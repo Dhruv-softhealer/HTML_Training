@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    div{
+        margin: 10px;
+    }
+</style>
+
+<body>
+    <div>
+        <h1>Form</h1>
+        <form action="#">
+            <div>
+                <label for="name">Name : </label>
+                <input type="text" name="name" required placeholder="Enter your Name"/>
+            </div>
+            <div>
+                <label for="number">Number : </label>
+                <input type="number" name="number" placeholder="Enter yout Phone No.">
+            </div>
+            <div>
+                <label for="email">Email : </label>
+                <input type="email" placeholder="Enter your Email" name="email">
+            </div>
+            <div>
+                <label for="select">Select</label>
+                <select name="select" id="select">
+                    <option value="opt_1">Cricket</option>
+                    <option value="opt_2">Kabaddi</option>
+                    <option value="opt_3" selected>Football</option>
+                </select>       
+            </div>
+
+            <div>
+                <label for="file">File : </label>
+                <input type="file" name="file">
+            </div>
+            <div>
+                <input type="submit" value="Submit">
+            </div>
+        </form>
+    </div>
+
+    <hr>
+    <h1>Media</h1>
+    <div>
+        <audio src="audio.mp3" controls autoplay></audio>
+    </div>
+    <div>
+        <h3>Video with autoplay and controls</h3>
+        <video src="video.mp4" controls autoplay></video>
+    </div>
+    <div>
+        <h3>Video with autoplay and muted</h3>
+        <video src="video.mp4" autoplay muted></video>
+    </div>
+</body>
+
+</html>
