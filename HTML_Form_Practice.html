@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    body{
+        background-color: rgb(234, 249, 255);
+        
+    }
+    .container{
+        display: flex;
+        justify-content: center;
+        max-width: 100%;
+    }
+
+    .in-container{
+        max-width: 60%;
+    }
+
+    .form-out{
+        margin-top: 20px;
+    }
+
+    .col-left{
+        width: 40%;
+    }
+
+    .col-right{
+        width: 60%;
+    }
+
+    .input-div{
+        margin-top: 20px;
+    }
+    button{
+        margin-left: 35%;
+        margin-right: auto;
+        width: 23%;
+        height: 50px;
+        border-radius: 30px;
+        background-color: rgb(53, 53, 116);
+        color: white;
+    }
+</style>
+
+<body style="color: rgb(53, 53, 116); padding-left: 5%; padding-right: 5%;">
+    <div class='container'>
+        <div class="in-container">
+            <h1>Online Order Form </h1>
+            <p>Please fill in the order form below with the items you want to purchase from our store. Thank yyou for choosing our services!</p>
+        
+            <hr>
+            <div class="form-out">
+                <form action="#">
+                    <div style="display: flex;">
+                        <div class="col-left">
+                            <strong>Preferred<br>Product*</strong>
+                        </div>
+                        <div class="col-right" style="padding-right: 35%;">
+                            <div>
+                                <input type="radio" name="radio" id="radio">
+                                <label for="radio"># Product 1</label>
+                            </div>
+                            <div class="input-div">
+                                <input type="radio" name="radio" id="radio">
+                                <label for="radio"># Product 2</label>
+                            </div>
+                            <div class="input-div">
+                                <input type="radio" name="radio" id="radio">
+                                <label for="radio"># Product 3</label>
+                            </div>
+                            <div class="input-div">
+                                <input type="radio" name="radio" id="radio">
+                                <label for="radio"># Product 4</label>
+                            </div>
+                            <div class="input-div">
+                                <input type="radio" name="radio" id="radio">
+                                <label for="radio"># Product 5</label>
+                            </div>
+                            <div class="input-div">
+                                <input type="radio" name="radio" id="radio">
+                                <label for="radio"># Product 6</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h1>Shipping & billing details</h1>
+                        <div style="display: flex;">
+                            <div class="col-left" style="width: 20%;">
+                                <strong>Quantity*</strong>
+                            </div>
+                            <div class="col-right" style="width: 80%;">
+                                <input type="text" style="width: 70px; border-radius: 3px; height: 40px; border: 1px solid rgb(158, 66, 33);">
+                            </div>
+                        </div>
+                        <br/>
+                        <div style="display: flex;">
+                            <div class="col-left" style="width: 20%;">
+                                <strong>Delivery Date*</strong>
+                            </div>
+                            <div class="col-right" style="width: 80%;">
+                                <input type="date" style="width: 120px; border-radius: 3px; height: 40px; border: 1px solid rgb(158, 66, 33);">
+                            </div>
+                        </div>
+                        <br/>
+                        <div style="display: flex;">
+                            <div class="col-left" style="width: 20%;">
+                                <strong>Delivery <br/>Address*</strong>
+                            </div>
+                            <div class="col-right" style="width: 80%;">
+                            <div>
+                                <input type="text" placeholder="Street Address" style="width: 80%; border-radius: 3px; height: 40px; border: 1px solid rgb(158, 66, 33);">
+                            </div>
+                            <br/>
+                            <div>
+                                <input type="text" placeholder="Street Address Line 2" style="width: 80%; border-radius: 3px; height: 40px; border: 1px solid rgb(158, 66, 33);">
+                            </div>
+                            <br/>
+                            <div>
+                                <input type="text" placeholder="City" style="width: 39%; border-radius: 3px; height: 40px; border: 1px solid rgb(158, 66, 33);">
+                            
+                                <input type="text" placeholder="Region" style="width: 40%; border-radius: 3px; height: 40px; border: 1px solid rgb(158, 66, 33);">
+                            </div>
+                            <br/>
+                            <div>
+                                <input type="text" placeholder="Postal / Zip Code" style="width: 40%; border-radius: 3px; height: 40px; border: 1px solid rgb(158, 66, 33);">
+                                <select style="width: 40%; border-radius: 3px; height: 43px; border: 1px solid rgb(158, 66, 33);">
+                                    <option selected>Country</option>
+                                    <option>India</option>
+                                    <option>USA</option>
+                                    <option>China</option>
+                                    <option>Kenya</option>
+                                    <option>Canada</option>
+                                    <option>Germany</option>
+                                </select>
+                            </div>
+                            <br/>
+                            
+                        </div>
+                        
+                        </div>
+                        <div style="display: flex;">
+                            <div class="col-left" style="width: 20%;">
+                                <strong>Name*</strong>
+                            </div>
+                            <div class="col-right" style="width: 80%;">
+                                <div>
+                                    <input type="text" placeholder="First" style="width: 43%; border-radius: 3px; height: 40px; border: 1px solid rgb(158, 66, 33);">
+                                
+                                    <input type="text" placeholder="Last" style="width: 37%; border-radius: 3px; height: 40px; border: 1px solid rgb(158, 66, 33);">
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                        <div style="display: flex;">
+                            <div class="col-left" style="width: 20%;">
+                                <strong>Phone*</strong>
+                            </div>
+                            <div class="col-right" style="width: 80%;">
+                                <div>
+                                    <input type="Number" placeholder="### ### ####" style="width: 43%; border-radius: 3px; height: 40px; border: 1px solid rgb(158, 66, 33);">
+                                
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                        <div style="display: flex;">
+                            <div class="col-left" style="width: 20%;">
+                                <strong>Email*</strong>
+                            </div>
+                            <div class="col-right" style="width: 80%;">
+                                <div>
+                                    <input type="email" style="width: 43%; border-radius: 3px; height: 40px; border: 1px solid rgb(158, 66, 33);">
+                                
+                                </div>
+                                <br/>
+                                <div>
+                                    <input type="checkbox" style="border: 1px solid rgb(158, 66, 33);;"> I agree to terms of service
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <br/>
+                        <br/>
+                        <div>
+                            <button>ORDER NOW</button>
+                        </div>
+                    </div>
+                    
+                </form>
+
+            </div>
+            
+        </div>
+    </div>
+</body>
+</html>
