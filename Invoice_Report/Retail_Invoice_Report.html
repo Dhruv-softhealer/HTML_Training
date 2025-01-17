@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        table,th, td{
+            border: 2px solid black;
+            border-top: 0px;
+            border-collapse: collapse;
+            margin-left: auto;
+            margin-right: auto;
+            align-items: center;
+        }
+        .c1 td{
+            border: 1px dotted black;
+            vertical-align: top;
+        }
+        .c1 td{
+            border-bottom: 2px solid black;
+        }
+        .c2 table{
+            height: 200px;
+        }
+        .c4 td{
+            border-left: 0px;
+        }
+        .c5 td{
+            border-right: 0px;
+        }
+        
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retail Invoice Report</title>
+</head>
+<body>
+    <table style="width: 80%; border-top: 2px solid black; height: 50px;">
+        <tr>
+            <td rowspan="3" style="padding: 5px;"><img src="img_avatar1.png" style="height: 140px; width: 100%;"></td>
+            <td>Invoice No. <br> <b>1213-83</b></td>
+            <td>Date <br><b>20-07-2012</b></td>
+        </tr>
+        <tr>
+            <td>Dispatched Through  <br><b>Transport</b></td>
+            <td>Destination <br><b>Surat</b></td>
+        </tr>
+        <tr>
+            <td>Terms of payment</td>
+            <td><b>7 Days</b></td>
+        </tr>
+        <tr>
+            <td rowspan="2"><b>Customer Detail<br></b>
+                Mr. Ketan Sheth <br>
+                Surbhi Traders <br>
+                13/D Shyamal road, Rajkot <br>
+                Phone: 8574859685 <br>
+                Tin No: 36252512451274
+            </td>
+            <td>Payment type <br> <b>Debit</b></td>
+            <td>Cheque Number <br><b>...</b></td>
+        </tr>
+        <tr>
+            <td colspan="2"><b>Terms of delivery </b><br>Goods sold would not be taken back.</td>
+        </tr>
+        
+    </table>
+    <table class="c1" style="width: 80%;">
+        <thead>
+        <tr>
+            <th>No</th>
+            <th>Item Name</th>
+            <th>Qty.</th>
+            <th>Rate</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>1<br>2<br>3<br>4</td>
+            <td style="height: 300px;">Parker edge serial roller ball pen reliff P
+                <br>Fabercastel Scale collection box - 100pc
+                <br>Fabercastel Crayon color box - 5pc
+                <br>FCell gripper pen cartoon - 1000pc
+            </td>
+            <td>10<br>2<br>5<br>1</td>
+            <td>75<br>1200<br>175<br>15000<br></td>
+            <td>750.0<br>2400.0<br>875.0<br>15000.0</td>
+        </tr>
+        <tr>
+            <td colspan="4" style="text-align: right; padding: 10px;">Total</td>
+            <td style="padding: 10px;"><b>19025.0</b></td>
+        </tr>
+        </tbody>
+    </table>
+
+
+
+    <table class="c4" style="font-size: 15px; width: 80%;">
+        <tr>
+            <td style="vertical-align: bottom; padding-left: 10px; padding-bottom: 15px; width: 50%;">
+                <span>Company's CST No.. 24132004572 24/4/2005</span><br>
+                <span>Company's Tin No.. 24132004572 30/3/2005</span><br>
+                <span>Bank A/c No. 24132004572 24/4/2005</span>
+            </td>
+            <td colspan="2" style="width: 30vh; text-align: right; border: 0px; ">
+                <span>Discount:</span><br>
+                <span>Net Value:</span><br>
+                <span>VAT/CST:</span><br>
+                <span>Additional Tax:</span><br>
+                <span>Again C Form:</span><br>
+                <span>Total:</span><br>
+                <span>Freight Charge:</span><br>
+            </td>
+            <td style="width: 12vh; text-align: right;">
+                <span>2.00%</span><br>
+                <span></span><br>
+                <span>0.00%</span><br>
+                <span>0.00%</span><br>
+                <span>2.00%</span><br>
+                <span></span><br>
+                <span></span><br>
+            </td>
+            <td style="width: 25vh; text-align: right;">
+                <span>380.50</span><br>
+                <span>18644.50</span><br>
+                <span>0.00</span><br>
+                <span>0.00</span><br>
+                <span>372.89</span><br>
+                <span>19017.0</span><br>
+                <span>150.00</span>
+            </td>
+                
+        </tr>
+    </table>
+
+    <table style="width: 80%; height: 150px;">
+        <tr>
+            <td style="width: 50%; padding: 10px;">
+                <strong>Declation</strong><br>
+                <span>Trading ACT,1954</span><br>
+                <span>Warranty from xa-FORM. We hereby certifythat goods<br> mentioned in this invoice are warranted to be of the<br> nature and quality which are stated in act.</span>
+            </td>
+            <td>
+                <table style="width: 100%;" class="c5">
+                    <tr>
+                        <th style="text-align: center;">Final Invoice Value</th>
+                        <th>19167</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span>Date & Time of Invoice</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right;" colspan="2">
+                            <span>Authorized Signatory</span>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+
+
