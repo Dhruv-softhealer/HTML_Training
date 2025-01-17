@@ -1,0 +1,229 @@
+body{
+    background-color: rgb(240, 233, 225);
+}
+p#p1{
+    color: whitesmoke;
+    text-align: center;
+}
+
+.first, .second, .third {
+    background-color: rgb(143, 119, 15);
+}
+  
+div.first {
+    opacity: 0.1;
+    text-align: center;
+}
+  
+div.second {
+    opacity: 0.3;
+    text-align: center;
+}
+  
+div.third {
+    opacity: 0.6;
+    text-align: center;
+}
+.mix{
+    border-style: dotted groove solid dashed;
+    text-align: center;
+    border-color: brown;
+    border-width: 2px 2px 6px 2px;
+    border-radius: 10px;
+}
+div.div1 {
+    margin: 70px;
+    border: 1px solid #4CAF50;
+    height: 45px;
+    text-align: center;
+    color: white;
+    padding-top: 25px;
+  }
+
+div.div2 {
+    border: 1px solid black;
+    background-color: lightblue;
+    padding-top: 50px;
+    padding-right: 30px;
+    padding-bottom: 50px;
+    padding-left: 80px;
+}
+.outline{
+    border: 2px soli black;
+    outline: thick ridge pink;
+    margin: auto;
+    padding: 15px;
+    text-align: center;
+}
+.text1{
+    text-decoration-line: overline;
+    text-decoration-color: red;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 5px red;
+}
+
+.text2{
+    text-decoration-line: underline;
+    text-decoration-color: blue;
+}
+.text3{
+    text-decoration-line: line-through;
+    text-decoration-color: green;
+}
+.text4{
+    text-decoration-line: overline line-through;
+    text-decoration-color: purple;
+}
+.font1 {
+    font-family: 'Courier New', sans-serif;
+    font-style: italic;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.c1:link, .c1:visited {
+    background-color: #f44336;
+    color: white;
+    padding: 14px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+  
+a:hover, a:active {
+    background-color: cadetblue;
+}
+
+table, th, td{
+    border: 1px solid black;
+}
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+span{
+    display: block;
+}
+div#overflowTest{
+    overflow: scroll;
+    height: 100px;
+    width: 30%;
+    border: 2px solid black;
+    background-color: #4CAF50;
+}
+.float{
+    width: 50%;
+    height: 150px;
+    padding: 0%;
+}
+
+
+img.imgfloat{
+    height: 150px;
+    width: 150px;
+    padding-left: 20px;
+    padding-right: 10px;
+    float: right;
+}
+.a{
+    display: inline;
+    height: 50px;
+    padding: 5px;
+    width: 60px;
+    background-color: aquamarine;
+}
+.b{
+    display: inline-block;
+    height: 50px;
+    padding: 5px;
+    width: 60px;
+    background-color: aquamarine;
+}
+.c{
+    display: block;
+    height: 50px;
+    padding: 5px;
+    width: 60px;
+    background-color: aquamarine;
+}
+.img2{
+    float: right;
+    height: 100px;
+    width: 100px;
+    padding: 5px;
+}
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+h1 + p{
+    background-color: #4CAF50;
+}
+
+.pseudoclass:visited{
+    color: white;
+}
+
+.pseudoclass:hover{
+    color: purple;
+}
+.pseudoclass:active{
+    color: #f44336;
+}
+
+.opacity{
+    height: 100px;
+    width: 100px;
+    opacity: 0.5;
+}
+.opacity:hover{
+    opacity: 1;
+}
+
+
+
+li a:hover{
+    background-color: #111;
+}
+li{
+    float: right;
+}
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+.dropdwn{
+    display: inline-block;
+}
+.afterdd{
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+.dropdwn:hover .afterdd {
+    display: block;
+}
+.desc{
+    text-align: center;
+    padding: 15px;
+}
+
+.borderimg{
+    border: 20px solid transparent;
+    text-align: center;
+    padding: 20px;
+    border-image: url(img_the_scream.jpg) 30 stretch;
+}
