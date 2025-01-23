@@ -26,7 +26,7 @@ temp = li[-1]
 for i in range(1,len(li)):
     diff = li[i] - li[i-1]
     if diff <= temp:
-        temp=diff
+        # temp=diff
         diff_li[0]=li[i]
         diff_li[1]=li[i-1]
         if diff == 1:
