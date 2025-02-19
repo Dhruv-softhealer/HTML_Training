@@ -1,0 +1,11 @@
+<odoo>
+
+    <menuitem id="sh_root_action" name="School" action="sh_student_action" >
+    
+        <menuitem id="sh_submenu1_action" action="sh_student_action" ></menuitem>
+        <menuitem id="sh_submenu2_action" action="sh_class_action" ></menuitem>
+        <menuitem id="sh_submenu3_action" action="sh_teacher_action" ></menuitem>
+
+    </menuitem>
+
+</odoo>

@@ -1,0 +1,33 @@
+<odoo>
+    <record id="sh_patient_list_view" model="ir.ui.view">
+        <field name="name">Patient</field>
+        <field name="model">sh.patient</field>
+        <field name="arch" type="xml">
+            <list string="Patient">
+                <field name="name" />
+                <field name="doctor_id" />
+            </list>
+        </field>
+    </record>
+
+    <record id="sh_patient_form_view" model="ir.ui.view">
+        <field name="name">Patient</field>
+        <field name="model">sh.patient</field>
+        <field name="arch" type="xml">
+            <form string="Patient">
+                <group>
+                    <field name="name" />
+                    <field name="age" />
+                    <field name="doctor_id" />
+                    <field name="diagnosis_ids" widget="many2many_tags" />
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="sh_patient_action" model="ir.actions.act_window">
+        <field name="name">Patient</field>
+        <field name="res_model">sh.patient</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>
