@@ -1,0 +1,20 @@
+<odoo>
+    <record id='sh_crm_custom_field_form' model='ir.ui.view'>
+        <field name='name'>sh.crm.custom.field.form</field>
+        <field name='model'>crm.lead</field>
+        <field name='inherit_id' ref='crm.crm_lead_view_form'></field>
+        <field name='arch' type='xml'>
+            <xpath expr="//field[@name='tag_ids']" position='after'>
+                <field name='more_info'></field>
+            </xpath>
+
+            <xpath expr="//page[@name='lead']" position='after'>
+                <page name="More Information">
+                    <group>
+                        <field name='more_info'></field>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
