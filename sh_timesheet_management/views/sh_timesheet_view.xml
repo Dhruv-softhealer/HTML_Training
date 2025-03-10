@@ -5,7 +5,9 @@
         <field name="arch" type="xml">
             <list string="Timesheet">
                 <field name="name"></field>
+                <field name='user_id'></field>
                 <field name="state" widget="badge"></field>
+                <field name="total_amount"></field>
             </list>
         </field>
     </record>
@@ -20,10 +22,10 @@
                     <button name="action_to_move_submitted"
                         string="Submit to Manager" type="object" data-hotkey="g" class="btn-primary"
                         invisible="state != 'draft'" />
-                    <button name="action_to_move_approve"
+                    <button name="action_to_move_approve" groups="sh_timesheet_management.timesheet_group_manager"
                         string="Approve" type="object" class="btn-primary"
                         invisible="state != 'submitted'" />
-                    <button name="action_to_open_wizard"
+                    <button name="action_to_open_wizard" groups="sh_timesheet_management.timesheet_group_manager"
                         string="Reject" type="object" class="btn-primary"
                         invisible="state != 'submitted'" />
 

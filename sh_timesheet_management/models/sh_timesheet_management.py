@@ -24,7 +24,7 @@ class Timesheet(models.Model):
     _description = 'Timesheet'
     _inherit = ["mail.thread", "mail.activity.mixin"]
     
-    user_id = fields.Many2one(comodel_name='res.users', default=lambda self:self.env.uid)
+    user_id = fields.Many2one(comodel_name='res.users')
     name = fields.Char(string='Name', tracking=True)
     description = fields.Html(string='Description')
     date = fields.Date(default=fields.datetime.now())
