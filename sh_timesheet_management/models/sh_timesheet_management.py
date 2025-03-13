@@ -15,6 +15,7 @@ class Task(models.Model):
     _description = 'Task'
     
     name = fields.Char(string='Name')
+    surname = fields.Char(string='Surname')
     amount = fields.Float(string='Amount')
     timesheet_id = fields.Many2one(comodel_name='sh.timesheet')
     
