@@ -7,7 +7,7 @@ class Animal(models.Model):
     _name = 'animal'
     
     
-    height = fields.Float(string='Height')
+    height = fields.Float(string='Heightdsdf')
     
     
 class Dog(models.Model):
