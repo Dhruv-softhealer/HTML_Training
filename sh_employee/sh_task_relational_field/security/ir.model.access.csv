@@ -1,4 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-sh_sh_employee,sh.employee,model_sh_employee,base.group_user,1,1,1,1
-sh_sh_department,sh.department,model_sh_department,base.group_user,1,1,1,1
-sh_sh_job,sh.job,model_sh_job,base.group_user,1,1,1,1
