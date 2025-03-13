@@ -1,6 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-sh_sh_res_partner,sh.res.partner,model_sh_res_partner,base.group_user,1,1,1,1
-sh_sh_product,sh.product,model_sh_product,base.group_user,1,1,1,1
-sh_sh_account_tax,sh.account.tax,model_sh_account_tax,base.group_user,1,1,1,1
-sh_sh_sale_order,sh.sale.order,model_sh_sale_order,base.group_user,1,1,1,1
-sh_sh_sale_order_line,sh.sale.order.line,model_sh_sale_order_line,base.group_user,1,1,1,1
