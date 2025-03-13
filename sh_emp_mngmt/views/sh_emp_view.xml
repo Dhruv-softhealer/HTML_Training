@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <record id="sh_employee_list_view" model="ir.ui.view">
+        <field name="name">Employee</field>
+        <field name="model">sh.emp.mngmt</field>
+        <field name="arch" type="xml">
+            <list string="Employee">
+                <field name="name"></field>
+            </list>
+        </field>
+    </record>
+
+    <record id="sh_employee_form_view" model="ir.ui.view">
+        <field name="name">Employee</field>
+        <field name="model">sh.emp.mngmt</field>
+        <field name="arch" type="xml">
+            <form string="Employee">
+                <sheet>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h1>
+                            <field name="name" placeholder="Employee's Name"></field>
+                        </h1>
+                        <div>
+                            <field name="image" widget='image' class="oe_avatar m-0" />
+                        </div>
+                    </div>
+                    <group>
+                        <group string="Many to One fields">
+                            <field name="user_id" />
+                            <field name="country_id" />
+                            <field name="country_of_birth" />
+                            <field name="job_id" />
+                            <field name="department_id" />
+                        </group>
+                        <group string="Details">
+                            <field name="address"></field>
+                            <field name="age"></field>
+                            <field name="gender"></field>
+                            <field name="birthdate"></field>
+                            <field name="marital_status"></field>
+                            <field name="nationality"></field>
+                        </group>
+                        <group string="Details">
+                            <field name="job_posotion"></field>
+                            <field name="department"></field>
+                            <field name="phone"></field>
+                            <field name="email"></field>
+                            <field name="work_email"></field>
+                            <field name="skills"></field>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Work Information">
+                            <group string="Location">
+                                <field name="work_address"
+                                    placeholder="e.g. Building 2, Khaugali, Goregav east" />
+                            </group>
+                        </page>
+
+                        <page string="Private Information">
+
+                            <group>
+                                <group string="Emergency">
+                                    <field name="emg_name" />
+                                    <field name="emg_phone" />
+                                </group>
+                                <group string="Education">
+                                    <field name="certificate" />
+                                    <field name="field_of_study" />
+                                    <field name="school" />
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Social Information">
+                            <group string="Social Info">
+                                <field name="security_num" />
+                                <field name="pan_num" />
+                                <field name="bank_ac_num" />
+                            </group>
+                        </page>
+
+                        <page string="Employment Status">
+                            <group string="Employeement Details">
+                                <field name="emp_status" />
+                                <field name="leave_type" />
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="sh_employee_action" model="ir.actions.act_window">
+        <field name="name">Employee</field>
+        <field name="res_model">sh.emp.mngmt</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+</odoo>

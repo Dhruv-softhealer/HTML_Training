@@ -1,0 +1,721 @@
+// 
+@if $login_page_style == "style_4" {
+    #wrapwrap{
+        &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+            font-family: $body_font_family !important;
+            .card {
+                font-family: $body_font_family !important;
+                .card-body {
+                    input {
+                        &:-webkit-autofill {
+                            -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+                            box-shadow: 0 0 0px 1000px white inset !important;
+                            &:hover {
+                                -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+                                box-shadow: 0 0 0px 1000px white inset !important;
+                            }
+                            &:focus {
+                                -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+                                box-shadow: 0 0 0px 1000px white inset !important;
+                            }
+                            &:active {
+                                -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+                                box-shadow: 0 0 0px 1000px white inset !important;
+                            }
+                        }
+                    }
+                    #login {
+                        &::placeholder {
+                            color: #616161;
+                        }
+                    }
+                    #password {
+                        &::placeholder {
+                            color: #616161;
+                        }
+                    }
+                    .login_user_icon {
+                        color: #616161;
+                    }
+                    .text-center.small.mt-4.pt-3.border-top {
+                        a {
+                            color: #ffffff;
+                            background: transparent;
+                            text-decoration: none;
+                        }
+                        border: 0px !important;
+                    }
+                    padding-top: 30px;
+                    background: #fff !important;
+                    border-radius: 10px;
+                    padding-left: 50px;
+                    padding-right: 50px;
+                    form.oe_login_form {
+                        .alert.alert-danger {
+                            padding: .5rem 1rem;
+                        }
+                    }
+                }
+                h2 {
+                    .company_name_style_1 {
+                        color: #888;
+                        font-weight: 600;
+                        letter-spacing: 1px;
+                        display: block;
+                        margin-bottom: 5px;
+                    }
+                }
+            }
+            .o_database_list {
+                .text-center.border-bottom {
+                    margin: 0 auto -60px !important;
+                    border: 0 !important;
+                    width: 120px;
+                    background: #fff;
+                    padding: 20px !important;
+                    height: 120px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    z-index: 1;
+                }
+                width: 50%;
+                height: auto;
+                min-height: auto;
+            }
+            .sh_backmate_th_login_left_img_st_2 {
+                .card-body {
+                    .oe_login_form {
+                        .field-login {
+                            .input-group {
+                                background: #ffffff !important;
+                                border: 1px solid #ccc;
+                                align-items: center;
+                                padding: 10px 20px;
+                                border-radius: 5px;
+                                .input-group-prepend {
+                                    align-items: center;
+                                    span {
+                                        padding-right: 15px;
+                                    }
+                                }
+                                input {
+                                    border: 0px;
+                                    padding: 0px 0px 0px 15px;
+                                    font-size: 14px;
+                                    &::placeholder {
+                                        color: #777 !important;
+                                    }
+                                }
+                            }
+                        }
+                        .field-password {
+                            .input-group {
+                                background: #ffffff !important;
+                                border: 1px solid #ccc;
+                                align-items: center;
+                                padding: 10px 20px;
+                                border-radius: 5px;
+                                .input-group-prepend {
+                                    align-items: center;
+                                    span {
+                                        padding-right: 15px;
+                                    }
+                                }
+                                input {
+                                    border: 0px;
+                                    padding: 0px 0px 0px 15px;
+                                    font-size: 14px;
+                                    &::placeholder {
+                                        color: #777 !important;
+                                    }
+                                }
+                            }
+                        }
+                        .oe_login_buttons {
+                            button {
+                                width: auto;
+                                padding: 10px 40px;
+                                font-weight: 600;
+                                letter-spacing: 0.7px;
+                                margin: auto;
+                                background: $primaryColor;
+                                border-color: $primaryColor;
+                                box-shadow: none;
+                                margin-bottom: 0px;
+                                color: #fff !important;
+                            }
+                        }
+                        .field-db {
+                            input {
+                                border-top-left-radius: 5px;
+                                border-bottom-left-radius: 5px;
+                                border: 1px solid #ccc;
+                                height: 53px;
+                            }
+                            .input-group-append {
+                                a {
+                                    background: $primaryColor;
+                                    border-color: $primaryColor !important;
+                                    border-top-right-radius: 5px;
+                                    border-bottom-right-radius: 5px;
+                                    padding-top: 15px;
+                                    padding-bottom: 15px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .text-center.small.mt-4.pt-3.border-top {
+                a {
+                    color: #ffffff;
+                    font-size: 12px;
+                    letter-spacing: 1px;
+                }
+            }
+            .justify-content-between.mt-2.d-flex.small {
+                margin-bottom: 8px !important;
+                a {
+                    padding-top: 0px;
+                }
+            }
+        }
+    }
+    @if $login_page_background_type == "bg_color" {
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                .sh_backmate_th_login_left_img_st_2 {
+                    background-color: $login_page_background_color;
+                    background-repeat: no-repeat;
+                    background-size: cover;
+                    min-height: 100vh;
+                    background-position-x: center;
+                }
+                .card {
+                    .card-body {
+                        input {
+                            padding-left: 0;
+                            background-color: transparent;
+                            background-repeat: no-repeat;
+                            background-position: center bottom, center calc(100% - 1px);
+                            background-size: 0 2px, 100% 1px;
+                            transition: background 0s ease-out;
+                            border-bottom: 1px solid #ccc;
+                            border-left: 0px;
+                            border-right: 0px;
+                            border-top: 0px;
+                            padding: 0.429rem 1.072rem;
+                            border-radius: 0px;
+                            &:focus {
+                                -webkit-background-size: 100% 2px, 100% 1px;
+                                background-size: 100% 2px, 100% 1px;
+                                outline: 0;
+                                -webkit-transition-duration: 0.3s;
+                                -o-transition-duration: 0.3s;
+                                transition-duration: 0.3s;
+                                float: none;
+                                background-image: linear-gradient($header_bg_color, $header_bg_color), linear-gradient($header_bg_color, $header_bg_color);
+                                border: 0;
+                                border-radius: 0;
+                                -webkit-box-shadow: none;
+                                box-shadow: none;
+                            }
+                        }
+                        .justify-content-between.mt-2.d-flex.small {
+                            justify-content: center !important;
+                            a {
+                                color: #616161;
+                            }
+                        }
+                        .text-center.small.mt-4.pt-3.border-top {
+                            margin-top: 0.5rem !important;
+                        }
+                        form {
+                            .form-control {
+                                &:focus {
+                                    box-shadow: none;
+                                }
+                            }
+                        }
+                        #db {
+                            + {
+                                .btn-secondary {
+                                    background-color: $primaryColor;
+                                    border-color: $primaryColor;
+                                }
+                            }
+                        }
+                        input[type="text"] {
+                            background-color: transparent;
+                            border: none;
+                            color: #0d0d0d;
+                            text-align: left;
+                            text-decoration: none;
+                            display: inline-block;
+                            font-size: 16px;
+                            -webkit-transition: all 0.5s ease-in-out;
+                            -moz-transition: all 0.5s ease-in-out;
+                            -ms-transition: all 0.5s ease-in-out;
+                            -o-transition: all 0.5s ease-in-out;
+                            transition: all 0.5s ease-in-out;
+                            -webkit-border-radius: 5px 5px 5px 5px;
+                            border-radius: 5px 5px 5px 5px;
+                            padding: 10px 20px 10px 20px;
+                            border: 1px solid #dcdcdc;
+                        }
+                        input[type="password"] {
+                            background-color: transparent;
+                            border: none;
+                            color: #0d0d0d;
+                            text-align: left;
+                            text-decoration: none;
+                            display: inline-block;
+                            font-size: 16px;
+                            -webkit-transition: all 0.5s ease-in-out;
+                            -moz-transition: all 0.5s ease-in-out;
+                            -ms-transition: all 0.5s ease-in-out;
+                            -o-transition: all 0.5s ease-in-out;
+                            transition: all 0.5s ease-in-out;
+                            -webkit-border-radius: 5px 5px 5px 5px;
+                            border-radius: 5px 5px 5px 5px;
+                            padding: 10px 20px 10px 20px;
+                            border: 1px solid #dcdcdc;
+                        }
+                        .btn-primary {
+                            border: none;
+                            color: white;
+                            text-align: center;
+                            text-decoration: none;
+                            display: inline-block;
+                            text-transform: uppercase;
+                            font-size: 13px;
+                            box-shadow: none;
+                            -webkit-border-radius: 5px 5px 5px 5px;
+                            border-radius: 5px 5px 5px 5px;
+                            -webkit-transition: all 0.3s ease-in-out;
+                            -moz-transition: all 0.3s ease-in-out;
+                            -ms-transition: all 0.3s ease-in-out;
+                            -o-transition: all 0.3s ease-in-out;
+                            transition: all 0.3s ease-in-out;
+                            background-color: $primaryColor;
+                        }
+                        form.oe_login_form {
+                            margin: 0px auto !important;
+                        }
+                    }
+                }
+                .btn.btn-link.btn-sm {
+                    color: #616161 !important;
+                    color: #616161;
+                    padding-top: 15px;
+                }
+                .btn-group-sm {
+                    >.btn.btn-link#wrapwrap {
+                        color: #616161 !important;
+                    }
+                }
+                color: #616161 !important;
+                background-color: $login_page_background_color !important;
+                .o_database_list {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background-color: transparent !important;
+                    max-width: 100% !important;
+                    border-radius: 10px;
+                    overflow: hidden;
+                    padding: 0px 25px;
+                }
+                .container {
+                    .bg-100 {
+                        background-color: $login_page_box_color !important;
+                        background-color: $login_page_box_color !important;
+                        color: #212529;
+                    }
+                    .oe_login_form {
+                        .justify-content-between.mt-2 {
+                            margin-top: 1rem !important;
+                        }
+                    }
+                }
+                .container.pb-5 {
+                    padding-top: 2rem;
+                    .mt-5 {
+                        margin-top: 0rem !important;
+                    }
+                }
+                .container.mb-5 {
+                    margin-bottom: 0rem !important;
+                }
+            }
+        }
+    }
+    @if $login_page_background_type == "bg_img" {
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                .sh_backmate_th_login_left_img_st_2 {
+                    background: url("/web/image?model=sh.back.theme.config.settings&id=1&field=login_page_background_image");
+                    background-repeat: no-repeat;
+                    background-size: cover;
+                    min-height: 100vh;
+                    background-position-x: center;
+                    background-position: center;
+                    &:before {position: absolute;background: linear-gradient(125deg, $primaryColor 20%, $primaryColor 80%);z-index: 0;bottom: 0; left: 0;height: 100%;content: '';width: 100%;opacity: .7;}
+                }
+                .card {
+                    h2 {
+                        .company_name_style_1 {
+                            color: #fff;
+                        }
+                    }
+                    .card-body {
+                        form.oe_login_form {
+                            margin: 0px auto !important;
+                        }
+                        input {
+                            padding-left: 0;
+                            background-color: transparent;
+                            background-repeat: no-repeat;
+                            background-position: center bottom, center calc(100% - 1px);
+                            background-size: 0 2px, 100% 1px;
+                            transition: background 0s ease-out;
+                            border-bottom: 1px solid #ccc;
+                            border-left: 0px;
+                            border-right: 0px;
+                            border-top: 0px;
+                            padding: 0.429rem 1.072rem;
+                            border-radius: 5px;
+                            &:focus {
+                                -webkit-background-size: 100% 2px, 100% 1px;
+                                background-size: 100% 2px, 100% 1px;
+                                outline: 0;
+                                -webkit-transition-duration: 0.3s;
+                                -o-transition-duration: 0.3s;
+                                transition-duration: 0.3s;
+                                float: none;
+                                border-radius: 0;
+                                -webkit-box-shadow: none;
+                                box-shadow: none;
+                            }
+                        }
+                        .text-center.small.mt-4.pt-3.border-top {
+                            margin-top: 0.5rem !important;
+                            a {
+                                color: #ffffff;
+                            }
+                        }
+                        .justify-content-between.mt-2.d-flex.small {
+                            a {
+                                color: #616161;
+                                padding-top: 15px;
+                                font-weight: 600;
+                                letter-spacing: 0.7px;
+                                &:last-child {
+                                    color: $primaryColor !important;
+                                    text-decoration: none;
+                                }
+                            }
+                            justify-content: center !important;
+                        }
+                        .clearfix.oe_login_buttons {
+                            .btn.btn-primary {
+                                background: $primaryColor !important;
+                                border-color: $primaryColor;
+                            }
+                        }
+                        form {
+                            .form-control {
+                                &:focus {
+                                    box-shadow: none;
+                                }
+                            }
+                        }
+                        input[type="text"] {
+                            background-color: transparent;
+                            border: none;
+                            color: #0d0d0d;
+                            text-align: left;
+                            text-decoration: none;
+                            display: inline-block;
+                            font-size: 16px;
+                            -webkit-transition: all 0.5s ease-in-out;
+                            -moz-transition: all 0.5s ease-in-out;
+                            -ms-transition: all 0.5s ease-in-out;
+                            -o-transition: all 0.5s ease-in-out;
+                            transition: all 0.5s ease-in-out;
+                            -webkit-border-radius: 5px 5px 5px 5px;
+                            border-radius: 5px 5px 5px 5px;
+                            padding: 10px 20px 10px 20px;
+                            border: 1px solid #dcdcdc;
+                        }
+                        input[type="password"] {
+                            background-color: transparent;
+                            border: none;
+                            color: #0d0d0d;
+                            text-align: left;
+                            text-decoration: none;
+                            display: inline-block;
+                            font-size: 16px;
+                            -webkit-transition: all 0.5s ease-in-out;
+                            -moz-transition: all 0.5s ease-in-out;
+                            -ms-transition: all 0.5s ease-in-out;
+                            -o-transition: all 0.5s ease-in-out;
+                            transition: all 0.5s ease-in-out;
+                            -webkit-border-radius: 5px 5px 5px 5px;
+                            border-radius: 5px 5px 5px 5px;
+                            padding: 10px 20px 10px 20px;
+                            border: 1px solid #dcdcdc;
+                        }
+                        #db {
+                            + {
+                                .btn-secondary {
+                                    background-color: $primaryColor;
+                                    border-color: $primaryColor;
+                                }
+                            }
+                        }
+                        .btn-primary {
+                            border: none;
+                            color: white;
+                            padding: 15px 80px;
+                            text-align: center;
+                            text-decoration: none;
+                            display: inline-block;
+                            text-transform: uppercase;
+                            font-size: 13px;
+                            box-shadow: none;
+                            -webkit-border-radius: 5px 5px 5px 5px;
+                            border-radius: 5px 5px 5px 5px;
+                            -webkit-transition: all 0.3s ease-in-out;
+                            -moz-transition: all 0.3s ease-in-out;
+                            -ms-transition: all 0.3s ease-in-out;
+                            -o-transition: all 0.3s ease-in-out;
+                            transition: all 0.3s ease-in-out;
+                            background-color: #f5f5f5;
+                        }
+                    }
+                }
+                .o_database_list {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 390px;
+                    max-width: 100% !important;
+                    border-radius: 10px;
+                    overflow: hidden;
+                    box-shadow: 0 30px 60px 0 rgba(0, 0, 0, 0.3);
+                    padding: 0px 25px;
+                    background: transparent !important;
+                    box-shadow: none;
+                }
+                .btn.btn-link.btn-sm {
+                    color: #616161 !important;
+                    color: #616161;
+                    padding-top: 15px;
+                }
+                .btn-group-sm {
+                    >.btn.btn-link#wrapwrap {
+                        color: #616161 !important;
+                    }
+                }
+                color: #616161 !important;
+                background: linear-gradient(rgba(0, 0, 0, 0.33), rgba(0, 0, 0, 0.5)), url("/web/image?model=sh.back.theme.config.settings&id=1&field=login_page_background_image");
+                background-repeat: no-repeat;
+                background-size: cover;
+                color: #616161;
+                font-family: $body_font_family !important;
+                .container.pb-5 {
+                    padding-top: 2rem;
+                    padding-bottom: 0px !important;
+                    .mt-5 {
+                        margin-top: 0rem !important;
+                    }
+                }
+                .container.mb-5 {
+                    margin-bottom: 0rem !important;
+                }
+                .container {
+                    .bg-100 {
+                        background-color: $login_page_box_color !important;
+                        color: #212529;
+                    }
+                    .oe_login_form {
+                        .justify-content-between.mt-2 {
+                            margin-top: 1rem !important;
+                        }
+                    }
+                }
+            } 
+        }       
+    }
+}
+@if $login_page_style == "style_4" {
+    @media only screen and (min-width: 991px) and (max-width: 1200px) {
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                .o_database_list.col-sm-6 {
+                    .card-body {
+                        width: 65%;
+                    }
+                }
+            }
+        }
+    }
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                .o_database_list.col-sm-6 {
+                    .card-body {
+                        width: 75%;
+                    }
+                }
+                .o_database_list {
+                    width: 75%;
+                }
+            }
+        }        
+    }
+    @media only screen and (max-width: 767px) {
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                .o_database_list.col-sm-6 {
+                    display: contents;
+                }
+                .o_database_list {
+                    width: 100%;
+                }
+            }
+        }
+    }
+    @media only screen and (max-width: 400px) {
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                .o_database_list {
+                    max-width: 325px;
+                }
+                .card {
+                    .card-body {
+                        padding-left: 20px;
+                        padding-right: 20px;
+                        padding-top: 45px;
+                    }
+                }
+            }
+        }
+    }
+}
+@if $login_page_style == "style_4" {
+	@media only screen and (max-width: 576px){
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                .o_database_list {
+                    top: 50%;
+                    .text-center.border-bottom {
+                        height: 90px;
+                        width: 90px;
+                        margin: 0 auto -40px !important;
+                    }
+                }
+                >main {
+                    .oe_login_form {
+                        .form-group.field-login {
+                            position: relative;
+                            margin-bottom: 15px !important;
+                        }
+                        .form-group.field-password {
+                            position: relative;
+                        }
+                    }
+                }
+                .card {
+                    .card-body {
+                        input[type="text"] {
+                            position: relative;
+                            border: 1px solid #dcdcdc;
+                            border-radius: 5px !important;
+                            height: auto !important;
+                        }
+                        input[type="password"] {
+                            position: relative;
+                            height: auto !important;
+                            border: 1px solid #dcdcdc;
+                            border-radius: 5px !important;
+                        }
+                    }
+                }
+            }
+        }
+        [data-logged="false"] {
+            #wrapwrap{
+                &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                    >main {
+                        .oe_login_form {
+                            .form-group.field-password {
+                                label {
+                                    display: none;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }        
+    }
+}
+
+@if $login_page_style == "style_4" {
+	@media only screen and (max-width: 1024px) and (min-width: 769px){
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                .o_database_list {
+                    top: 50%;
+                }
+            }
+        }        
+    }
+	@media only screen and (max-width: 768px) and (min-width: 577px){
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                .o_database_list {
+                    top: 45%;
+                }
+                .card {
+                    h2 {
+                        .company_name_style_1 {
+                            margin-bottom: 10px;
+                        }
+                    }
+                }
+            }
+        }
+	}
+	@media only screen and (max-width: 576px) and (min-width: 320px){
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                .o_database_list {
+                    top: 55%;
+                    padding: 0px 10px;
+                }
+                .card {
+                    h2 {
+                        .company_name_style_1 {
+                            margin-bottom: 10px;
+                        }
+                    }
+                    .card-body {
+                        padding-left: 10px;
+                        padding-right: 10px;
+                    }
+                }
+            }
+        }
+	}
+}
+

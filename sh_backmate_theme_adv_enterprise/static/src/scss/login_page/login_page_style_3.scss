@@ -1,0 +1,547 @@
+@if $login_page_style == "style_3" {
+    #wrapwrap{
+        &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+            font-family: $body_font_family !important;
+            color: $primaryColor !important;
+            background-color: $login_page_box_color !important;
+            .card-body {
+                font-family: $body_font_family !important;
+            }
+            .justify-content-between.mt-2.d-flex.small {
+                a {
+                    color: #ffffff;
+                    padding-top: 15px;
+                }
+            }
+            .card {
+                overflow: visible !important;
+                .card-body {
+                    input {
+                        padding-left: 0;
+                        background-color: transparent;
+                        background-repeat: no-repeat;
+                        background-position: center bottom, center calc(100% - 1px);
+                        background-size: 0 2px, 100% 1px;
+                        transition: background 0s ease-out;
+                        border-bottom: 1px solid #ccc;
+                        border-left: 0px;
+                        border-right: 0px;
+                        border-top: 0px;
+                        padding: 0.429rem 1.072rem;
+                        border-radius: 0px;
+                        &:focus {
+                            -webkit-background-size: 100% 2px, 100% 1px;
+                            background-size: 100% 2px, 100% 1px;
+                            outline: 0;
+                            -webkit-transition-duration: 0.3s;
+                            -o-transition-duration: 0.3s;
+                            transition-duration: 0.3s;
+                            float: none;
+                            background-image: linear-gradient($header_bg_color, $header_bg_color), linear-gradient($header_bg_color, $header_bg_color);
+                            border: 0;
+                            border-radius: 0;
+                            -webkit-box-shadow: none;
+                            box-shadow: none;
+                        }
+                        &::placeholder {
+                            color: #ffffff !important;
+                        }
+                    }
+                    .text-center.small.mt-4.pt-3.border-top {
+                        margin-top: 0.5rem !important;
+                        border: 0 !important;
+                        margin: 0 !important;
+                        a {
+                            color: #ffffff;
+                            font-weight: 600;
+                            text-decoration: none;
+                            letter-spacing: 0.5px;
+                        }
+                    }
+                    .btn.btn-link.btn-sm {
+                        color: $primaryColor;
+                        padding-top: 15px;
+                    }
+                    .btn-primary {
+                        background: rgba(0, 0, 0, 0.2);
+                        border: none;
+                        color: white;
+                        padding: 12px 15px;
+                        text-align: center;
+                        text-decoration: none;
+                        display: block;
+                        width: 100%;
+                        text-transform: uppercase;
+                        font-size: 13px;
+                        box-shadow: none;
+                        -webkit-border-radius: 5px 5px 5px 5px;
+                        border-radius: 5px 5px 5px 5px;
+                        -webkit-transition: all 0.3s ease-in-out;
+                        -moz-transition: all 0.3s ease-in-out;
+                        -ms-transition: all 0.3s ease-in-out;
+                        -o-transition: all 0.3s ease-in-out;
+                        transition: all 0.3s ease-in-out;
+                        background-color: $primaryColor;
+                        color: #ffffff;
+                        background: rgba(0, 0, 0, 0.5) !important;
+                        box-shadow: none;
+                        &:not(:disabled) {
+                            &:not(.disabled) {
+                                &:active {
+                                    background-color: $primaryColor;
+                                    border-color: $primaryColor;
+                                }
+                            }
+                            &:not(.disabled).active {
+                                background-color: $primaryColor;
+                                border-color: $primaryColor;
+                            }
+                        }
+                    }
+                    .form-control {
+                        &:focus {
+                            box-shadow: none;
+                        }
+                    }
+                    input[type="text"] {
+                        background-color: transparent;
+                        border: none;
+                        color: #ffffff;
+                        text-align: left;
+                        text-decoration: none;
+                        display: inline-block;
+                        font-size: 16px;
+                        -webkit-transition: all 0.5s ease-in-out;
+                        -moz-transition: all 0.5s ease-in-out;
+                        -ms-transition: all 0.5s ease-in-out;
+                        -o-transition: all 0.5s ease-in-out;
+                        transition: all 0.5s ease-in-out;
+                        -webkit-border-radius: 5px 5px 5px 5px;
+                        border-radius: 5px 5px 5px 5px;
+                        padding: 10px 15px;
+                        background: rgba(255, 255, 255, 0.2);
+                    }
+                    input[type="password"] {
+                        background-color: transparent;
+                        border: none;
+                        color: #ffffff;
+                        text-align: left;
+                        text-decoration: none;
+                        display: inline-block;
+                        font-size: 16px;
+                        -webkit-transition: all 0.5s ease-in-out;
+                        -moz-transition: all 0.5s ease-in-out;
+                        -ms-transition: all 0.5s ease-in-out;
+                        -o-transition: all 0.5s ease-in-out;
+                        transition: all 0.5s ease-in-out;
+                        -webkit-border-radius: 5px 5px 5px 5px;
+                        border-radius: 5px 5px 5px 5px;
+                        padding: 10px 15px;
+                        background: rgba(255, 255, 255, 0.2);
+                    }
+                    .btn-secondary {
+                        background-color: $primaryColor;
+                        border-color: $primaryColor;
+                    }
+                    .show {
+                        >.btn-primary.dropdown-toggle {
+                            background-color: $primaryColor;
+                            border-color: $primaryColor;
+                        }
+                    }
+                    .oe_login_buttons {
+                        a.btn {
+                            padding-top: 25px;
+                        }
+                    }
+                    label[for="db"] {
+                        color: #ffffff;
+                    }
+                    .field-login {
+                        label {
+                            color: #ffffff;
+                        }
+                    }
+                    label[for="password"] {
+                        color: #ffffff;
+                    }
+                    .sign_in {
+                        color: $primaryColor;
+                    }
+                    .justify-content-between.mt-2.d-flex.small {
+                        a {
+                            font-weight: 600;
+                            text-decoration: none;
+                            letter-spacing: 0.5px;
+                        }
+                    }
+                }
+                .oe_login_form {
+                    .form-group.field-login {
+                        .input-group {
+                            background: rgba(256, 256, 255, 0.2) !important;
+                            align-items: center;
+                            padding: 4px 15px;
+                            border-radius: 5px;
+                            color: #ffffff;
+                            input {
+                                background: transparent !important;
+                                border: 0;
+                                padding-left: 15px;
+                                &::placeholder {
+                                    color: #ddd !important;
+                                }
+                            }
+                            .input-group-prepend {
+                                align-items: center;
+                            }
+                            .login_user_icon {
+                                padding-right: 15px;
+                                font-size: 18px;
+                            }
+                        }
+                    }
+                    .form-group.field-password {
+                        .input-group {
+                            background: rgba(256, 256, 255, 0.2) !important;
+                            align-items: center;
+                            padding: 4px 15px;
+                            border-radius: 5px;
+                            color: #fff;
+                            input {
+                                background: transparent !important;
+                                border: 0;
+                                padding-left: 15px;
+                                &::placeholder {
+                                    color: #ddd !important;
+                                }
+                            }
+                            .input-group-prepend {
+                                align-items: center;
+                            }
+                            .login_user_icon {
+                                padding-right: 15px;
+                                font-size: 18px;
+                            }
+                        }
+                    }
+                }
+            }
+            .btn.btn-link.btn-sm {
+                color: $primaryColor !important;
+            }
+            .btn-group-sm {
+                >.btn.btn-link#wrapwrap {
+                    color: $primaryColor !important;
+                }
+            }
+            .sh_backmate_th_login_left_img_st_2 {
+                .card {
+                    .card-body {
+                        h1 {
+                            .sign_in {
+                                color: #fff;
+                                font-weight: 600;
+                            }
+                        }
+                    }
+                }
+                img {
+                    width: 100%;
+                }
+                .col-lg-6 {
+                    &:first-child {
+                        border-right: 1px solid #fff;
+                    }
+                }
+            }
+            .o_database_list {
+                .card-body {
+                    .field-db {
+                        label {
+                            color: #ffffff;
+                            letter-spacing: 0.7px;
+                        }
+                        .input-group-append {
+                            a {
+                                background: rgba(0, 0, 0, 0.5);
+                                line-height: 38px;
+                                padding: 0 20px;
+                                box-shadow: none;
+                                border: 0px;
+                            }
+                        }
+                    }
+                    background-color: transparent !important;
+                }
+                max-width: 100% !important;
+                border-radius: 0px;
+                padding: 0px 25px;
+                position: relative;
+                background-color: transparent !important;
+            }
+            .mt-5 {
+                margin-top: 0rem !important;
+            }
+            .sh_backmate_th_login_left_img_st_2.col-lg-6 {
+                padding: 0px;
+            }
+            .container-fluid.pb-5 {
+                padding-bottom: 0rem !important;
+            }
+            .container-fluid.mb-5 {
+                margin-bottom: 0rem !important;
+            }
+            .row.sh_backmate_th_login_left_img_st_2 {
+                &:before {
+                    position: absolute;
+                    background: linear-gradient(200deg, $primaryColor 40%, $primaryColor 100%);
+                    z-index: 0;
+                    left: 0;
+                    height: 100%;
+                    content: '';
+                    width: 100%;
+                    opacity: .8;
+                }
+            }
+            .container {
+                .bg-100 {
+                    background-color: $login_page_box_color !important;
+                    color: #212529;
+                    background-color: $login_page_box_color !important;
+                }
+                .oe_login_form {
+                    .justify-content-between.mt-2 {
+                        margin-top: 1rem !important;
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    
+
+    @media (min-width: 1025px) {
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper{
+                .card{
+                    .card-body {border-radius: 10px;position: absolute;top: 50%;left: 50% !important;transform: translate(-50%, -50%);}
+                }
+            } 
+        }
+    }
+    
+    @media (max-width: 574px) {
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper{
+                .o_database_list {box-shadow: none;}
+            } 
+        }
+    }
+    @if $login_page_background_type == "bg_color" {
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                .sh_backmate_th_login_left_img_st_2 {
+                    background-color: $login_page_background_color;
+                    background-repeat: no-repeat;
+                    background-size: cover;
+                    min-height: 100vh;
+                    background-position-x: center;
+                    background-position: center;
+                    align-items: center;
+                    position: relative;
+                }
+            }
+        }
+    }
+    @if $login_page_background_type == "bg_img" {
+
+        [data-logged="false"] {
+            .sh_backmate_th_login_left_img_st_2 {
+                background: url("/web/image?model=sh.back.theme.config.settings&id=1&field=login_page_background_image");
+                background-repeat: no-repeat;
+                background-size: cover;
+                min-height: 100vh;
+                background-position-x: center;
+                background-position: center;
+                align-items: center;
+            }
+        }
+        #wrapwrap.sh_backmate_advance_enterprise_website_login_page_wrapper {
+            .row.sh_backmate_th_login_left_img_st_2 {
+                &:before {
+                    position: absolute;
+                    background: linear-gradient(200deg, $primaryColor 40%, $primaryColor 100%);
+                    z-index: 0;
+                    left: 0;
+                    height: 100%;
+                    content: '';
+                    width: 100%;
+                    opacity: .8;
+                }
+                background: url("/web/image?model=sh.back.theme.config.settings&id=1&field=login_page_background_image");
+                background-repeat: no-repeat;
+                background-size: cover;
+                min-height: 100vh;
+                background-position-x: center;
+                background-position: center;
+                align-items: center;
+            }
+        }
+        
+    }
+
+}
+@if $login_page_style == "style_3" {
+    @media (max-width: 992px){
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                .sh_backmate_th_login_left_img_st_2 {
+                    .col-lg-6 {
+                        &:first-child {
+                            flex: 0 0 100%;
+                            max-width: 100%;
+                            border: 0px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    @media only screen and (min-width: 993px){
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                .sh_backmate_th_login_left_img_st_2 {
+                    .col-lg-6 {
+                        &:first-child {
+                            position: relative;
+                        }
+                    }
+                }
+            }
+        }
+    }
+	@media only screen and (max-width: 1024px) and (min-width: 991px){
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                .sh_backmate_th_login_left_img_st_2 {
+                    .sh_logo_icon_img {
+                        padding-top: 50px;
+                    }
+                }
+            }
+        }
+    }
+    @media only screen and (max-width: 992px) and (min-width: 768px){
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                .sh_backmate_th_login_left_img_st_2 {
+                    .col-lg-6 {
+                        &:first-child {
+                            padding-top: 100px;
+                        }
+                    }
+                }
+                .card {
+                    .card-body {
+                        top: 50%;
+                    }
+                }
+            }
+        }
+    }
+    @media only screen and (max-width: 767px){
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                .sh_backmate_th_login_left_img_st_2 {
+                    .col-lg-6 {
+                        &:first-child {
+                            padding-top: 50px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    @media only screen and (max-width: 992px){
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                .sh_backmate_th_login_left_img_st_2 {
+                    .sh_logo_icon_img {
+                        padding-top: 20px;
+                        height: 100vh;
+                        position: absolute;
+                    }
+                    .pb-3 {
+                        padding-bottom: 0rem !important;
+                    }
+                    .mb-4 {
+                        margin-bottom: 0rem !important;
+                    }
+                    img[alt="icon_img"] {
+                        max-height: 50px !important;
+                    }
+                }
+            }
+        }
+    }
+	@media only screen and (max-width: 992px) and (min-width: 577px){
+		#wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper{
+                .card-body {border-radius: 10px;position: absolute;top: 50%;left: 50% !important;transform: translate(-50%, -50%);width: 89%;}
+            }
+        } 
+	}
+    @media only screen and (max-width: 576px){
+        @if $login_page_style == "style_3"{        
+            #wrapwrap{
+                &.sh_backmate_advance_enterprise_website_login_page_wrapper {
+                    >main {
+                        .oe_login_form {
+                            .form-group.field-login {
+                                position: relative;
+                            }
+                            .form-group.field-password {
+                                position: relative;
+                            }
+                        }
+                    }
+                    .card {
+                        .card-body {
+                            input[type="text"] {
+                                position: relative;
+                                padding-top: 10px;
+                            }
+                            input[type="password"] {
+                                position: relative;
+                                border-left: 0px solid $header_bg_color;
+                            }
+                        }
+                    }
+                }
+            }            
+        }
+    }
+	@media only screen and (max-width: 576px) and (min-width: 376px){
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper{
+                .card-body {border-radius: 10px;position: absolute;top: 50%;left: 50% !important;transform: translate(-50%, -50%);width: 89%;}
+            }
+        }
+    }
+	@media only screen and (max-width: 375px) and (min-width: 321px){
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper{
+                .card-body {border-radius: 10px;position: absolute;top: 40%;left: 50% !important;transform: translate(-50%, -38%);width: 89%;}
+            }
+        }
+	}
+	@media only screen and (max-width: 320px){
+        #wrapwrap{
+            &.sh_backmate_advance_enterprise_website_login_page_wrapper{
+                .card-body {border-radius: 10px;position: absolute;top: 40%;left: 50% !important;transform: translate(-50%, -25%);width: 89%;}
+            }
+        }
+	}
+}

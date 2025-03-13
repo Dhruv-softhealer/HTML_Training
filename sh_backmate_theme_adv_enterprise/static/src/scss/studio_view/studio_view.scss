@@ -1,0 +1,105 @@
+.o_in_studio{
+    .o_action_manager{
+        margin-left: 0 !important;
+        .o_studio{
+            .o_web_studio_editor{
+                .o_web_studio_menu {
+                    background-color: #fff !important;
+                    border-bottom-color: #fff !important;
+                }
+                .o_web_studio_editor_manager {
+                    .o_web_studio_sidebar {
+                        background-color: #fff !important;
+                        border-right-color: #fff !important;
+                        &.o_notebook{
+                            .o_notebook_headers {
+                                li{
+                                    background: $body_background_color !important;
+                                }
+                            }
+                            .o_notebook_content {
+                                .tab-pane{
+                                    .o_web_studio_property{
+                                        .o_select_menu_toggler {
+                                            background-color: $primaryColor !important;
+                                            @if $button_style == 'style_1'{
+                                                border-radius: 0px !important;
+                                            }
+                                            @if $button_style == 'style_2'{
+                                                border-radius: 5px !important;
+                                            }
+                                            @if $button_style == 'style_3'{
+                                                border-radius: 5px 15px  !important;
+                                            }
+                                            @if $button_style == 'style_4'{
+                                                border-radius: 2rem !important;
+                                            }
+                                        }
+                                        .o_select_menu_menu {
+                                            .dropdown-item{
+                                                &.o_select_active{
+                                                    color: #fff !important; 
+                                                }
+                                            }
+                                        }
+                                    }
+                                    .o_web_studio_property {
+                                        input{
+                                            background-color:$primaryColor !important;
+                                            @if $button_style == 'style_1'{
+                                                border-radius: 0px !important;
+                                            }
+                                            @if $button_style == 'style_2'{
+                                                border-radius: 5px !important;
+                                            }
+                                            @if $button_style == 'style_3'{
+                                                border-radius: 5px 15px  !important;
+                                            }
+                                            @if $button_style == 'style_4'{
+                                                border-radius: 2rem !important;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .o_web_studio_view_renderer {
+                        .o_web_studio_form_view_editor {
+                            .o-web-studio-editor--element-clickable.o-web-studio-editor--element-clicked {
+                                &:not(.o_dragged) {
+                                    outline: 0px solid #111c43!important;
+                                    + {
+                                        .o-web-studio-element-ghost {
+                                            outline: 0px solid #111c43!important;
+                                        }
+                                    }
+                                }
+                            }
+                            .o_field_image {
+                                img {
+                                    max-width: 90px!important;
+                                    height: auto;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.o_studio_navbar {
+	.o_web_edit_menu {
+		color: o-color(o-color-1)!important;
+	}
+	.o_web_create_new_model {
+		color: o-color(o-color-1)!important;
+	}
+}
+.o_web_client.o_in_studio{
+    .o_action_manager {
+      margin-left: 0px !important;
+    }
+}

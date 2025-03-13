@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+sh_sh_book,sh.book,model_sh_book,base.group_user,1,1,1,1
+sh_sh_category,sh.category,model_sh_category,base.group_user,1,1,1,1
+sh_sh_member,sh.member,model_sh_member,base.group_user,1,1,1,1
+sh_sh_bookline,sh.bookline,model_sh_bookline,base.group_user,1,1,1,1

@@ -1,0 +1,55 @@
+<odoo>
+
+    <record id="sh_job_list_view" model="ir.ui.view">
+        <field name='name'>sh.job.list.view</field>
+        <field name="model">sh.job</field>
+        <field name="arch" type="xml">
+            <list string="Jobs">
+                <field name="name" />
+                <field name="active" widget="boolean_toggle" />
+            </list>
+        </field>
+    </record>
+    
+    <record id="sh_job_form_view" model="ir.ui.view">
+        <field name='name'>sh.job.form.view</field>
+        <field name="model">sh.job</field>
+        <field name="arch" type="xml">
+            <form string="Job Details">
+                <sheet>
+                    
+                    <group>
+                        <field name="name" />
+                        <field name="active" />
+                    </group>
+                    <group string="Many To One Fields">
+                        <field name="manager_id" />
+                        <field name="address_id" />
+                        <field name="department_id" />
+                    </group>
+                    <notebook>
+                        <page string="Employees (One to Many Field)">
+                            <field name="employees_ids" />
+                        </page>
+                        <page string="Favorite User (Many to Many Field)">
+                            <field name="favorite_user_ids" />
+                        </page>
+                        <page string="Employees Interviews (Many to Many Field)">
+                            <field name="interviewers_ids" />
+                        </page>
+                        <page string="Employees Extended Interviews (Many to Many Field)">
+                            <field name="extended_interviewers_ids" />
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>    
+    
+    <record id="sh_job_action" model="ir.actions.act_window">
+        <field name='name'>Job</field>
+        <field name="res_model">sh.job</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

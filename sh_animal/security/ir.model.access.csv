@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+sh_sh_animal,sh.animal,model_sh_animal,base.group_user,1,1,1,1
+sh_sh_animal,sh.animal.dog,model_sh_animal,base.group_user,1,1,1,1
+sh_sh_animal,sh.animal.cat,model_sh_animal,base.group_user,1,1,1,1
+

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<templates  xml:space="preserve">
+    <t t-name="sh_backmate_theme_adv_enterprise.SystrayItem" t-inherit="voip.SystrayItem" t-inherit-mode="extension">
+        <xpath expr="//button[hasclass('o_nav_entry')]" position="replace">
+            <button class="o_nav_entry sh_open_softphone" t-att-title="titleText" t-on-click="onClick">
+                <i class="oi oi-large oi-voip"/>
+            </button>
+        </xpath>
+    </t>
+</templates>

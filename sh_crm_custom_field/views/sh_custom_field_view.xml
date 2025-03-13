@@ -1,0 +1,45 @@
+<odoo>
+    <record id='sh_crm_custom_field_form' model='ir.ui.view'>
+        <field name='name'>sh.crm.custom.field.form</field>
+        <field name='model'>crm.lead</field>
+        <field name='inherit_id' ref='crm.crm_lead_view_form'></field>
+        <field name='arch' type='xml'>
+            <xpath expr="//field[@name='tag_ids']" position='after'>
+                <field name='more_info'></field>
+            </xpath>
+
+            <xpath expr="//page[@name='lead']" position='after'>
+                <page name="More Information">
+                    <group>
+                        <field name='more_info'></field>
+                        <field name="k_name"></field>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+        <record id='sh_crm_custom_field_kanban' model='ir.ui.view'>
+        <field name='name'>sh.crm.custom.field.kanban</field>
+        <field name='model'>crm.lead</field>
+        <field name='inherit_id' ref='crm.crm_case_kanban_view_leads'></field>
+        <field name='arch' type='xml'>
+            <xpath expr="//field[@name='tag_ids']" position='after'>
+                <field name='k_name' invisible="stage_id != 1"></field>
+            </xpath>
+
+           
+        </field>
+    </record>
+
+    <record id="sh_lead_analysis_list_view" model="ir.ui.view">
+        <field name='name'>sh.lead.analysis.list.view</field>
+        <field name='model'>crm.lead</field>
+        <field name='inherit_id' ref='crm.crm_lead_view_tree_reporting'></field>
+        <field name='arch' type='xml'>
+            <xpath expr="//field[@name='email_from']" position='after'>
+                <field name='tree_part'></field>
+            </xpath>
+        </field>
+    </record>
+</odoo>

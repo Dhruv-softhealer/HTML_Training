@@ -1,0 +1,29 @@
+<odoo>
+    <record id='sh_sale_warranty_form_view' model='ir.ui.view'>
+        <field name='name'>sh.sale.warranty.form.view</field>
+        <field name='model'>sale.order</field>
+        <field name='inherit_id' ref='sale.view_order_form'></field>
+        <field name='arch' type='xml'>
+            <xpath expr="//field[@name='custom_notes']" position='replace'>
+                <field name='warranty_applicable' />
+            </xpath>
+            <xpath expr="//field[@name='sale_order_template_id']" position='after'>
+                <field name='expire_date_warranty' />
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id='sh_sale_warranty_action' model='ir.actions.act_window'>
+        <field name='name'>Sale Warranty</field>
+        <field name='res_model'>sh.sale.warranty</field>
+        <field name='view_mode'>list,form</field>
+    </record>
+
+
+    <!-- Menuitems -->
+    <!-- <menuitem id='sh_note_root_menu' name='Sale Warranty' action='sh_sale_warranty_action'
+    parent='sale.menu_sale_config' /> -->
+    <menuitem id='sh_note_root_menu1' name='Sale Warranty' action='sh_sale_warranty_action' />
+
+</odoo>

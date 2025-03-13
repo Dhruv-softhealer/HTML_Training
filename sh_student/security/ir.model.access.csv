@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+sh_db_prac_1,sh.student,model_sh_student,base.group_user,1,1,1,1
+sh_sh_degree,sh.degree,model_sh_degree,base.group_user,1,1,1,1

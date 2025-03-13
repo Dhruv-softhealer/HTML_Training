@@ -1,0 +1,31 @@
+<odoo>
+
+    
+    <!-- Form View -->
+    <record id='sh_emp_form_view' model="ir.ui.view">
+        <field name="name">sh.emp.form.view</field>
+        <field name="model">sh.child</field>
+        <field name="arch" type='xml'>
+            <form>
+                <sheet>
+                    <group>
+                        
+                            <field name="properties"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="sh_emp_root_action" model="ir.actions.act_window">
+        <field name="name">Temp</field>
+        <field name="res_model">sh.child</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="sh_emp_root_menu_action" action='sh_emp_root_action'></menuitem>
+    <!-- <menuitem id="sh_emp_root_menu" parent='sh.emp.root.action'></menuitem> -->
+   
+    
+
+</odoo>
