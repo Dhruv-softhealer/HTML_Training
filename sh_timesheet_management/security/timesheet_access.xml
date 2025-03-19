@@ -47,7 +47,7 @@
     </record>
 
 
-    <!-- ======================SEQUENCE======================= -->
+    <!-- ====================== SEQUENCE ======================= -->
 
     <record id="seq_timesheet" model="ir.sequence">
         <field name="name">Timesheet</field>

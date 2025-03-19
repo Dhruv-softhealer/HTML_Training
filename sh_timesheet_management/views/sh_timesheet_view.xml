@@ -1,4 +1,7 @@
 <odoo>
+
+<!-- ============================ LIST VIEW ============================= -->
+
     <record id="sh_timesheet_list_view" model="ir.ui.view">
         <field name="name">sh_timesheet</field>
         <field name="model">sh.timesheet</field>
@@ -13,6 +16,7 @@
         </field>
     </record>
 
+<!-- ============================ FORM VIEW ============================= -->
 
     <record id='sh_timesheet_form_view' model='ir.ui.view'>
         <field name='name'>sh_timesheet</field>
@@ -48,7 +52,7 @@
                         <field name='user_id'></field>
                         <field name='description'></field>
                         <field name='rejection_reason'></field>
-                        <field name='date'></field>
+                        <field name='date' optional="hide"></field>
                         <field name='hours' widget='float_time'></field>
                         <field name='tag_ids' widget="many2many_tags"></field>
                         <field name='rejection_reason' invisible="state != 'reject'"></field>
@@ -65,12 +69,13 @@
         </field>
     </record>
 
+<!-- ============================ KANBAN VIEW ============================= -->
 
     <record id="timesheet_kanban_view" model="ir.ui.view">
         <field name="name">timesheet.kanban.view</field>
         <field name="model">sh.timesheet</field>
         <field name="arch" type="xml">
-            <kanban class="o_kanban_mobile" domain="[('state', '!=', 'reject')]">
+            <kanban class="o_kanban_mobile">
                 <!-- <field name="seq_num"></field>
                 <field name="name"></field>
                 <field name='user_id'></field>
@@ -104,6 +109,7 @@
         </field>
     </record>
 
+<!-- ============================ PIVOT VIEW ============================= -->
 
     <record id="timesheet_pivot_view" model="ir.ui.view">
         <field name="name">timesheet.pivot</field>
@@ -117,6 +123,7 @@
         </field>
     </record>
 
+<!-- ============================ CALENDAR VIEW ============================= -->
 
     <record model="ir.ui.view" id="timesheet_calendar_view">
         <field name="name">timesheet.calendar</field>
@@ -142,6 +149,8 @@
     </record>
 
 
+<!-- ============================ TIMESHEET REJECTION FORM VIEW ============================= -->
+
     <record id="sh_timesheet_rejection_form_view" model="ir.ui.view">
         <field name="name">sh_timesheet_rejection</field>
         <field name="model">sh.timesheet.rejection</field>
@@ -159,6 +168,9 @@
             </form>
         </field>
     </record>
+
+<!-- ============================ TIMESHEET ACTION VIEW ============================= -->
+
     <record id='sh_timesheet_action_view' model='ir.actions.act_window'>
         <field name="name">Timesheet</field>
         <field name="res_model">sh.timesheet</field>

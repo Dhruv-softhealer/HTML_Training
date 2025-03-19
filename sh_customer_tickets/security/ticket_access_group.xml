@@ -1,0 +1,19 @@
+<odoo>
+    <record id="ticket_category" model="ir.module.category">
+        <field name="name">Ticket Holder</field>
+    </record>
+
+    <record id="access_developer" model="res.groups">
+        <field name="name">Developer</field>
+        <field name="category_id" ref="sh_customer_tickets.ticket_category"></field>
+        <field name="comment">The Developer will be able to join support channels.</field>
+    </record>
+
+    <record id="access_support_leader" model="res.groups">
+        <field name="name">Support Leader</field>
+        <field name="category_id" ref="sh_customer_tickets.ticket_category"></field>
+        <field name="comment">The Support Leader will be able to join support channels.</field>
+        <field name="implied_ids" eval="[(4, ref('access_developer'))]"></field>
+        <field name="users" eval="[(4, ref('base.user_admin'))]"></field>
+    </record>
+</odoo>

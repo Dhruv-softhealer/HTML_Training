@@ -73,7 +73,7 @@ class Timesheet(models.Model):
             'target' : 'new'
         }
     def test_message(self):
-        print("test::::::::::")
+        print("test::::::::::::::::::::::::::::::::")
     
     @api.model_create_multi
     def create(self, vals_list):
@@ -94,7 +94,7 @@ class TimesheetRejection(models.TransientModel):
 
     name = fields.Char('Rejection Reason',required=True)
     def timesheet_value(self):
-        print(self.env.context)
+        print(":::::::::::::::::::::::::::::",self.env.context)
         active_id = self.env.context.get('active_id')
         return active_id
     timesheet_id = fields.Many2one('sh.timesheet', default=timesheet_value)

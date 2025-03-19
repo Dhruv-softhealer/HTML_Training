@@ -1,0 +1,16 @@
+<odoo>
+    <record id="ticket_rule_developer" model="ir.rule">
+        <field name="name">Developer can't interact with all the records</field>
+        <field name="model_id" ref="model_support_ticket" />
+        <field name="domain_force">[('dev_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('sh_customer_tickets.access_developer'))]" />
+    </record>
+
+
+    <record id="ticket_rule_support_leader" model="ir.rule">
+        <field name="name">Support Leader can interact with all the records</field>
+        <field name="model_id" ref="model_support_ticket" />
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('sh_customer_tickets.access_support_leader'))]" />
+    </record>
+</odoo>

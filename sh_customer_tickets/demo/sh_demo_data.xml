@@ -1,0 +1,28 @@
+<odoo>
+    <data noupdate='1'>
+        <record id="demo_ticket_1" model="support.ticket">
+
+            <field name="customer_id" ref='base.res_partner_5'></field>
+            <field name="dev_id" eval='2'></field>
+            <field name="priority">2</field>
+        </record>
+
+        <record id="demo_ticket_2" model="support.ticket">
+            <field name="customer_id" ref='base.res_partner_10'></field>
+            <field name="dev_id" eval='6'></field>
+            <field name="priority">2</field>
+        </record>
+
+        <record id="demo_ticket_3" model="support.ticket">
+            <field name="customer_id" ref='base.res_partner_12'></field>
+            <field name="dev_id" eval='8'></field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="demo_ticket_4" model="support.ticket">
+            <field name="customer_id" ref='base.res_partner_18'></field>
+            <field name="dev_id" eval='9'></field>
+            <field name="priority">3</field>
+        </record>
+    </data>
+</odoo>

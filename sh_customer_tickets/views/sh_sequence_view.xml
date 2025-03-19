@@ -1,0 +1,9 @@
+<odoo>
+    <record id="sequence_Ticket_number" model="ir.sequence">
+        <field name="name">Ticket</field>
+        <field name="code">support.ticket</field>
+        <field name="prefix">T</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

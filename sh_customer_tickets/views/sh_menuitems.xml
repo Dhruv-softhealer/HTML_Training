@@ -1,0 +1,3 @@
+<odoo>
+    <menuitem id="sh_root_action" name="Ticket" action="sh_ticket_action_view" />
+</odoo>

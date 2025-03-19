@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+sh_customer_tickets,support.ticket,model_support_ticket,base.group_user,1,1,1,1
+sh_customer_tickets_wizard_developer,support.ticket.update.wizard.developer,model_ticket_update_wizard,sh_customer_tickets.access_developer,1,0,0,0
+sh_customer_tickets_wizard_leader,support.ticket.update.wizard.leader,model_ticket_update_wizard,sh_customer_tickets.access_support_leader,1,1,1,1
