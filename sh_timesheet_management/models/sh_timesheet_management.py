@@ -72,6 +72,8 @@ class Timesheet(models.Model):
             'res_model' : 'sh.timesheet.rejection',
             'target' : 'new'
         }
+    def test_message(self):
+        print("test::::::::::")
     
     @api.model_create_multi
     def create(self, vals_list):

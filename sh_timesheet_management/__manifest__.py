@@ -15,6 +15,7 @@ Timesheet Management
     'depends': ['base_setup','web', 'sale', 'mail', 'crm'],
 # for chatter add mail option in depends.
     'data' : [
+        'views/crone.xml',
         'security/timesheet_access.xml',
         'security/ir.model.access.csv',
         'reports/sh_quotation_report_view.xml',
