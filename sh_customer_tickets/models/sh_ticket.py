@@ -10,10 +10,10 @@ from odoo.exceptions import ValidationError
 class Tickets(models.Model):
     _name = 'support.ticket'
     _inherit = ['mail.activity.mixin', 'mail.thread']
-    _description = 'dfsdfs'
+    _description = 'Ticket Management'
 
     name = fields.Char(string="Name", required=True, readonly=True, default=lambda self: _('New'))
-    # user_id = fields.Many2one(comodel_name='res.users')
+    user_id = fields.Many2one(comodel_name='res.users')
     customer_id = fields.Many2one('res.partner', string="Ticket", required=True)
     dev_id = fields.Many2one('res.users', string='Developer', default=lambda self : self.env.uid)
     priority = fields.Selection(
@@ -34,7 +34,8 @@ class Tickets(models.Model):
     )
     date_begin = fields.Datetime(default=fields.Datetime.now())
     date_end = fields.Datetime()
-    # write_date = fields.Datetime()
+    invoice_ids = fields.One2many('account.move', 'ticket_id', string="InvoiceIDs")
+    
     
     # ================================= DEFAULT GET METHOD ==================================
     
@@ -61,11 +62,11 @@ class Tickets(models.Model):
         return super().create(vals_list)
     
     
-    # ================================= WRITE STATE ==================================
+    # ================================= WRITE STATE =================================
     
     def write(self, vals):
         if 'state' in vals:
-            for ticket in self:
+            for ticket in self: 
                 old_state = ticket.state
                 new_state = vals.get('state')
                 message = f'Status Changed from "{old_state}" to "{new_state}"'
@@ -75,6 +76,7 @@ class Tickets(models.Model):
                 ticket_invoice = self.env['account.move'].create([{
                     'partner_id':self.customer_id.id,
                     'move_type':'out_invoice',
+                    'ticket_id' : self.id,
                     'invoice_date':fields.Date.today(),
                     'invoice_line_ids':[(0,0,{
                         'name':f'SH Ticket {self.name}',
@@ -83,19 +85,25 @@ class Tickets(models.Model):
                     })]
                 }])
                 ticket_invoice.state = 'posted' 
-                vals['invoice_id'] = ticket_invoice.id
+                
         return super().write(vals)
     
     
     # ================================= SMART BUTTON ==================================
     
     def get_invoices(self):
+        if len(self.invoice_ids) > 1:
+            return {
+                'type':'ir.actions.act_window',
+                'view_mode':'list,form',
+                'res_model':'account.move',
+                'domain':[('ticket_id', '=', self.id)]
+            }
         return {
             'type':'ir.actions.act_window',
             'view_mode':'form',
-            'view_id':self.env.ref('account.view_move_form').id,
             'res_model':'account.move',
-            'res_id':self.invoice_id.id
+            'res_id':self.invoice_ids.id
         }
         
         

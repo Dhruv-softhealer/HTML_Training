@@ -17,7 +17,7 @@ Tickets Management
     'category': 'Uncategorized',
     'version': '0.1',
 
-    'depends': ['base_setup','web', 'mail'],
+    'depends': ['base_setup','web', 'mail', 'account'],
 
     'data': [
         'security/ticket_access_group.xml',
