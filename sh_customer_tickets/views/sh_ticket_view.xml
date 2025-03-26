@@ -44,7 +44,7 @@ if records:
     <!-- ===================== TICKET SMART BUTTON ========================= -->
 
     <record id='sh_ticket_smart_btn' model='ir.ui.view'>
-        <field name='name'>Ticket BTN</field>
+        <field name='name'>Ticket</field>
         <field name='model'>res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"></field>
         <field name='arch' type='xml'>
@@ -89,16 +89,17 @@ if records:
                     </header>
                     
 
-                    <div class="oe_button_box" name="button_box">
+                    <div class="oe_button_box" name="button_box" invisible="not invoice_ids">
                         <button name="get_invoices" type="object" class="oe_stat_button"
-                            icon="fa-pencil-square-o" invisible="not invoice_ids">
+                            icon="fa-pencil-square-o" >
                             Invoice
                         </button>
                     </div>
 
                     <group>
                         <field name="name"></field>
-                        <field name="user_id"></field>
+                        <!-- <field name="user_id"></field> -->
+                        <field name="sub_name"></field>
                         <field name="priority" widget="priority"></field>
                         <field name="dev_id"></field>
                         <field name="customer_id"></field>
@@ -239,7 +240,7 @@ if records:
                 <footer>
                     <button name="update_ticket_status" type="object"
                         class="bg-info">
-                        Change Status </button>
+                        Batch Update </button>
                 </footer>
             </form>
         </field>

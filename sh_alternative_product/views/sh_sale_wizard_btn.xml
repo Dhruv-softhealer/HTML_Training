@@ -1,0 +1,14 @@
+<odoo>
+
+    <record id="sale_order_inherited_view" model="ir.ui.view">
+        <field name="name">sale.button</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/list" position="inside">
+                <button name='show_alternative_products' groups="sh_alternative_product.sh_manage_alt_product" class='btn btn-success' icon='fa-book' type='object'></button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

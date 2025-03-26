@@ -1,0 +1,24 @@
+<odoo>
+
+
+    <!-- ===================== PRODUCT VARIENT LIST VIEW ========================= -->
+
+    <record id="alt_product_inherited_view" model="ir.ui.view">
+        <field name="name">product.alt</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='inventory']" position="after">
+                <page string="Alternative Products" groups='sh_alternative_product.sh_manage_alt_product'>
+                <group name="Alternative Products">
+                    <field name="alt_product"  widget="many2many_tags"></field>
+                </group>
+                    
+                </page>
+                
+            </xpath>
+            
+        </field>
+    </record>
+
+</odoo>

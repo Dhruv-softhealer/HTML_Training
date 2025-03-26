@@ -1,0 +1,5 @@
+<odoo>
+    <record id="sh_manage_alt_product" model="res.groups">
+        <field name="name">Manage Alternative Products</field>
+    </record>
+</odoo>

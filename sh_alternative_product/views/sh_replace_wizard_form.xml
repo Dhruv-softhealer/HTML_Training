@@ -1,0 +1,23 @@
+<odoo>
+    <record id='sh_replace_product_wizard_form_view' model='ir.ui.view'>
+        <field name='name'>sh_product_replace</field>
+        <field name='model'>sh.replace.product</field>
+        <field name='arch' type='xml'>
+            <form string="Replace Product">
+                <sheet>
+                    <group>
+                        <field name="product_id"></field>
+                        <field name="replace_prod_id" domain="[('id', 'in', alternate_prod_id)]" ></field>
+                        <field name="alternate_prod_id"></field>
+                    </group>
+                <footer>
+                    <button name="replace_alternate_product" type="object" groups='sh_alternative_product.sh_manage_alt_product'
+                        class="bg-info">
+                        Change </button>
+                </footer>
+                </sheet>
+                
+            </form>
+        </field>
+    </record>
+</odoo>

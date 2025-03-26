@@ -12,8 +12,9 @@ class Tickets(models.Model):
     _inherit = ['mail.activity.mixin', 'mail.thread']
     _description = 'Ticket Management'
 
-    name = fields.Char(string="Name", required=True, readonly=True, default=lambda self: _('New'))
-    user_id = fields.Many2one(comodel_name='res.users')
+    name = fields.Char(string="Name",  required=True, readonly=True, default=lambda self: _('New'))
+    sub_name = fields.Char(company_dependent=True)
+    # user_id = fields.Many2one(comodel_name='res.users')
     customer_id = fields.Many2one('res.partner', string="Ticket", required=True)
     dev_id = fields.Many2one('res.users', string='Developer', default=lambda self : self.env.uid)
     priority = fields.Selection(
@@ -29,6 +30,7 @@ class Tickets(models.Model):
          ('resolved', 'Resolved'),
          ('closed', 'Closed'),
          ('cancel', 'Cancel')],
+        
         # default='new',
         string="State"
     )
@@ -72,19 +74,7 @@ class Tickets(models.Model):
                 message = f'Status Changed from "{old_state}" to "{new_state}"'
                 print("\n\n\n\n::::::::",message,":::::::::\n\n\n\n")
                 
-            if vals['state'] == 'closed':
-                ticket_invoice = self.env['account.move'].create([{
-                    'partner_id':self.customer_id.id,
-                    'move_type':'out_invoice',
-                    'ticket_id' : self.id,
-                    'invoice_date':fields.Date.today(),
-                    'invoice_line_ids':[(0,0,{
-                        'name':f'SH Ticket {self.name}',
-                        'quantity' : 1,
-                        'price_unit' : 10
-                    })]
-                }])
-                ticket_invoice.state = 'posted' 
+             
                 
         return super().write(vals)
     
@@ -128,7 +118,21 @@ class Tickets(models.Model):
         self.state = 'resolved'
         
     def set_ticket_to_closed(self):
-        self.state = 'closed'
+        # print(self,"\n\n\n")
+        for tic in self:        
+            tic.state = 'closed'
+            ticket_invoice = self.env['account.move'].create([{
+                'partner_id':tic.customer_id.id,
+                'move_type':'out_invoice',
+                'ticket_id' : tic.id,
+                'invoice_date':fields.Date.today(),
+                'invoice_line_ids':[(0,0,{
+                    'name':f'SH Ticket {tic.name}',
+                    'quantity' : 1,
+                    'price_unit' : 10
+                })]
+            }])
+            ticket_invoice.state = 'posted'
     
     def set_ticket_to_cancel(self):
         self.state = 'cancel'
@@ -155,44 +159,6 @@ class Tickets(models.Model):
                 ('state', 'not in', ['closed', 'cancel']),
                 ('id', '!=', record.id) 
             ])
-            print(existing_ticket,self)
+            print("Existing ticket\n\n\n\n\n",existing_ticket,record.dev_id.id,self)
             if existing_ticket:
                 raise ValidationError(f"{record.dev_id.name} already has an active ticket! Close or cancel it before assigning a new one.")
-        
-        
-        
-class Customer(models.Model):
-    _inherit = ['res.partner']
-    
-    
-    # ================================= SMART BUTTON ==================================
-    
-    def action_get_tickets(self):
-        return{
-            'type':'ir.actions.act_window',
-            'view_mode':'list',
-            'res_model':'support.ticket',
-            'domain':[('customer_id','=',self.id)]
-        }
-   
-        
-    
-        
-    
-class TicketUpdatedWizard(models.TransientModel):
-    _name = 'ticket.update.wizard'
-    _description = 'Ticket Wizard'
-    
-    status = fields.Selection(
-        [('new', 'New'),
-         ('in_progress', 'In Progress'),
-         ('resolved', 'Resolved'),
-         ('closed', 'Closed'),
-         ('cancel', 'Cancel')],
-        required=True
-    )
-    def update_ticket_status(self):
-        print(self.env.context)
-        active_ids = self.env.context.get('active_ids')
-        res = self.env['support.ticket'].browse(active_ids)
-        res.write({'state':self.status})
