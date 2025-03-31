@@ -1,0 +1,5 @@
+<odoo>
+    <record id="sh_auto_sale_workflow_group_access" model="res.groups">
+        <field name="name">Auto Sale Workflow</field>
+    </record>
+</odoo>

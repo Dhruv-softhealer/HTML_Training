@@ -1,0 +1,8 @@
+<odoo>
+     <menuitem
+        id="auto_sale_workflow_submenu"
+        parent="sale.menu_sale_config"
+        name="Auto Sale Workflow"
+        groups='sh_auto_sale_workflow.sh_auto_sale_workflow_group_access'
+        action="sh_auto_sale_workflow_action_view"/>
+</odoo>

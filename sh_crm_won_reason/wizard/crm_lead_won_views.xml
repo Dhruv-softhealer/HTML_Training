@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<odoo>
+        <record id="crm_lead_won_view_form" model="ir.ui.view">
+            <field name="name">crm.lead.won.form</field>
+            <field name="model">crm.lead.won</field>
+            <field name="arch" type="xml">
+                <form string="Won Lead">
+                    <field name="lead_ids" invisible="1"></field>
+                    <group>
+                        <field name="won_reason_id" options="{'no_create_edit': True}" />
+                        <field name="won_feedback" placeholder="What went wrong?"/>
+                    </group>
+                    <footer>
+                        <button name="action_won_reason_apply" string="Mark as Won" type="object" class="btn-primary" data-hotkey="q"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="x"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="crm_lead_won_action" model="ir.actions.act_window">
+            <field name="name">Mark Won</field>
+            <field name="res_model">crm.lead.won</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="crm_lead_won_view_form"/>
+            <field name="target">new</field>
+            <field name="binding_model_id" ref="sh_crm_won_reason.model_crm_lead_won"/>
+            <field name="context">{
+                'dialog_size' : 'medium',
+                'default_lead_ids': active_ids,
+            }</field>
+        </record>
+</odoo>

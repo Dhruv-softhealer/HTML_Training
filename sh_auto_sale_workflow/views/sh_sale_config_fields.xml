@@ -1,0 +1,24 @@
+<odoo>
+    <record id="sh_config_workflow_fields_view_form" model="ir.ui.view">
+            <field name="name">sh.config.workflow.fields.view.form</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="sale.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                
+                <xpath expr="//block[@id='connectors_setting_container']" position="after">
+                   
+                   <block title="Auto Sale Workflow Settings" id="auto_sale_workflow_setting_container">
+                      <setting id="auto_sale_order_line_1" title="Auto Sale Workflow Settings">
+                            <field name="auto_sale_config_bool"/>    
+                       </setting>
+                       <setting id="auto_sale_order_line_2" invisible="not auto_sale_config_bool" title="Auto Sale Workflow Settings">
+                            <field name="auto_sale_workflow_m2o"/>
+                       </setting>
+                        
+                    </block>
+                   
+                </xpath>
+
+            </field>
+        </record>
+</odoo>

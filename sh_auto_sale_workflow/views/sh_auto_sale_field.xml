@@ -1,0 +1,31 @@
+<odoo>
+    <record id="sh_sale_workflow_field_view_form" model="ir.ui.view">
+            <field name="name">sh.sale.workflow.field.view.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                
+                <xpath expr="//field[@name='partner_id']" position="after">
+                   
+                   <field name="auto_sale_workflow"/>
+                   
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="sh_res_partner_field_view_form" model="ir.ui.view">
+            <field name="name">sh_res_partner_field_view_form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                
+                <xpath expr="//field[@name='vat']" position="after">
+                   
+                   <field name="auto_sale_workflow"/>
+                   
+                </xpath>
+
+            </field>
+        </record>
+</odoo>
