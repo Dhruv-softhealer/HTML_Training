@@ -1,0 +1,49 @@
+<odoo>
+    <record id="sh_sale_order_line_view_form" model="ir.ui.view">
+        <field name="name">sh.sale.line.view.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="arch" type="xml">
+
+            <xpath expr="//page[@name='order_lines']" position="after">
+                <page string="Order History">
+                    <field name="sale_order_history">
+
+                        <list editable="bottom">
+                            <field name="is_selected" nolabel="1" ></field>
+                            <field name='order_id' string='Sale Order' readonly="1"/>
+                            <field name='product_id' string='Product' readonly="1"/>
+                            <field name='product_uom_qty' readonly="1"/>
+                            <field name='price_unit' string='Price' readonly="1"/>
+                            <field name='tax_id' string='Tax' readonly="1"/>
+                            <field name='product_uom' readonly="1"/>
+                            <field name='discount' readonly="1"/>
+                            <field name='price_subtotal' readonly="1"/>
+                            <field name='state' readonly="1" string='Status' decoration-success="state == 'sale'"
+                                decoration-info="state == 'draft'"
+                                decoration-primary="state == 'sent'" widget="badge" />
+                            <button name="sync_line_btn" string="" type="object" class="fa fa-retweet" groups="sh_customer_sale_order_history.sh_order_history_access_group"/>
+                            <button name='view_line_order' string="" type='object' icon='fa-eye' />
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+   
+
+
+    <record id="sh_sale_order_btn_view_form" model="ir.ui.view">
+        <field name="name">sh.sale.btn.view.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='sale_order_history']" position="before">
+                <button name="reorder_line_btn" string="All Line Reorder" type="object" groups="sh_customer_sale_order_history.sh_order_history_access_group"
+                    class="btn btn-secondary"></button>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

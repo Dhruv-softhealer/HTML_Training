@@ -28,6 +28,7 @@ class SaleOrderWorkflow(models.Model):
             rec = self.env['sh.auto.sale.workflow'].browse(self.auto_sale_workflow.id)
             if rec.val_order:
                 self.env['stock.picking'].search([('origin','=',self.name)]).button_validate()
+                # self.env['stock.picking'].search([('id', 'in', rec.picking_ids.id)]).button_validate()
                 if rec.force_transfer:
                     pass
                 if rec.create_invoice:

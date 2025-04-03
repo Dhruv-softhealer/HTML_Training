@@ -1,0 +1,5 @@
+<odoo>
+    <record id="sh_order_history_access_group" model="res.groups">
+        <field name="name">Enable ReOrdering</field>
+    </record>
+</odoo>
