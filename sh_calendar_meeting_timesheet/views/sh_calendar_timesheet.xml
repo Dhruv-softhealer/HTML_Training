@@ -1,0 +1,36 @@
+<odoo>
+    <record id="sh_calendar_field_view_form" model="ir.ui.view">
+        <field name="name">sh.calendar.field.view.form</field>
+        <field name="model">calendar.event</field>
+        <field name="inherit_id" ref="calendar.view_calendar_event_form" />
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='current_status']" position="after">
+
+                <field name="sh_task_id" />
+                <field name="sh_project_id" />
+
+            </xpath>
+            <xpath expr="//field[@name='stop']" position="after">
+                    <field name="reason" string="Reason" invisible="not show_reason" />
+            </xpath>
+
+            <xpath expr="//page[@name='page_invitations']" position="after">
+                <page string="Timesheet" invisible="not timesheet_ids">
+                    <field name="timesheet_ids">
+                        <list>
+                            <field name='date'/>
+                            <field name='name' string="Name"/>
+                            <field name='project_id'/>
+                            <field name='task_id'/>
+                            <field name='partner_id'/>
+                            <field name='unit_amount' string="Hours Spent"/>
+                            <!-- <button name="sync_line_btn" string="" type="object" class="fa fa-retweet" groups="sh_customer_sale_order_history.sh_order_history_access_group"/>
+                            <button name='view_line_order' string="" type='object' icon='fa-eye' /> -->
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
