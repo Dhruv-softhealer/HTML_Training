@@ -1,0 +1,41 @@
+<odoo>
+    <data>
+            <template id="checklist_report_template" inherit_id="mrp.report_mrporder">
+                <xpath expr="//div[hasclass('page')]" position="inside">
+                    <div class="mt32">
+                        <h3>Checklist</h3>
+                        <p><strong>Completed Checklist : </strong> <t t-esc="o.sh_checklist_completed"/>%</p>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Date</th>
+                                    <th>State</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.sh_o2m_checklist" t-as="line">
+                                    <td><t t-esc="line.name"/></td>
+                                    <td><t t-esc="line.description"/></td>
+                                    <td><t t-esc="line.date"/></td>
+                                    <td><t t-esc="line.state"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </xpath>
+            </template>
+        
+        <record id="sh_timesheet_report_template_wizard" model="ir.actions.report">
+            <field name="name">Checklist Report</field>
+            <field name="model">sh.mrp.checklist.line</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">sh_mrp_custom_checklist.checklist_report_template</field>
+            <field name="report_file">sh_mrp_custom_checklist.checklist_report_template</field>
+            <field name="print_report_name">'Checklist'</field>
+            <field name="binding_model_id" ref="sh_mrp_custom_checklist.model_sh_mrp_checklist_line" />
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+</odoo>

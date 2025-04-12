@@ -14,7 +14,6 @@ class CalendarTimesheet(models.Model):
     timesheet_ids = fields.One2many('account.analytic.line','event_id', store=True)
     
 
-    
     def _create_timesheet_entry(self, vals):
         if 'partner_ids' in vals.keys():
             for val in vals['partner_ids']:
@@ -30,9 +29,8 @@ class CalendarTimesheet(models.Model):
                     self.timesheet_ids = [(4, timesheet.id)]
                 elif val[0] == 3:
                         delete_timesheet = [p.id for p in self.timesheet_ids if p.partner_id.id == val[1]]
-                        print("\n\n\n\ndelete",delete_timesheet)
                         if len(delete_timesheet) == 1 :
-                            self.timesheet_ids = [(2,delete_timesheet[0],0)]
+                            self.timesheet_ids = [(2, delete_timesheet[0],0)]
                 
 
     @api.model_create_multi    
@@ -43,13 +41,7 @@ class CalendarTimesheet(models.Model):
                 rec._create_timesheet_entry(val)
             return rec
     
-    
 
-    # @api.onchange('start', 'stop')
-    # def _onchange_start_date(self):
-        
-
-        
     
     def write(self, vals):
         rec = super(CalendarTimesheet, self).write(vals)

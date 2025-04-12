@@ -1,0 +1,79 @@
+<odoo>
+    <record id="sh_mrp_checklist_page_view" model="ir.ui.view">
+        <field name="name">MRP Checklist Page</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view" />
+        <field name="arch" type="xml">
+
+            <xpath expr="//page[@name='miscellaneous']" position="after">
+
+                <page string="Chceklist" name="checklist">
+                    <group>
+                        <field name="sh_checklist_completed" widget="percentpie">Checklist Completed</field>    
+                    </group>
+
+                    <group>
+                        <field name="sh_m2o_checklist_template" string="Checklist Template" widget="many2many_tags"></field>
+                    </group>
+                    
+                    
+                    <field name="sh_o2m_checklist">
+                        <list string="MRP Custom Checklist">
+                            <field name="name" />
+                            <field name="description" />
+                            <field name="date" />
+                            <field name="state" widget="badge" />
+                            <button name="action_state_complete" type="object" string="Complete"
+                                invisible="state == 'complete'"
+                                class="btn btn-primary" />
+                            <button name="action_state_cancel" type="object" string="Cancel"
+                                invisible="state == 'cancel'"
+                                class="btn btn-danger" />
+                        </list>
+                    </field>
+
+                </page>
+            </xpath>
+        
+        </field>
+    </record>
+
+    <record id="sh_mrp_checklist_list_view" model="ir.ui.view">
+        <field name="name">MRP Checklist List</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_tree_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="after">
+                <field name="sh_checklist_completed" widget="progressbar"></field>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="sh_mrp_checklist_kanban_view" model="ir.ui.view">
+        <field name="name">MRP Checklist Kanban</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_kanban_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//footer[@class='text-muted']" position="before">
+                    <field name="sh_checklist_completed" widget="percentpie" ></field>
+                
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="sh_mrp_checklist_search_view" model="ir.ui.view">
+        <field name="name">MRP Checklist Search</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.view_mrp_production_filter" />
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='activities_exception']" position="after">
+                <filter name="group_by_completed" string="Completed Checklist" domain="[('sh_checklist_completed','=',100)]" groups='sh_mrp_custom_checklist.sh_mrp_custom_checklist_access_group'/>
+                <filter name="group_by_uncompleted" string="Uncompleted Checklist" domain="[('sh_checklist_completed','!=',100)]" groups='sh_mrp_custom_checklist.sh_mrp_custom_checklist_access_group'/>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

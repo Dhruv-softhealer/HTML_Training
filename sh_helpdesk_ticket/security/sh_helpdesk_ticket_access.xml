@@ -1,0 +1,5 @@
+<odoo>
+    <record id="sh_helppdesk_ticket_access_group" model="res.groups">
+        <field name="name">Create Task</field>
+    </record>
+</odoo>

@@ -1,0 +1,19 @@
+<odoo>
+
+    <record id='sh_auto_timesheet_res_config_settings_form_inherited' model='ir.ui.view'>
+        <field name='name'>sh.auto.timesheet.res.config.settings.form.inherited</field>
+        <field name='model'>res.config.settings</field>
+        <field name='inherit_id' ref='hr_timesheet.res_config_settings_view_form' />
+        <field name='arch' type='xml'>
+            <xpath expr='//div[@name="section_leaves"]' position='before'>
+                <block title='Timesheet Restricted'>
+                    <setting id="sh_timesheet_backdate_restriction_settings"
+                        string="Restricted Timesheet After">
+                        <field name="backdate_days_limit" />
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

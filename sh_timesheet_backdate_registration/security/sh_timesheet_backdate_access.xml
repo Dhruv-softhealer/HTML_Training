@@ -1,0 +1,5 @@
+<odoo>
+    <record id="sh_timesheet_backdate_access_group" model="res.groups">
+        <field name="name">Restricted Timesheet After</field>
+    </record>
+</odoo>

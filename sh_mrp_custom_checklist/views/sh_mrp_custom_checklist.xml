@@ -1,0 +1,59 @@
+<odoo>
+    <record id="sh_mrp_custom_checklist_list_view" model="ir.ui.view">
+        <field name="name">sh_mrp_checklist</field>
+        <field name="model">sh.mrp.custom.checklist</field>
+        <field name="arch" type="xml">
+            <list string="MRP Checklist">
+                <field name="sequence" widget="handle" />
+                <field name="name" />
+                <field name="description" />
+            </list>
+        </field>
+    </record>
+
+    <record id="sh_mrp_checklist_form_view" model="ir.ui.view">
+        <field name="name">MRP Custom Checklist</field>
+        <field name="model">sh.mrp.custom.checklist</field>
+        <field name="arch" type="xml">
+            <form string="MRP Custom Checklist">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                            <field name="company_id" />
+                        </group>
+                        <group>
+                            <field name="description" />
+                        </group>
+                    </group>
+                </sheet>
+
+            </form>
+        </field>
+    </record>
+
+    <record id="sh_mrp_custom_checklist_search_view" model="ir.ui.view">
+        <field name="name">sh.mrp.custom.checklist.search</field>
+        <field name="model">sh.mrp.custom.checklist</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"></field>
+                <field name="description"></field>
+            </search>
+        </field>
+    </record>
+
+
+    <record id="sh_mrp_checklist_action_view" model="ir.actions.act_window">
+        <field name="name">MRP Custom Checklist</field>
+        <field name="res_model">sh.mrp.custom.checklist</field>
+        <field name="view_mode">list,form,search</field>
+    </record>
+
+    <menuitem
+            id="sh_mrp_checklist_menuitems"
+            parent="mrp.menu_mrp_configuration"
+            name="MRP Custom Checklist"
+            groups='sh_mrp_custom_checklist_access_group'
+            action="sh_mrp_checklist_action_view" />
+</odoo>

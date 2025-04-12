@@ -1,0 +1,17 @@
+<odoo>
+    <record id="sh_mrp_custom_checklist_access_group" model="res.groups">
+        <field name="name">MRP Custom Checklist</field>
+    </record>
+
+    <record id="company_wise_filter" model="ir.rule">
+        <field name="name">Company wise filter checklist</field>
+        <field name="model_id" ref="model_sh_mrp_custom_checklist" />
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="company_wise_filter_template" model="ir.rule">
+        <field name="name">Company wise filter template</field>
+        <field name="model_id" ref="model_sh_mrp_custom_checklist_template" />
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

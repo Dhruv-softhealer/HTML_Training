@@ -1,0 +1,15 @@
+<odoo>
+    <record id="sh_helpdesk_setting_fields_view_form" model="ir.ui.view">
+        <field name="name">sh.helpdesk.setting.fields.view.form</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="project.res_config_settings_view_form" />
+        <field name="arch" type="xml">
+
+            <xpath expr="//setting[@id='project_milestone']" position="after">
+                <setting id="project_task_create">
+                    <field name="sh_select_project" />
+                </setting>
+            </xpath>
+        </field>
+    </record>
+</odoo>

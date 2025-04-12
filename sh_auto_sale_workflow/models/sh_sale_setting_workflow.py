@@ -15,7 +15,7 @@ class AutoSaleConfigWorkflow(models.TransientModel):
     def set_values(self):
         super(AutoSaleConfigWorkflow, self).set_values()
         self.env['ir.config_parameter'].sudo().set_param("sh_auto_sale_workflow.auto_sale_config_bool", self.auto_sale_config_bool)
- 
+
         group = self.env.ref('sh_auto_sale_workflow.sh_auto_sale_workflow_group_access', raise_if_not_found=False)
         if group:
             if self.auto_sale_config_bool:
