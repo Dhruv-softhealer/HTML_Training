@@ -49,7 +49,7 @@ class ImportChecklist(models.TransientModel):
         for row in reader:
             name = row.get('Name')
             description = row.get('Description')
-            if not name:
+            if not name:    
                 continue
             self.env['sh.mrp.custom.checklist'].create({
                 'name': name,
