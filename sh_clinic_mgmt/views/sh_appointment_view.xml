@@ -1,0 +1,138 @@
+<odoo>
+    <record id="sh_appointment_list_view" model="ir.ui.view">
+        <field name="name">Appointment</field>
+        <field name="model">sh.appointment</field>
+        <field name="arch" type="xml">
+            <list string="Appointment">
+                <field name="name"></field>
+                <field name="sh_patient_id"></field>
+                <field name="sh_doctor_id"></field>
+                <field name="sh_date"></field>
+                <field name="sh_status"></field>
+            </list>
+        </field>
+    </record>
+
+    <record id="sh_appointment_form_view" model="ir.ui.view">
+        <field name="name">Appointment</field>
+        <field name="model">sh.appointment</field>
+        <field name="arch" type="xml">
+            <form string="Appointment">
+                <header>
+                    <button name="new_record" string="New" class="oe_highlight" />
+                    <button name="check_in" string="Check-in" class="btn-warning" />
+                    <button name="move_to_done" string="Done" class="btn-success" />
+                    <button name="unlock_record" string="Unlock" class="btn-info" />
+                    <button name="calcel_record" string="Cancel" class="btn-danger" />
+
+                    <field name="sh_state" widget="statusbar"></field>
+                </header>
+                <sheet>
+                    <field name="name"></field>
+                    <group>
+                        <group>
+                            <field name="sh_expected_revenue"></field>
+                            <field name="sh_patient_id"></field>
+                            <field name="sh_age"></field>
+                            <field name="sh_doctor_id"></field>
+                            <field name="sh_doctor_specialization"></field>
+                        </group>
+                        <group>
+                            <field name="sh_emergency_case" widget="boolean_confirm_popup"></field>
+                            <field name="sh_slot_id"></field>
+                            <field name="sh_date"></field>
+                            <field name="sh_status"></field>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Patient Details">
+                            <group>
+                                <field name="sh_last_visited"></field>
+                                <field name="sh_visit_type"></field>
+                                <field name="sh_blood_group"></field>
+                            </group>
+                            <group>
+                                <field name="sh_email"></field>
+                                <field name="sh_phone"></field>
+                                <field name="sh_birth_date"></field>
+                                <field name="sh_age"></field>
+                            </group>
+                        </page>
+                        <page string="Disease Details">
+                            <field name="sh_disease_line">
+                                <list>
+                                    <field name="sh_disease_name"></field>
+                                    <field name="sh_disease_category"></field>
+                                    <field name="sh_symptoms_ids"></field>
+                                    <field name="sh_severity"></field>
+                                    <field name="description"></field>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Prescription &amp; Medication">
+                            <field name="sh_prescription_line">
+                                <list>
+                                    <field name="sh_medicine_id"></field>
+                                    <field name="sh_medicine_type_id"></field>
+                                    <field name="sh_dosage_duration"></field>
+                                    <field name="sh_instruction"></field>
+                                    <field name="sh_advice"></field>
+                                    <field name="sh_morning"></field>
+                                    <field name="sh_afternoon"></field>
+                                    <field name="sh_evening"></field>
+                                    <field name="sh_night"></field>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Personal Medical Info">
+                            <group>
+                                <group>
+                                    <field name="sh_dietary_preferences"></field>
+                                    <field name="sh_lifestyle_factors_ids" widget="many2many_tags"></field>
+                                    <field name="sh_mental_health_issues_ids"
+                                        widget="many2many_tags"></field>
+                                </group>
+                                <group>
+                                    <field name="sh_chronic_conditions_ids" widget="many2many_tags"></field>
+                                    <field name="sh_allergy_ids" widget="many2many_tags"></field>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Emergency" invisible="not sh_emergency_case">
+                            <group>
+                                <group>
+                                    <field name="sh_priority_level"></field>
+                                    <field name="sh_doctor_notified"></field>
+                                    <field name="sh_assigned_doctor"></field>
+                                </group>
+                                <group>
+                                    <field name="sh_immediate_check_in"></field>
+                                    <field name="sh_emergency_slot_bypass"></field>
+                                    <field name="sh_walk_in_case"></field>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="sh_appointment_action_view" model="ir.actions.act_window">
+        <field name="name">Appointment</field>
+        <field name="res_model">sh.appointment</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+     <!-- ================================= SEQUENCE ================================== -->
+
+    <record id="sequence_appointment_number" model="ir.sequence">
+        <field name="name">Appointment</field>
+        <field name="code">sh.appointment</field>
+        <!-- <field name="prefix">A</field> -->
+        <field name="padding">3</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+</odoo>

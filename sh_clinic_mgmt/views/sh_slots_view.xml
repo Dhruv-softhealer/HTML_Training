@@ -1,0 +1,75 @@
+<odoo>
+    <record id="sh_slots_list_view" model="ir.ui.view">
+        <field name="name">Slots</field>
+        <field name="model">sh.slots</field>
+        <field name="arch" type="xml">
+            <list string="Slots">
+                <field name="name"></field>
+                <field name="doctor_id"></field>
+                <field name="sh_slot_time"></field>
+                <field name="sh_start_date"></field>
+                <field name="sh_end_date"></field>
+            </list>
+        </field>
+    </record>
+
+    <record id="sh_slots_form_view" model="ir.ui.view">
+        <field name="name">Slots</field>
+        <field name="model">sh.slots</field>
+        <field name="arch" type="xml">
+            <form string="Slots">
+                <header>
+                    <button name="create_record" string="New" class="oe_highlight" />
+                    <button name="publish_appointment" string="Publish" class="oe_highlight" />
+                    <button name="generate_slot" string="Generate Slot" class="oe_highlight" />
+                    <field name="sh_state" widget="statusbar"></field>
+                </header>
+                <sheet>
+                    <field name="name"></field>
+                    <group>
+                        <group>
+                            <field name="doctor_id"></field>
+                            <field name="sh_slot_time" /> min
+                            <field name="sh_pre_booking"></field>
+                            <field name="sh_start_date"></field>
+                            <field name="sh_end_date"></field>
+                            <field name="sh_cancel_time"></field>
+                        </group>
+                        <group>
+                            <field name="sh_allowed_patients"></field>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Schedule">
+                            <field name="sh_schedule_line">
+                                <list editable="bottom">
+                                    <field name="sh_date"></field>
+                                    <field name="sh_appointment_line" widget="many2many_tags"></field>
+                                    <field name="sh_start_time"></field>
+                                    <field name="sh_end_time"></field>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="sh_slots_action_view" model="ir.actions.act_window">
+        <field name="name">Slots</field>
+        <field name="res_model">sh.slots</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+    <!-- ================================= SEQUENCE ================================== -->
+
+    <record id="sequence_slot_number" model="ir.sequence">
+        <field name="name">Slot</field>
+        <field name="code">sh.slots</field>
+        <field name="prefix">SLOT </field>
+        <field name="padding">3</field>
+        <field name="company_id" eval="False" />
+    </record>
+</odoo>
