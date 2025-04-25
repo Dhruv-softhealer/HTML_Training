@@ -4,11 +4,12 @@
 import datetime
 from odoo import _, models, fields, api
 from odoo.exceptions import ValidationError
+from odoo.sql_db import timedelta
 
 class Appointment(models.Model):
     _name = 'sh.appointment'
     _description = 'Appointment'
-    _order = 'sh_emergency_case'
+    # _order = 'sh_emergency_case'
     
     # Header Page
     
@@ -17,7 +18,7 @@ class Appointment(models.Model):
     sh_doctor_id = fields.Many2one('hr.employee', string="Doctor Name", required=True, tracking=True)
     sh_doctor_specialization = fields.Char(string="Doctor Specialization", related="sh_doctor_id.sh_specialization")
     sh_date = fields.Date(string="Date", required=True, tracking=True)
-    sh_slot_id = fields.Many2one('sh.slots', string="Slot", required=True)
+    sh_slot_id = fields.Many2one('sh.slots.schedule', string="Slot", required=True)
     sh_status = fields.Selection([
         ('pending', 'Pending'),
         ('confirmed', 'Confirmed'),
@@ -121,6 +122,14 @@ class Appointment(models.Model):
         if count>4:
             raise ValidationError("You can't generate Emergency Case more then 10 cases")
         
+     
+    @api.onchange('sh_emergency_case')
+    def onchange_emergency_case(self):
+        if self.sh_emergency_case:
+            self.sh_doctor_notified = True
+            self.sh_assigned_doctor = self.sh_doctor_id
+            
+     
         
     @api.onchange('sh_date')
     def onchage_state_and_charge(self):
@@ -128,14 +137,85 @@ class Appointment(models.Model):
             
             if self.sh_date < datetime.date.today():
                 self.sh_date = False
-                raise ValidationError("You can not select the date before today's date.")
+                return {
+                    'warning': {
+                        'title': "Invalid Date",
+                        'message': "Date cannot be set earlier than today."
+                    }
+                }
                 
-            days = self.env.company.sh_case_days
+            case_days = self.env.company.sh_case_days
             
-            if abs((self.sh_date - self.sh_last_visited).days) > days:
+            if (self.sh_date - self.sh_last_visited).days > case_days:
                 self.sh_visit_type = 'new'
                 self.sh_expected_revenue = self.sh_doctor_id.sh_new_case_charges
                 
             else:
                 self.sh_visit_type = 'old'
                 self.sh_expected_revenue = self.sh_doctor_id.sh_old_case_charges
+                
+                
+    # def float_time_to_hours_minutes(self, float_time):
+    #     hours = int(float_time)
+    #     minutes = int(round((float_time - hours) * 60))
+    #     return hours, minutes
+ 
+    # def hours_minutes_to_float_time(self, hours, minutes):
+    #     return hours + minutes / 60.0
+ 
+    # def publish(self):
+    #     self.sh_stage = 'published'
+        # print(self.hours_minutes_to_float_time(3,15))
+        # print(self.float_time_to_hours_minutes(9.50))
+ 
+    def generate_slot(self):
+        self.ensure_one()
+        self.sh_slot_lines.unlink()
+ 
+        slot_minutes = int(self.sh_slot_time)
+        calendar_id = self.hr_employee_id.resource_calendar_id
+ 
+        if not calendar_id:
+            raise ValueError("No working hours calendar defined for this employee.")
+ 
+        current_date = self.sh_start_date
+        while current_date <= self.sh_end_date:
+            weekday = str(current_date.weekday())
+ 
+            all_lines = calendar_id.attendance_ids.filtered(lambda a: a.dayofweek == weekday)
+            if not all_lines:
+                current_date += timedelta(days=1)
+                continue
+
+            working_lines = all_lines.filtered(lambda a: a.day_period != 'lunch')
+            break_lines = all_lines.filtered(lambda a: a.day_period == 'lunch')
+
+            break_ranges = []
+            for b in break_lines:
+                start_b = datetime.combine(current_date, datetime.min.time()) + timedelta(hours=b.hour_from)
+                end_b = datetime.combine(current_date, datetime.min.time()) + timedelta(hours=b.hour_to)
+                break_ranges.append((start_b, end_b))
+ 
+            for line in working_lines:
+                start_dt = datetime.combine(current_date, datetime.min.time()) + timedelta(hours=line.hour_from)
+                end_dt = datetime.combine(current_date, datetime.min.time()) + timedelta(hours=line.hour_to)
+ 
+                current_slot_start = start_dt
+                while current_slot_start + timedelta(minutes=slot_minutes) <= end_dt:
+                    current_slot_end = current_slot_start + timedelta(minutes=slot_minutes)
+ 
+                    overlaps_break = any(
+                        (br_start < current_slot_end and current_slot_start < br_end)
+                        for br_start, br_end in break_ranges
+                    )
+                    if not overlaps_break:
+                        self.env['sh.slot.line'].create({
+                            'sh_slot_id': self.id,
+                            'sh_date': current_date,
+                            'sh_start_time': current_slot_start.hour + current_slot_start.minute / 60.0,
+                            'sh_end_time': current_slot_end.hour + current_slot_end.minute / 60.0,
+                        })
+
+                    current_slot_start = current_slot_end
+
+            current_date += timedelta(days=1)

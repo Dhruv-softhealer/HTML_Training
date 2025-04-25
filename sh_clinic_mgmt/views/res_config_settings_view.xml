@@ -11,7 +11,6 @@
                         <field name="sh_case_days"></field>
                     </setting>
                 </block>
-
             </xpath>
         </field>
     </record>

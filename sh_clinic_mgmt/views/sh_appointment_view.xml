@@ -109,6 +109,7 @@
                                     <field name="sh_immediate_check_in"></field>
                                     <field name="sh_emergency_slot_bypass"></field>
                                     <field name="sh_walk_in_case"></field>
+                                    <field name="sh_checked_in"></field>
                                 </group>
                             </group>
                         </page>

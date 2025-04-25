@@ -43,6 +43,7 @@
                         <page string="Schedule">
                             <field name="sh_schedule_line">
                                 <list editable="bottom">
+                                    <!-- <field name="name"></field> -->
                                     <field name="sh_date"></field>
                                     <field name="sh_appointment_line" widget="many2many_tags"></field>
                                     <field name="sh_start_time"></field>
