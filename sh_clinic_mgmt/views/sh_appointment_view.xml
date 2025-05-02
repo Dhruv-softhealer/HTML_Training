@@ -19,11 +19,10 @@
         <field name="arch" type="xml">
             <form string="Appointment">
                 <header>
-                    <button name="new_record" string="New" class="oe_highlight" />
-                    <button name="check_in" string="Check-in" class="btn-warning" />
-                    <button name="move_to_done" string="Done" class="btn-success" />
-                    <button name="unlock_record" string="Unlock" class="btn-info" />
-                    <button name="calcel_record" string="Cancel" class="btn-danger" />
+                    <button name="check_in" type="object" string="Check-in" class="oe_highlight" invisible="sh_status == 'cancelled'" />
+                    <button name="move_to_done" type="object" string="Done" class="oe_highlight" invisible="sh_status == 'cancelled'" />
+                    <button name="unlock_record" type="object" string="Unlock" class="oe_highlight" invisible="sh_status == 'cancelled'" />
+                    <button name="calcel_record" type="object" string="Cancel" class="oe_highlight" invisible="sh_status == 'completed' or sh_status == 'cancelled'" />
 
                     <field name="sh_state" widget="statusbar"></field>
                 </header>
@@ -38,7 +37,7 @@
                             <field name="sh_doctor_specialization"></field>
                         </group>
                         <group>
-                            <field name="sh_emergency_case" widget="boolean_confirm_popup"></field>
+                            <field name="sh_emergency_case"></field>
                             <field name="sh_slot_id"></field>
                             <field name="sh_date"></field>
                             <field name="sh_status"></field>
@@ -109,7 +108,9 @@
                                     <field name="sh_immediate_check_in"></field>
                                     <field name="sh_emergency_slot_bypass"></field>
                                     <field name="sh_walk_in_case"></field>
-                                    <field name="sh_checked_in"></field>
+                                    <field name="sh_checked_in" 
+                                    groups="sh_clinic_mgmt.clinic_group_receptioniest"
+                                    ></field>
                                 </group>
                             </group>
                         </page>

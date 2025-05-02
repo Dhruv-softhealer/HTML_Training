@@ -42,6 +42,7 @@ class Patient(models.Model):
         ('walker', 'Walker'),
         ('crutches', 'Crutches'),
     ], string="Mobility Status")
+    sh_report_name = fields.Char('sh_report_name')
     sh_report = fields.Binary(string="Reports")
     
     

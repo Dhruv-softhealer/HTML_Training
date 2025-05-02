@@ -38,8 +38,9 @@
         'views/resource_calendar_view.xml',
         'views/sh_slots_view.xml',
         'views/sh_appointment_view.xml',
-        'views/sh_clinic_menuitems.xml',
         'views/res_config_settings_view.xml',
+        'views/sh_clinic_menuitems.xml',
+        'wizard/sh_emergency_pop_up_view.xml',
     ],
     
     'installable': True,

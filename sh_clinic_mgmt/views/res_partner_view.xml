@@ -26,7 +26,8 @@
                             <field name="sh_allergies_description" />
                             <field name="sh_cronic_condition_ids" widget="many2many_tags" />
                             <field name="sh_mobility_status" />
-                            <field name="sh_report" />
+                            <field name="sh_report_name" invisible="1"/>
+                            <field name="sh_report" filename="sh_report_name"/>
                         </group>
                     </group>
 

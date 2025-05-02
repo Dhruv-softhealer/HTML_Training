@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 # Part of Softhealer Technologies.
 
-import datetime
-from odoo import _, models, fields, api
+from datetime import datetime, timedelta
+from odoo import Command, _, models, fields, api
 from odoo.exceptions import ValidationError
 from odoo.sql_db import timedelta
+from odoo.tools.date_utils import date
 
 class Appointment(models.Model):
     _name = 'sh.appointment'
@@ -17,8 +18,8 @@ class Appointment(models.Model):
     sh_patient_id = fields.Many2one('res.partner', string="Patient Name", required=True, tracking=True)
     sh_doctor_id = fields.Many2one('hr.employee', string="Doctor Name", required=True, tracking=True)
     sh_doctor_specialization = fields.Char(string="Doctor Specialization", related="sh_doctor_id.sh_specialization")
-    sh_date = fields.Date(string="Date", required=True, tracking=True)
-    sh_slot_id = fields.Many2one('sh.slots.schedule', string="Slot", required=True)
+    sh_date = fields.Datetime(string="Date", required=True, tracking=True)
+    sh_slot_id = fields.Many2one('sh.slots',required=True,string='Slot')
     sh_status = fields.Selection([
         ('pending', 'Pending'),
         ('confirmed', 'Confirmed'),
@@ -60,7 +61,6 @@ class Appointment(models.Model):
     sh_dietary_preferences = fields.Selection(string="Dietary Preferences", related="sh_patient_id.sh_dietary_preferences")
     sh_allergy_ids = fields.Many2many('sh.allergies', string="Allergies", related="sh_patient_id.sh_allergy_ids")
     
-    
     # Emergency Handling info
     
     sh_priority_level = fields.Selection([
@@ -77,50 +77,91 @@ class Appointment(models.Model):
     
     sh_state = fields.Selection([
         ('new', 'New'),
-        ("todays_appointment", "Today's Appointment"),
         ('in_progress', 'In Progress'),
-        ('pending_appointment', 'Pending Appointment'),
         ('completed_appointment', 'Completed Appointment'),
         ('cancelled_appointment', 'Cancelled Appointment'),
-    ])
-    
-    
-    # ================================= SEQUENCE ==================================
-    
-    # @api.model_create_multi
-    # def create(self, vals_list):
-    #     for vals in vals_list:
-    #         if vals.get('sh_appointment_number', ("New")) == ("New"):
-    #             seq_date = fields.Datetime.context_timestamp(
-    #                 self, fields.Datetime.to_datetime(vals['create_date'])
-    #             ) if 'create_date' in vals else None
-    #             vals['sh_appointment_number'] = self.env['ir.sequence'].with_company(vals.get('company_id')).next_by_code(
-    #                 'sh.appointment', sequence_date=seq_date) or _("New")
+    ], 
+    default='new'
+    )
 
-    #     return super().create(vals_list)
+    sh_is_locked = fields.Boolean()
     
     
-    @api.model_create_multi
-    def create(self, vals):
-        for val in vals:
-            booking_dt = fields.Datetime.from_string(val.get('sh_date'))
-            current_dt = fields.Datetime.now()
+    # ===================================== Onchange Emergency Boolean ===========================================
     
-            b_str = booking_dt.strftime("B%y%m%d-%H%M")
-            c_str = current_dt.strftime("C%y%m%d-%H%M")
+    @api.onchange('sh_emergency_case')
+    def _onchange_emergency_case(self):
+        if self.sh_emergency_case:
+            return{
+                'name': 'Switch to Emergency',
+                'type': 'ir.actions.act_window',
+                'res_model': 'sh.emergency.case.wizard',
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {
+                    'default_message': 'Are you sure you want to switch to emergency case?'
+                }
+            }
+    
+    
+    # ===================================== Stages ===========================================
+    
  
-            seq = self.env['ir.sequence'].next_by_code('sh.appointment')
- 
-            val['name'] = f"APT-{b_str}-{c_str}-{seq}"
- 
-        return super(Appointment, self).create(vals)
+    def check_in(self):
+        self.sh_state = 'in_progress'
+        self.sh_checked_in = True
+        
+    def move_to_done(self):
+        self.sh_state = 'completed_appointment'
+        self.sh_patient_id.sh_last_visit_date = date.today()
+        self.sh_is_locked = True
+        return {
+        'type': 'ir.actions.client',
+        'tag': 'reload',
+        }
+        
+    def unlock_record(self):
+        self.sh_state = 'unlock'
     
+    def calcel_record(self):
+        local_booking_dt = fields.Datetime.context_timestamp(self, self.sh_date)
+        now_dt = fields.Datetime.context_timestamp(self, datetime.now())
+        rec = self.env['sh.slots'].browse(self.sh_slot_id.id)
+        # print("\n\n\n\n", rec)
+
+        if rec.sh_cancel_time:
+            cancel_time = rec.sh_cancel_time
+            diff = (local_booking_dt - now_dt).total_seconds() / 3600.0
+            print("\n\n\n\n", diff)
+            if diff < cancel_time:
+                raise ValidationError(f"You can't cancel before {cancel_time} hours from your booking time.")
+            else:
+                slot_line = self.env['sh.slot.schedule'].search([('sh_slot_id', '=', self.sh_slot_id.id),('sh_appointment_line', 'in', self.id)],limit=1)
+                print("\n\n\n\n", slot_line)
+                slot_line.write({
+                    'sh_appointment_line': [Command.unlink(self.id)]
+                })
+                self.sh_state = 'cancelled_appointment'
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': 'Success',
+                        'message': 'Appointment cancelled successfully.',
+                        'type': 'success',  
+                        'sticky': False,
+                    }
+                }
+    
+        
+    
+    # ======================================= Emergence Case Count ==========================================
     
     @api.constrains('sh_emergency_case')
     def _count_emg_case(self):
         count = self.search_count([('sh_emergency_case', '=', True)])
         if count>4:
-            raise ValidationError("You can't generate Emergency Case more then 10 cases")
+            raise ValidationError(f"You can't generate Emergency Case more then {count} cases")
         
      
     @api.onchange('sh_emergency_case')
@@ -130,12 +171,13 @@ class Appointment(models.Model):
             self.sh_assigned_doctor = self.sh_doctor_id
             
      
+    # ======================================= Date Validation & Apply Charges ==========================================
         
     @api.onchange('sh_date')
     def onchage_state_and_charge(self):
         if self.sh_doctor_id and self.sh_patient_id:
             
-            if self.sh_date < datetime.date.today():
+            if self.sh_date <= fields.datetime.today():
                 self.sh_date = False
                 return {
                     'warning': {
@@ -146,76 +188,100 @@ class Appointment(models.Model):
                 
             case_days = self.env.company.sh_case_days
             
-            if (self.sh_date - self.sh_last_visited).days > case_days:
+            if (self.sh_date.date() - self.sh_last_visited).days > case_days:
                 self.sh_visit_type = 'new'
                 self.sh_expected_revenue = self.sh_doctor_id.sh_new_case_charges
                 
             else:
                 self.sh_visit_type = 'old'
                 self.sh_expected_revenue = self.sh_doctor_id.sh_old_case_charges
+
+ 
+# ======================================== Time Validation =========================================
+
+    def assign_slot_line(self):
+        if self.sh_slot_id and self.sh_date:
+            slot_time = fields.Datetime.context_timestamp(self, self.sh_date).time()
+            slot_time_float = slot_time.hour + slot_time.minute / 60.0
+            # print("\n\n\n\n", slot_time_float)
+            
+            slot_line = self.sh_slot_id.sh_schedule_line.filtered(
+                lambda a: (a.sh_start_time <= slot_time_float and a.sh_end_time > slot_time_float) and a.sh_date == self.sh_date.date()
+            )
+            if not slot_line:
+                raise ValidationError("Please change the time, Slot Time is not available.")
+            if not self.sh_emergency_slot_bypass:
+                if len(slot_line.sh_appointment_line) >= self.sh_slot_id.sh_allowed_patients:
+                    raise ValidationError(f"Only {self.sh_slot_id.sh_allowed_patients} Patients allowed in {self.sh_slot_id.name}")
+            
+                slot_line.write({
+                    'sh_appointment_line': [Command.link(self.id)]
+                })
+            else:
+                slot_line.write({
+                    'sh_appointment_line': [Command.link(self.id)]
+                })
                 
+
+# ================================== Sequence =======================================
+   
+    @api.model_create_multi
+    def create(self, vals):
+        for val in vals:
+            if val['sh_date']:
+                booking_dt = fields.Datetime.from_string(val['sh_date'])
+                                
+                local_booking_dt = fields.Datetime.context_timestamp(self, booking_dt)
+                booking_str = local_booking_dt.strftime('%y%m%d-%H%M')
+ 
+                now_dt = fields.Datetime.context_timestamp(self, datetime.now())
+                current_str = now_dt.strftime('%y%m%d-%H%M')
                 
-    # def float_time_to_hours_minutes(self, float_time):
-    #     hours = int(float_time)
-    #     minutes = int(round((float_time - hours) * 60))
-    #     return hours, minutes
+                #============================ pre-booking validation =================================
+                
+                if val['sh_slot_id'] and not val['sh_emergency_slot_bypass']:
+                    rec = self.env['sh.slots'].browse(val['sh_slot_id'])
+                    if rec.sh_pre_booking:
+                        pre_booking_hour = rec.sh_pre_booking
+                        diff = (local_booking_dt - now_dt).total_seconds() / 3600.0
+            
+                        if diff < pre_booking_hour:
+                            raise ValidationError(f"A minimum advance booking of {pre_booking_hour} hours is required.")
  
-    # def hours_minutes_to_float_time(self, hours, minutes):
-    #     return hours + minutes / 60.0
+                seq = self.env['ir.sequence'].next_by_code('sh.appointment') or '000'
+                val['name'] = f'APT-B{booking_str}-C{current_str}-{seq}'
+           
+        record = super().create(vals)
+        record.assign_slot_line()
+        return record
  
-    # def publish(self):
-    #     self.sh_stage = 'published'
-        # print(self.hours_minutes_to_float_time(3,15))
-        # print(self.float_time_to_hours_minutes(9.50))
+    def write(self, vals):
+        res = super(Appointment, self).write(vals)
  
-    def generate_slot(self):
-        self.ensure_one()
-        self.sh_slot_lines.unlink()
+        if 'sh_date' in vals or 'sh_slot_id' in vals or 'sh_emergency_slot_bypass' in vals:
+            if vals.get('sh_date'):
+                booking_dt = fields.Datetime.from_string(vals['sh_date'])
+                local_booking_dt = fields.Datetime.context_timestamp(self, booking_dt)
  
-        slot_minutes = int(self.sh_slot_time)
-        calendar_id = self.hr_employee_id.resource_calendar_id
+            now_dt = fields.Datetime.context_timestamp(self, datetime.now())
+            
+            
+            #============================ pre-booking validation =================================
+            
+            if vals.get('sh_slot_id') and not vals.get('sh_emergency_slot_bypass'):
+                rec = self.env['sh.slots'].browse(vals['sh_slot_id'])
+                if rec.sh_pre_booking:
+                    pre_booking_hour = rec.sh_pre_booking
+                    diff = (local_booking_dt - now_dt).total_seconds() / 3600.0
+                   
+                    if diff < pre_booking_hour:
+                        raise ValidationError(f"A minimum advance booking of {pre_booking_hour} hours is required.")
  
-        if not calendar_id:
-            raise ValueError("No working hours calendar defined for this employee.")
- 
-        current_date = self.sh_start_date
-        while current_date <= self.sh_end_date:
-            weekday = str(current_date.weekday())
- 
-            all_lines = calendar_id.attendance_ids.filtered(lambda a: a.dayofweek == weekday)
-            if not all_lines:
-                current_date += timedelta(days=1)
-                continue
-
-            working_lines = all_lines.filtered(lambda a: a.day_period != 'lunch')
-            break_lines = all_lines.filtered(lambda a: a.day_period == 'lunch')
-
-            break_ranges = []
-            for b in break_lines:
-                start_b = datetime.combine(current_date, datetime.min.time()) + timedelta(hours=b.hour_from)
-                end_b = datetime.combine(current_date, datetime.min.time()) + timedelta(hours=b.hour_to)
-                break_ranges.append((start_b, end_b))
- 
-            for line in working_lines:
-                start_dt = datetime.combine(current_date, datetime.min.time()) + timedelta(hours=line.hour_from)
-                end_dt = datetime.combine(current_date, datetime.min.time()) + timedelta(hours=line.hour_to)
- 
-                current_slot_start = start_dt
-                while current_slot_start + timedelta(minutes=slot_minutes) <= end_dt:
-                    current_slot_end = current_slot_start + timedelta(minutes=slot_minutes)
- 
-                    overlaps_break = any(
-                        (br_start < current_slot_end and current_slot_start < br_end)
-                        for br_start, br_end in break_ranges
-                    )
-                    if not overlaps_break:
-                        self.env['sh.slot.line'].create({
-                            'sh_slot_id': self.id,
-                            'sh_date': current_date,
-                            'sh_start_time': current_slot_start.hour + current_slot_start.minute / 60.0,
-                            'sh_end_time': current_slot_end.hour + current_slot_end.minute / 60.0,
-                        })
-
-                    current_slot_start = current_slot_end
-
-            current_date += timedelta(days=1)
+            slot_line = self.env['sh.slot.schedule'].search([('sh_slot_id', '=', self.sh_slot_id.id),('sh_appointment_line', 'in', self.id)],limit=1)
+                        
+            slot_line.write({
+                'sh_appointment_line': [Command.unlink(self.id)]  
+            })
+                        
+            self.assign_slot_line()
+        return res

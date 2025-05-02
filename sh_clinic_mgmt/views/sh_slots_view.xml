@@ -19,9 +19,8 @@
         <field name="arch" type="xml">
             <form string="Slots">
                 <header>
-                    <button name="create_record" string="New" class="oe_highlight" />
-                    <button name="publish_appointment" string="Publish" class="oe_highlight" />
-                    <button name="generate_slot" string="Generate Slot" class="oe_highlight" />
+                    <button name="publish_appointment" string="Publish" type="object" class="oe_highlight" />
+                    <button name="generate_slot" string="Generate Slot" type="object" class="oe_highlight" />
                     <field name="sh_state" widget="statusbar"></field>
                 </header>
                 <sheet>
@@ -29,11 +28,11 @@
                     <group>
                         <group>
                             <field name="doctor_id"></field>
-                            <field name="sh_slot_time" /> min
-                            <field name="sh_pre_booking"></field>
+                            <field name="sh_slot_time" widget="float_time"/>
+                            <field name="sh_pre_booking" widget="float_time"></field>
                             <field name="sh_start_date"></field>
                             <field name="sh_end_date"></field>
-                            <field name="sh_cancel_time"></field>
+                            <field name="sh_cancel_time" widget="float_time"></field>
                         </group>
                         <group>
                             <field name="sh_allowed_patients"></field>
@@ -46,8 +45,8 @@
                                     <!-- <field name="name"></field> -->
                                     <field name="sh_date"></field>
                                     <field name="sh_appointment_line" widget="many2many_tags"></field>
-                                    <field name="sh_start_time"></field>
-                                    <field name="sh_end_time"></field>
+                                    <field name="sh_start_time" widget="float_time"></field>
+                                    <field name="sh_end_time" widget="float_time"></field>
                                 </list>
                             </field>
                         </page>

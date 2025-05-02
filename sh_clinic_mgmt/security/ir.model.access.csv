@@ -111,3 +111,5 @@ sh_slot_schedule_admin,sh.slot.schedule.admin,model_sh_slot_schedule,clinic_grou
 res_config_settings_receptioniest,res.config.settings.receptioniest,model_res_config_settings,clinic_group_receptioniest,1,1,1,0
 res_config_settings_doctor,res.config.settings.doctor,model_res_config_settings,clinic_group_doctor,1,1,1,1
 res_config_settings_admin,res.config.settings.admin,model_res_config_settings,clinic_group_admin,1,1,1,1
+
+sh_emergency_pop_up,sh.emergency.pop.up,model_sh_emergency_case_wizard,base.group_user,1,1,1,1
