@@ -82,10 +82,7 @@ class Appointment(models.Model):
         ('cancelled_appointment', 'Cancelled Appointment'),
     ], 
     default='new'
-    )
-
-    sh_is_locked = fields.Boolean()
-    
+    )    
     
     # ===================================== Onchange Emergency Boolean ===========================================
     
@@ -105,7 +102,7 @@ class Appointment(models.Model):
     
     
     # ===================================== Stages ===========================================
-    
+        
  
     def check_in(self):
         self.sh_state = 'in_progress'
@@ -114,14 +111,14 @@ class Appointment(models.Model):
     def move_to_done(self):
         self.sh_state = 'completed_appointment'
         self.sh_patient_id.sh_last_visit_date = date.today()
-        self.sh_is_locked = True
         return {
         'type': 'ir.actions.client',
         'tag': 'reload',
         }
         
     def unlock_record(self):
-        self.sh_state = 'unlock'
+        self.sh_state = 'in_progress'
+            
     
     def calcel_record(self):
         local_booking_dt = fields.Datetime.context_timestamp(self, self.sh_date)
@@ -157,11 +154,11 @@ class Appointment(models.Model):
     
     # ======================================= Emergence Case Count ==========================================
     
-    @api.constrains('sh_emergency_case')
-    def _count_emg_case(self):
-        count = self.search_count([('sh_emergency_case', '=', True)])
-        if count>4:
-            raise ValidationError(f"You can't generate Emergency Case more then {count} cases")
+    # @api.constrains('sh_emergency_case')
+    # def _count_emg_case(self):
+    #     count = self.search_count([('sh_emergency_case', '=', True)])
+    #     if count>4:
+    #         raise ValidationError(f"You can't generate Emergency Case more then {count} cases")
         
      
     @api.onchange('sh_emergency_case')

@@ -19,10 +19,10 @@
         <field name="arch" type="xml">
             <form string="Appointment">
                 <header>
-                    <button name="check_in" type="object" string="Check-in" class="oe_highlight" invisible="sh_status == 'cancelled'" />
-                    <button name="move_to_done" type="object" string="Done" class="oe_highlight" invisible="sh_status == 'cancelled'" />
-                    <button name="unlock_record" type="object" string="Unlock" class="oe_highlight" invisible="sh_status == 'cancelled'" />
-                    <button name="calcel_record" type="object" string="Cancel" class="oe_highlight" invisible="sh_status == 'completed' or sh_status == 'cancelled'" />
+                    <button name="check_in" type="object" string="Check-in" class="oe_highlight" invisible="sh_status == 'cancelled_appointment'" />
+                    <button name="move_to_done" type="object" string="Done" class="oe_highlight" invisible="sh_status == 'cancelled_appointment'" />
+                    <button name="unlock_record" type="object" string="Unlock" class="oe_highlight" invisible="sh_status == 'cancelled_appointment'" />
+                    <button name="calcel_record" type="object" string="Cancel" class="oe_highlight" invisible="sh_status == 'completed_appointment' or sh_status == 'cancelled_appointment'" />
 
                     <field name="sh_state" widget="statusbar"></field>
                 </header>
@@ -30,29 +30,29 @@
                     <field name="name"></field>
                     <group>
                         <group>
-                            <field name="sh_expected_revenue"></field>
-                            <field name="sh_patient_id"></field>
+                            <field name="sh_expected_revenue" readonly="sh_state == 'completed_appointment'"></field>
+                            <field name="sh_patient_id" readonly="sh_state == 'completed_appointment'"></field>
                             <field name="sh_age"></field>
-                            <field name="sh_doctor_id"></field>
+                            <field name="sh_doctor_id" readonly="sh_state == 'completed_appointment'"></field>
                             <field name="sh_doctor_specialization"></field>
                         </group>
                         <group>
-                            <field name="sh_emergency_case"></field>
-                            <field name="sh_slot_id"></field>
-                            <field name="sh_date"></field>
-                            <field name="sh_status"></field>
+                            <field name="sh_emergency_case" readonly="sh_state == 'completed_appointment'"></field>
+                            <field name="sh_slot_id" readonly="sh_state == 'completed_appointment'"></field>
+                            <field name="sh_date" readonly="sh_state == 'completed_appointment'"></field>
+                            <field name="sh_status" readonly="sh_state == 'completed_appointment'"></field>
                         </group>
                     </group>
                     <notebook>
                         <page string="Patient Details">
                             <group>
                                 <field name="sh_last_visited"></field>
-                                <field name="sh_visit_type"></field>
+                                <field name="sh_visit_type" readonly="sh_state == 'completed_appointment'"></field>
                                 <field name="sh_blood_group"></field>
                             </group>
                             <group>
                                 <field name="sh_email"></field>
-                                <field name="sh_phone"></field>
+                                <field name="sh_phone" readonly="sh_state == 'completed_appointment'"></field>
                                 <field name="sh_birth_date"></field>
                                 <field name="sh_age"></field>
                             </group>
@@ -100,15 +100,15 @@
                         <page string="Emergency" invisible="not sh_emergency_case">
                             <group>
                                 <group>
-                                    <field name="sh_priority_level"></field>
-                                    <field name="sh_doctor_notified"></field>
-                                    <field name="sh_assigned_doctor"></field>
+                                    <field name="sh_priority_level" readonly="sh_state == 'completed_appointment'"></field>
+                                    <field name="sh_doctor_notified" readonly="sh_state == 'completed_appointment'"></field>
+                                    <field name="sh_assigned_doctor" readonly="sh_state == 'completed_appointment'"></field>
                                 </group>
                                 <group>
-                                    <field name="sh_immediate_check_in"></field>
-                                    <field name="sh_emergency_slot_bypass"></field>
-                                    <field name="sh_walk_in_case"></field>
-                                    <field name="sh_checked_in" 
+                                    <field name="sh_immediate_check_in" readonly="sh_state == 'completed_appointment'"></field>
+                                    <field name="sh_emergency_slot_bypass" readonly="sh_state == 'completed_appointment'"></field>
+                                    <field name="sh_walk_in_case" readonly="sh_state == 'completed_appointment'"></field>
+                                    <field name="sh_checked_in" readonly="sh_state == 'completed_appointment'"
                                     groups="sh_clinic_mgmt.clinic_group_receptioniest"
                                     ></field>
                                 </group>

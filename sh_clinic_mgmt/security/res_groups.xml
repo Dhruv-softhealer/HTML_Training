@@ -28,4 +28,14 @@
         <field name="comment">The Admin will be able to join support channels.</field>
         <field name="implied_ids" eval="[(4,ref('clinic_group_doctor'))]"></field>
     </record>
+
+
+    <!-- ================================== Record Rules =============================== -->
+
+    <record id="sh_appointment_reception_rule" model="ir.rule">
+        <field name="name">Receptioniest Rules</field>
+        <field name="model_id" ref="model_sh_appointment"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('sh_clinic_mgmt.clinic_group_receptioniest'))]"/>
+    </record>
 </odoo>

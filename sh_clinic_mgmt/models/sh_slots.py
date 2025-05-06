@@ -22,13 +22,24 @@ class Slots(models.Model):
     
     sh_schedule_line = fields.One2many('sh.slot.schedule', 'sh_slot_id', string="Appointment Slots")
     
-    
     sh_state = fields.Selection([
         ('draft', 'Draft'),
         ('published', 'Published'),
         ('booked', 'Booked')
     ],default="draft")
     
+    
+    
+    def compute_slot_stage(self):
+        for rec in self:
+            is_fully_booked = True
+            for line in rec.sh_schedule_line:
+                allowed = rec.sh_allowed_patients
+                if len(line.sh_appointment_line) < allowed:
+                    is_fully_booked = False
+                    break
+            rec.sh_state = 'booked' if is_fully_booked else 'published'
+            
     
     # ================================= SEQUENCE ==================================
     
@@ -57,7 +68,7 @@ class Slots(models.Model):
     # ======================================= Publish Slot ==========================================
                 
     def publish_appointment(self):
-        self.sh_stage = 'published'
+        self.sh_state = 'published'
         
     # ======================================= Slot Generation ========================================
             
