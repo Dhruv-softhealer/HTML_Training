@@ -16,8 +16,10 @@
         <field name="arch" type="xml">
             <form string="Medicine Type">
                 <sheet>
-                    <field name="name"></field>
-                    <field name="description"></field>
+                    <group>
+                        <field name="name"></field>
+                        <field name="description"></field>
+                    </group>
                 </sheet>
             </form>
         </field>

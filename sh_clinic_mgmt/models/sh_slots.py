@@ -11,8 +11,8 @@ class Slots(models.Model):
     _description = 'Slots'
     
     
-    name = fields.Char(string="Slot Number", default=lambda self: _("New"))
-    doctor_id = fields.Many2one('hr.employee',string='Doctor Name',required=True,tracking=True,domain="[('job_id.name', '=', 'Doctor')]")
+    name = fields.Char(string="Slot Number", default=lambda self: _("New"), readonly=True)
+    doctor_id = fields.Many2one('hr.employee',string='Doctor Name',required=True,tracking=True, domain="[('job_id.name', '=', 'Doctor')]")
     sh_slot_time = fields.Float(string="Slot Time(In Min)", required=True)
     sh_allowed_patients = fields.Integer(string="Allowed Patients", tracking=True, required=True)
     sh_pre_booking = fields.Float(string="Pre-Booking Time(In Min)")
@@ -83,7 +83,7 @@ class Slots(models.Model):
  
             slot_minutes = int(self.sh_slot_time * 60)
             calendar_id = self.doctor_id.resource_calendar_id
- 
+            
             if not calendar_id:
                 raise ValidationError("No working hours defined for current doctor.")
  

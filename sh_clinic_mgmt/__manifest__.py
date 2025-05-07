@@ -15,12 +15,22 @@
     'category': 'Uncategorized',
     'version': '0.1',
 
-    'depends': ['base','web','account','sale', 'crm', 'hr'],
+    'depends': ['base','web','account','sale', 'crm', 'hr', 'hr_contract'],
 
     'data': [
+        # groups
         'security/res_groups.xml',
+        
+        # date
+            'data/apt_sequence.xml',
+        
+        # security
         'security/ir.model.access.csv',
         
+        # wizard
+        'wizard/sh_emergency_pop_up_view.xml',
+        
+        # views
         'views/sh_allergies_view.xml',
         'views/sh_chronic_condition_view.xml',
         'views/sh_disease_category_view.xml',
@@ -37,10 +47,11 @@
         'views/hr_department_view.xml',
         'views/resource_calendar_view.xml',
         'views/sh_slots_view.xml',
-        'views/sh_appointment_view.xml',
         'views/res_config_settings_view.xml',
+        'views/sh_appointment_view.xml',
+        
+        # menuitem
         'views/sh_clinic_menuitems.xml',
-        'wizard/sh_emergency_pop_up_view.xml',
     ],
     
     'installable': True,
@@ -48,9 +59,6 @@
     
     'license': 'LGPL-3',
     
-    # only loaded in demonstration mode
-    # 'demo': [
-    #     'demo/sh_demo_data.xml',
-    # ],
+    
 }
 

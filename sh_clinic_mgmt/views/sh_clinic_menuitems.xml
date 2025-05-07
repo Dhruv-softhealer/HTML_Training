@@ -1,5 +1,5 @@
 <odoo>
-    <menuitem id="sh_clinic_root_action" name="Clinic" action="sh_allergies_action_view">
+    <menuitem id="sh_clinic_root_action" name="Clinic" action="sh_clinic_mgmt.sh_appointment_action_view">
 
         <menuitem id="sh_slot_config_action" name="Slot" sequence="1" action="sh_slots_action_view">
 

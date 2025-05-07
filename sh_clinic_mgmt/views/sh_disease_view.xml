@@ -19,11 +19,13 @@
         <field name="arch" type="xml">
             <form string="Disease">
                 <sheet>
-                    <field name="name"></field>
-                    <field name="sh_category_ids" widget="many2many_tags"></field>
-                    <field name="sh_symptom_ids" widget="many2many_tags"></field>
-                    <field name="description"></field>
-                    <field name="sh_treatment_plan"></field>
+                    <group>
+                        <field name="name"></field>
+                        <field name="sh_category_ids" widget="many2many_tags"></field>
+                        <field name="sh_symptom_ids" widget="many2many_tags"></field>
+                        <field name="description"></field>
+                        <field name="sh_treatment_plan"></field>
+                    </group>
                 </sheet>
             </form>
         </field>

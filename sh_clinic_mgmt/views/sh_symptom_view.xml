@@ -15,7 +15,9 @@
         <field name="arch" type="xml">
             <form string="Symptoms">
                 <sheet>
-                    <field name="name"></field>
+                    <group>
+                        <field name="name"></field>
+                    </group>
                 </sheet>
             </form>
         </field>

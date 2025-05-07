@@ -57,3 +57,5 @@ class Patient(models.Model):
                     (current_date.month, current_date.day) < (rec.sh_birth_date.month, rec.sh_birth_date.day)
                 )
                 rec.sh_age = str(age)
+            else:
+                rec.sh_age = 0

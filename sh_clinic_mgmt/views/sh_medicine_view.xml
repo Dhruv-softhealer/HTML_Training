@@ -18,13 +18,13 @@
                 <sheet>
                     <header>
                         <button name="create_product" string="Create Product"
-                        invisible="sh_product_id" type="object" class="btn-primary"></button>
+                        invisible="sh_product_id or not sh_provided_by_us" type="object" class="btn-primary"></button>
                     </header>
                     <group>
                         <field name="name"></field>
                         <field name="sh_type"></field>
-                        <field name="sh_product_id" invisible="not sh_provided_by_us"></field>
                         <field name="sh_provided_by_us"></field>
+                        <field name="sh_product_id" invisible="not sh_provided_by_us"></field>
                     </group>
                 </sheet>
             </form>

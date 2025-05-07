@@ -8,7 +8,7 @@
                 <field name="sh_patient_id"></field>
                 <field name="sh_doctor_id"></field>
                 <field name="sh_date"></field>
-                <field name="sh_status"></field>
+                <!-- <field name="sh_status"></field> -->
             </list>
         </field>
     </record>
@@ -19,10 +19,10 @@
         <field name="arch" type="xml">
             <form string="Appointment">
                 <header>
-                    <button name="check_in" type="object" string="Check-in" class="oe_highlight" invisible="sh_status == 'cancelled_appointment'" />
-                    <button name="move_to_done" type="object" string="Done" class="oe_highlight" invisible="sh_status == 'cancelled_appointment'" />
-                    <button name="unlock_record" type="object" string="Unlock" class="oe_highlight" invisible="sh_status == 'cancelled_appointment'" />
-                    <button name="calcel_record" type="object" string="Cancel" class="oe_highlight" invisible="sh_status == 'completed_appointment' or sh_status == 'cancelled_appointment'" />
+                    <button name="check_in" type="object" string="Check-in" class="oe_highlight" invisible="sh_state == 'cancelled_appointment'" />
+                    <button name="move_to_done" type="object" string="Done" class="oe_highlight" invisible="sh_state == 'cancelled_appointment'" />
+                    <button name="unlock_record" type="object" string="Unlock" class="oe_highlight" invisible="sh_state == 'cancelled_appointment'" />
+                    <button name="cancel_record" type="object" string="Cancel" class="oe_highlight" invisible="sh_state == 'completed_appointment' or sh_state == 'cancelled_appointment'" />
 
                     <field name="sh_state" widget="statusbar"></field>
                 </header>
@@ -38,23 +38,23 @@
                         </group>
                         <group>
                             <field name="sh_emergency_case" readonly="sh_state == 'completed_appointment'"></field>
-                            <field name="sh_slot_id" readonly="sh_state == 'completed_appointment'"></field>
                             <field name="sh_date" readonly="sh_state == 'completed_appointment'"></field>
-                            <field name="sh_status" readonly="sh_state == 'completed_appointment'"></field>
+                            <field name="sh_slt_id" readonly="sh_state == 'completed_appointment'" domain="[('sh_date', '=', sh_date)]"></field>
+                            <!-- <field name="sh_status" readonly="sh_state == 'completed_appointment'"></field> -->
                         </group>
                     </group>
                     <notebook>
                         <page string="Patient Details">
                             <group>
-                                <field name="sh_last_visited"></field>
+                                <field name="sh_last_visited" readonly="0"></field>
                                 <field name="sh_visit_type" readonly="sh_state == 'completed_appointment'"></field>
-                                <field name="sh_blood_group"></field>
+                                <field name="sh_blood_group" readonly="0"></field>
                             </group>
                             <group>
-                                <field name="sh_email"></field>
+                                <field name="sh_email" readonly="0"></field>
                                 <field name="sh_phone" readonly="sh_state == 'completed_appointment'"></field>
-                                <field name="sh_birth_date"></field>
-                                <field name="sh_age"></field>
+                                <field name="sh_birth_date" readonly="0"></field>
+                                <field name="sh_age" readonly="0"></field>
                             </group>
                         </page>
                         <page string="Disease Details">
@@ -109,7 +109,6 @@
                                     <field name="sh_emergency_slot_bypass" readonly="sh_state == 'completed_appointment'"></field>
                                     <field name="sh_walk_in_case" readonly="sh_state == 'completed_appointment'"></field>
                                     <field name="sh_checked_in" readonly="sh_state == 'completed_appointment'"
-                                    groups="sh_clinic_mgmt.clinic_group_receptioniest"
                                     ></field>
                                 </group>
                             </group>
@@ -127,14 +126,6 @@
     </record>
 
 
-     <!-- ================================= SEQUENCE ================================== -->
-
-    <record id="sequence_appointment_number" model="ir.sequence">
-        <field name="name">Appointment</field>
-        <field name="code">sh.appointment</field>
-        <!-- <field name="prefix">A</field> -->
-        <field name="padding">3</field>
-        <field name="company_id" eval="False"/>
-    </record>
+     
 
 </odoo>
