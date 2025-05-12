@@ -7,6 +7,8 @@ from odoo import Command, _, models, fields, api
 from odoo.exceptions import UserError, ValidationError
 from odoo.sql_db import timedelta
 from odoo.tools.date_utils import date
+from collections import defaultdict
+
 
 class Appointment(models.Model):
     _name = 'sh.appointment'
@@ -27,7 +29,7 @@ class Appointment(models.Model):
     
     # Patient Details 
 
-    sh_email = fields.Char(string="Email", related="sh_patient_id.email")
+    sh_email = fields.Char(string="Email", related="sh_patient_id.email", store=True)
     sh_phone = fields.Char(string="Phone", related="sh_patient_id.phone", required=True, readonly=False)
     sh_blood_group = fields.Selection(string="Blood Group", related="sh_patient_id.sh_blood_group")
     sh_birth_date = fields.Date(string="Birth Date", related="sh_patient_id.sh_birth_date")
@@ -117,6 +119,7 @@ class Appointment(models.Model):
     
     
     def cancel_record(self):
+        self.sh_state = 'cancelled_appointment'
         for record in self:
             if record.sh_slt_id:
                 curr_time = fields.Datetime.now()
@@ -139,7 +142,9 @@ class Appointment(models.Model):
                             'sticky': False,
                         }
                     }
-    
+            mail_template = self.env.ref('sh_clinic_mgmt.mail_template_cancel_appointment')
+            if mail_template:
+                mail_template.send_mail(record.id, force_send=True)
         
     
     # ======================================= Emergence Case ==========================================

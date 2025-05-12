@@ -126,6 +126,39 @@
     </record>
 
 
+<!-- ================================ Appointment Summery Report ================================== -->
+
+
+<record id="sh_appointment_summery_form_view" model="ir.ui.view">
+    <field name="name">Appointment Summery</field>
+    <field name="model">sh.appointment.summary.wizard</field>
+    <field name="arch" type="xml">
+        <form string="Appointment summery">
+            <sheet>
+                <group>
+                    <field name="from_date"></field>
+                    <field name="to_date"></field>
+                    <field name="doctor_id"></field>
+                </group>
+            </sheet>
+            <footer>
+                <button name="generate_report" type="object" string="Generate Report"
+                    class="oe_highlight"/>
+                <button string="Cancel" class="btn-secondary" special="cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+    <record id="action_appointment_summary_wizard" model="ir.actions.act_window">
+        <field name="name">Daily Appointment Summary</field>
+        <field name="res_model">sh.appointment.summary.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    
+    
+
      
 
 </odoo>

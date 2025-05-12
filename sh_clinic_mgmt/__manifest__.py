@@ -15,20 +15,27 @@
     'category': 'Uncategorized',
     'version': '0.1',
 
-    'depends': ['base','web','account','sale', 'crm', 'hr', 'hr_contract'],
+    'depends': ['base','web','account','sale', 'crm', 'hr', 'hr_contract', 'mail'],
 
     'data': [
         # groups
         'security/res_groups.xml',
         
-        # date
-            'data/apt_sequence.xml',
-        
         # security
         'security/ir.model.access.csv',
         
+        # date
+        'data/apt_sequence.xml',
+        'data/sh_mail_template.xml',
+        
+        # report
+        # 'report/sh_appointment_template.xml',
+        # 'report/sh_reports.xml',
+        
         # wizard
         'wizard/sh_emergency_pop_up_view.xml',
+        'wizard/sh_appointment_template.xml',
+        'wizard/sh_reports.xml',
         
         # views
         'views/sh_allergies_view.xml',
