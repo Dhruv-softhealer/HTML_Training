@@ -2,6 +2,8 @@
 # Part of Softhealer Technologies.
 
 from odoo import models, fields
+from collections import defaultdict
+
 
 class AppointmentSummaryWizard(models.TransientModel):
     _name = 'sh.appointment.summary.wizard'

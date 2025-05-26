@@ -8,11 +8,13 @@ from odoo.exceptions import UserError, ValidationError
 from odoo.sql_db import timedelta
 from odoo.tools.date_utils import date
 from collections import defaultdict
+from odoo.addons.portal.models.portal_mixin import PortalMixin
 
 
 class Appointment(models.Model):
     _name = 'sh.appointment'
     _description = 'Appointment'
+    _inherit = ['mail.thread', 'portal.mixin']
     
     # Header Page
     
@@ -79,28 +81,12 @@ class Appointment(models.Model):
         ('cancelled_appointment', 'Cancelled Appointment'),
     ], 
     default='new'
-    )    
-    
-    # ===================================== Onchange Emergency Boolean ===========================================
-    
-    @api.onchange('sh_emergency_case')
-    def _onchange_emergency_case(self):
-        if self.sh_emergency_case:
-            return{
-                'name': 'Switch to Emergency',
-                'type': 'ir.actions.act_window',
-                'res_model': 'sh.emergency.case.wizard',
-                'view_mode': 'form',
-                'target': 'new',
-                'context': {
-                    'default_message': 'Are you sure you want to switch to emergency case?'
-                }
-            }
+    )
     
     
     # ===================================== Stages ===========================================
         
- 
+
     def check_in(self):
         self.sh_state = 'in_progress'
         self.sh_checked_in = True
@@ -163,7 +149,7 @@ class Appointment(models.Model):
     def onchage_state_and_charge(self):
         if self.sh_doctor_id and self.sh_patient_id:
             
-            if self.sh_date <= fields.date.today():
+            if self.sh_date < fields.date.today():
                 self.sh_date = False
                 return {
                     'warning': {
@@ -183,23 +169,21 @@ class Appointment(models.Model):
                 self.sh_expected_revenue = self.sh_doctor_id.sh_old_case_charges
 
  
-# ======================================== Time Validation =========================================
+# ======================================== Assign Appointment to Slot =========================================
             
-    
+
     def assign_slot_line(self):
-        for record in self:
-            if not record.sh_emergency_slot_bypass:
-                if len(record.sh_slt_id.sh_appointment_line) >= record.sh_slot_id.sh_allowed_patients:
-                    raise ValidationError(
-                        f"Only {record.sh_slot_id.sh_allowed_patients} patients allowed in {record.sh_slt_id.name}."
-                    )
-
-            record.sh_slt_id.write({
-                'sh_appointment_line': [Command.link(record.id)]
-            })
-
-
-
+        for rec in self:
+            if rec.sh_slt_id and rec.sh_date:
+                if not rec.sh_emergency_slot_bypass:
+                    if len(rec.sh_slt_id.sh_appointment_line) >= rec.sh_slot_id.sh_allowed_patients:
+                        raise ValidationError(
+                            f"Only {rec.sh_slot_id.sh_allowed_patients} patients allowed in {rec.sh_slt_id.name}."
+                            )
+                
+                rec.sh_slt_id.write({
+                    'sh_appointment_line': [Command.link(rec.id)]
+                    })
                 
 
 # ================================== Sequence =======================================
@@ -230,9 +214,8 @@ class Appointment(models.Model):
  
                 seq = self.env['ir.sequence'].next_by_code('sh.appointment') or '000'
                 val['name'] = f'APT-B{booking_str}-C{current_str}-{seq}'
-           
+                val['sh_state'] = 'new'
         record = super().create(vals)
-        # logger.info(f"\n\n\n\n\nCreated record ID: {record.id}")
         record.assign_slot_line()
         return record
  

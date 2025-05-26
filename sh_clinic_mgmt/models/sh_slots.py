@@ -120,3 +120,21 @@ class Slots(models.Model):
  
                         start_dt = slot_end_time
                 current_date += timedelta(days=1)
+                
+    # ======================================= Slot Overlapping ========================================
+    
+    
+    @api.constrains('doctor_id', 'sh_start_date', 'sh_end_date')
+    def _check_overlapping_slots(self):
+        for rec in self:
+            overlapping_slots = self.search([
+                ('id', '!=', rec.id),
+                ('doctor_id', '=', rec.doctor_id.id),
+                ('sh_start_date', '<=', rec.sh_end_date),
+                ('sh_end_date', '>=', rec.sh_start_date),
+            ])
+            if overlapping_slots:
+                print("\n\n\n\n\noverlapping_slots--------------->", overlapping_slots.sh_start_date)
+                raise ValidationError(
+                    f"Doctor {rec.doctor_id.name} already has a slot between {overlapping_slots.sh_start_date} and {overlapping_slots.sh_end_date}. Please change the date or timing."
+                )

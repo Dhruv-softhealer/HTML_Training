@@ -8,7 +8,6 @@ class SaleOrderWorkflow(models.Model):
     _inherit = 'sale.order'
     
     auto_sale_workflow = fields.Many2one('sh.auto.sale.workflow',groups='sh_auto_sale_workflow.sh_auto_sale_workflow_group_access' , string="Sale Workflow")
-    # apply_auto_workflow = fields.Boolean()
     
     @api.model
     def default_get(self, fields_list):
@@ -49,7 +48,7 @@ class SaleOrderWorkflow(models.Model):
                         if rec.send_invoice_by_email:
                             # self.env["account.move.send.wizard"].with_context(
                             #     active_model="account.move",
-                            #     active_ids=var.ids,
+                            #     active_ids=var.ids, 
                             #     mail_partner_ids=self.partner_id,
                             #     mail_subject=self.auto_sale_workflow.company_id
                             # ).action_send_and_print()

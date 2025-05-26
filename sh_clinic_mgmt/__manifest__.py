@@ -15,7 +15,7 @@
     'category': 'Uncategorized',
     'version': '0.1',
 
-    'depends': ['base','web','account','sale', 'crm', 'hr', 'hr_contract', 'mail'],
+    'depends': ['base','web','account','sale', 'crm', 'hr', 'hr_contract', 'mail', 'portal'],
 
     'data': [
         # groups
@@ -33,7 +33,6 @@
         # 'report/sh_reports.xml',
         
         # wizard
-        'wizard/sh_emergency_pop_up_view.xml',
         'wizard/sh_appointment_template.xml',
         'wizard/sh_reports.xml',
         
@@ -56,6 +55,7 @@
         'views/sh_slots_view.xml',
         'views/res_config_settings_view.xml',
         'views/sh_appointment_view.xml',
+        'views/portal_templates.xml',
         
         # menuitem
         'views/sh_clinic_menuitems.xml',
