@@ -17,6 +17,15 @@ class AppointmentPortal(CustomerPortal):
         ])
         return values
 
+    def _ticket_get_searchbar_groupby(self):
+        return {
+            'none': {'label': _('None'), 'sequence': 10},
+            'name': {'label': _('Appointments'), 'sequence': 20},
+            'doctor': {'label': _(''), 'sequence': 30},
+            'sh_date': {'label': _('Stage'), 'sequence': 40},
+            'stage': {'label': _('Status'), 'sequence': 50},
+        }
+
     def _search_bar_domain(self,search,search_in):
         search_domains = []
         if search_in in ('all', 'name'):
@@ -34,7 +43,7 @@ class AppointmentPortal(CustomerPortal):
         return OR(search_domains) if search_domains else []
 
     @http.route(['/my/appointments'], type='http', auth="user", website=True)
-    def portal_my_appointments(self, page=1, sortby=True, filterby="all",search=None, search_in='name', **kw):
+    def portal_my_appointments(self, page=1, sortby=True, filterby="all", groupby=None, search=None, search_in='name', **kw):
         Appointment = request.env['sh.appointment'].sudo()
         partner_id = request.env.user.partner_id.id
 
@@ -53,6 +62,14 @@ class AppointmentPortal(CustomerPortal):
 
         appointments = Appointment.search(domain, limit=10, offset=pager['offset'], order='sh_date')
         # print("\n\n\n\nAppointments---->:", appointments)
+        
+        searchbar_groupings = {
+            None: {'label': _('None')},
+            'name': {'label': _('Appointment'), 'groupby': 'name'},
+            'doctor': {'label': _('Doctor'), 'groupby': 'sh_doctor_id'},
+            'sh_date': {'label': _('Date'), 'groupby': 'sh_date'},
+            'stage': {'label': _('Stage'), 'groupby': 'sh_state'},
+        }
         
         searchbar_sortings = {
             'new': {'label': _('Appointment'), 'order': 'create_date desc'},
@@ -121,6 +138,9 @@ class AppointmentPortal(CustomerPortal):
             'search':search,
             'search_in':search_in,
             
+            'searchbar_groupings': searchbar_groupings,
+            'groupby': groupby,
+            
             'default_url': url,
         })
         
@@ -145,4 +165,3 @@ class AppointmentPortal(CustomerPortal):
             'prev_id': prev_id,
             'next_id': next_id,
         })
-
