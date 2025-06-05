@@ -2,8 +2,8 @@
 
     <record id="paperformat_event_full_page" model="report.paperformat">
         <field name="name">Custom Paperformat for the Event Full Page Ticket report</field>
-        <field name="default" eval="False"/>
-        <field name="disable_shrinking" eval="True"/>
+        <field name="default" eval="False" />
+        <field name="disable_shrinking" eval="True" />
         <field name="format">A4</field>
         <field name="page_height">0</field>
         <field name="page_width">0</field>
@@ -24,6 +24,20 @@
         <field name="print_report_name">'Daily Appointment Summary'</field>
         <field name="binding_model_id" ref="sh_clinic_mgmt.model_sh_appointment_summary_wizard" />
         <field name="binding_type">report</field>
-        <field name="paperformat_id" ref="paperformat_event_full_page"/>
+        <field name="paperformat_id" ref="paperformat_event_full_page" />
     </record>
+
+    <!-- report_action.xml -->
+
+    <record id="report_appointment_action" model="ir.actions.report">
+        <field name="name">Appointment</field>
+        <field name="model">sh.appointment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sh_clinic_mgmt.report_appointment</field>
+        <field name="report_file">sh_clinic_mgmt.report_appointment</field>
+        <field name="print_report_name">'Appointment'</field>
+        <field name="binding_type">report</field>
+    </record>
+
+
 </odoo>

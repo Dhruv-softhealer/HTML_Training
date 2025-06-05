@@ -34,7 +34,6 @@
         
         # wizard
         'wizard/sh_appointment_template.xml',
-        'wizard/sh_reports.xml',
         
         # views
         'views/sh_allergies_view.xml',
@@ -55,12 +54,14 @@
         'views/sh_slots_view.xml',
         'views/res_config_settings_view.xml',
         'views/sh_appointment_view.xml',
+        'views/report_appointment.xml',
         'views/portal_templates.xml',
+        'wizard/sh_reports.xml',
         
         # menuitem
         'views/sh_clinic_menuitems.xml',
     ],
-    
+        
     'installable': True,
     'application': True,
     

@@ -14,7 +14,7 @@ from odoo.addons.portal.models.portal_mixin import PortalMixin
 class Appointment(models.Model):
     _name = 'sh.appointment'
     _description = 'Appointment'
-    _inherit = ['mail.thread', 'portal.mixin']
+    _inherit = ['portal.mixin', 'mail.thread', 'mail.activity.mixin']
     
     # Header Page
     
@@ -25,7 +25,7 @@ class Appointment(models.Model):
     sh_date = fields.Date(string="Date", required=True, tracking=True)
     sh_slt_id = fields.Many2one('sh.slot.schedule',required=True,string='Slot')
     sh_slot_id = fields.Many2one('sh.slots',related="sh_slt_id.sh_slot_id", store=True, string='Slot')
-    sh_expected_revenue = fields.Float(string="Case Charges", required=True, tracking=True)
+    sh_expected_revenue = fields.Float(string="Case Charges", tracking=True)
     sh_emergency_case = fields.Boolean(string="Emergency Case", tracking=True)
     
     
@@ -83,6 +83,31 @@ class Appointment(models.Model):
     default='new'
     )
     
+    # Portal Report Access
+    
+    def get_portal_url(self, suffix=None, download=None, report_type=None, query_string=None, anchor=None, **kwargs):
+        self.ensure_one()
+        url = self.access_url + '%s?access_token=%s%s%s%s%s' % (
+            suffix if suffix else '',
+            self._portal_ensure_token(),
+            '&report_type=%s' % report_type if report_type else '',
+            '&download=true' if download else '',
+            query_string if query_string else '',
+            '#%s' % anchor if anchor else ''
+        )
+        return url
+    
+    def _get_report_base_filename(self):
+        self.ensure_one()
+        return 'APT-%s' % (self.name)
+    
+    # ===================================== Portal Access ===========================================
+    
+    def _compute_access_url(self):
+        super()._compute_access_url()
+        for order in self:
+            order.access_url = f'/my/appointments/{order.id}'
+
     
     # ===================================== Stages ===========================================
         
@@ -202,7 +227,7 @@ class Appointment(models.Model):
                 
                 #============================ pre-booking validation =================================
                 
-                if val['sh_slt_id'] and not val['sh_emergency_slot_bypass']:
+                if val.get('sh_slt_id') and not val.get('sh_emergency_slot_bypass'):
                     rec = self.env['sh.slot.schedule'].browse(val['sh_slt_id'])
                     
                     if rec.sh_slot_id.sh_pre_booking:

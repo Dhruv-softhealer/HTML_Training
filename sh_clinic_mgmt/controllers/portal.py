@@ -5,26 +5,24 @@ from odoo import http, _
 from odoo.osv.expression import AND, OR
 from odoo.http import request
 from odoo.addons.portal.controllers import portal
+from odoo.tools import date_utils, groupby as groupbyelem
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager
+from odoo.addons.account.controllers.download_docs import _get_headers, _build_zip_from_data
 from odoo.exceptions import AccessError,MissingError
+from odoo import fields
+import requests
 
 class AppointmentPortal(CustomerPortal):
 
-    def _prepare_home_portal_values(self, counters):
-        values = super()._prepare_home_portal_values(counters)
-        values['appointment_count'] = request.env['sh.appointment'].sudo().search_count([
-            ('sh_patient_id', '=', request.env.user.partner_id.id)
-        ])
-        return values
+    # Portal Home Values
 
-    def _ticket_get_searchbar_groupby(self):
-        return {
-            'none': {'label': _('None'), 'sequence': 10},
-            'name': {'label': _('Appointments'), 'sequence': 20},
-            'doctor': {'label': _(''), 'sequence': 30},
-            'sh_date': {'label': _('Stage'), 'sequence': 40},
-            'stage': {'label': _('Status'), 'sequence': 50},
-        }
+    def _prepare_home_portal_values(self, counters):
+            values = super()._prepare_home_portal_values(counters)
+            if 'appointment_count' in counters:
+                values['appointment_count'] = request.env['sh.appointment'].sudo().search_count([
+                    ('sh_patient_id', '=', request.env.user.partner_id.id)
+                ])
+            return values
 
     def _search_bar_domain(self,search,search_in):
         search_domains = []
@@ -37,12 +35,41 @@ class AppointmentPortal(CustomerPortal):
         if search_in in ('all', 'sh_state'):
             search_domains.append([('sh_state', 'ilike', search)])
 
-        print('\n\n\n\n')
-        print(f'---old-search_domains----> {search_domains}')
-        print('\n\n\n\n')
+        # print('\n\n\n\n')
+        # print(f'---old-search_domains----> {search_domains}')
+        # print('\n\n\n\n')
         return OR(search_domains) if search_domains else []
 
-    @http.route(['/my/appointments'], type='http', auth="user", website=True)
+    # Portal Pagination at Form side
+
+    # def get_records_pager(ids, current):
+    #     if current.id in ids and (hasattr(current, 'website_url') or hasattr(current, 'access_url')):
+    #         attr_name = 'access_url' if hasattr(current, 'access_url') else 'website_url'
+    #         idx = ids.index(current.id)
+    #         prev_record = idx != 0 and current.browse(ids[idx - 1])
+    #         next_record = idx < len(ids) - 1 and current.browse(ids[idx + 1])
+
+    #         if prev_record and prev_record[attr_name] and attr_name == "access_url":
+    #             prev_url = '%s?access_token=%s' % (prev_record[attr_name], prev_record._portal_ensure_token())
+    #         elif prev_record and prev_record[attr_name]:
+    #             prev_url = prev_record[attr_name]
+    #         else:
+    #             prev_url = prev_record
+
+    #         if next_record and next_record[attr_name] and attr_name == "access_url":
+    #             next_url = '%s?access_token=%s' % (next_record[attr_name], next_record._portal_ensure_token())
+    #         elif next_record and next_record[attr_name]:
+    #             next_url = next_record[attr_name]
+    #         else:
+    #             next_url = next_record
+
+    #         return {
+    #             'prev_record': prev_url,
+    #             'next_record': next_url,
+    #         }
+    #     return {}
+    
+    @http.route(['/my/appointments', '/my/appointments/page/<int:page>'], type='http', auth="user", website=True)
     def portal_my_appointments(self, page=1, sortby=True, filterby="all", groupby=None, search=None, search_in='name', **kw):
         Appointment = request.env['sh.appointment'].sudo()
         partner_id = request.env.user.partner_id.id
@@ -51,25 +78,8 @@ class AppointmentPortal(CustomerPortal):
         
         appointments_count = Appointment.search_count(domain)
         
-        pager = portal.pager(
-            url="/my/appointments",
-            total=appointments_count,
-            page=page,
-            step=10,
-            url_args={},
-        )
-        # print("\n\n\n\nPager for appointments---->:", pager)
-
-        appointments = Appointment.search(domain, limit=10, offset=pager['offset'], order='sh_date')
-        # print("\n\n\n\nAppointments---->:", appointments)
         
-        searchbar_groupings = {
-            None: {'label': _('None')},
-            'name': {'label': _('Appointment'), 'groupby': 'name'},
-            'doctor': {'label': _('Doctor'), 'groupby': 'sh_doctor_id'},
-            'sh_date': {'label': _('Date'), 'groupby': 'sh_date'},
-            'stage': {'label': _('Stage'), 'groupby': 'sh_state'},
-        }
+        # Search and Filter Logic
         
         searchbar_sortings = {
             'new': {'label': _('Appointment'), 'order': 'create_date desc'},
@@ -96,32 +106,56 @@ class AppointmentPortal(CustomerPortal):
             'sh_state': {'label': _('Search in Stage'), 'input': 'sh_state'}
         }
 
-        order = searchbar_sortings[sortby]["order"]
 
         if filterby:
             domain += searchbar_filters[filterby]["domain"]
 
         search_bar_domain = self._search_bar_domain(search,search_in)
        
-        print('\n\n\n\n')
-        print(f'----search_bar_domain----> {search_bar_domain}')
-        print('\n\n\n\n')
+        # print('\n\n\n\n')
+        # print(f'----search_bar_domain----> {search_bar_domain}')
+        # print('\n\n\n\n')
 
         if search_bar_domain:
             domain = AND([domain,search_bar_domain])
 
-        print('\n\n\n\n')
-        print(f'----domain----> {domain}')
-        print('\n\n\n\n')
-        url = "/my/transfer"
-        pager_values = portal.pager(
+        # print('\n\n\n\n')
+        # print(f'----domain----> {domain}')
+        # print('\n\n\n\n')
+        
+        # Sorting & Pagination Logic
+        
+        order = searchbar_sortings[sortby]["order"]
+        url = "/my/appointments"
+        pager = portal.pager(
             url=url,
-            total=Appointment.search_count(domain=domain),
+            total=appointments_count,
             page=page,
-            step=50,
-            url_args={},
+            step=20,
+            url_args={'sortby': sortby, 'search_in': search_in, 'search': search, 'filterby': filterby, 'groupby': groupby},
         )
-        appointments = Appointment.search(domain, order=order , limit=50,offset=pager_values["offset"])
+        appointments = Appointment.search(domain, limit=20, offset=pager['offset'], order=order)      
+
+        # Grouping Logic
+
+        def resolve_nested_attr(obj, attr_path):
+            for attr in attr_path.split('.'):
+                obj = getattr(obj, attr, False)
+                if not obj:
+                    return ''
+            return obj
+
+        grouped_appointments = []
+        if groupby and groupby != 'none':
+            appointments = appointments.sorted(key=lambda a: resolve_nested_attr(a, groupby))
+            grouped_appointments = [
+                (g, list(records))
+                for g, records in groupbyelem(appointments, lambda a: resolve_nested_attr(a, groupby))
+            ]
+        else:
+            grouped_appointments = [(False, appointments)]
+        
+        # Prepare the response for rendering
         
         return request.render("sh_clinic_mgmt.portal_my_appointments", {
             'appointments': appointments,
@@ -138,30 +172,126 @@ class AppointmentPortal(CustomerPortal):
             'search':search,
             'search_in':search_in,
             
-            'searchbar_groupings': searchbar_groupings,
+            'grouped_appointments': grouped_appointments,
             'groupby': groupby,
             
             'default_url': url,
         })
         
-    def _get_prev_next_ids(self, current_id):
-        ids = request.env['sh.appointment'].search([], order='id').ids
-        current_index = ids.index(current_id)
-        prev_id = ids[current_index - 1] if current_index > 0 else None
-        next_id = ids[current_index + 1] if current_index < len(ids) - 1 else None
-        return prev_id, next_id
+      
+    @staticmethod
+    def get_records_pager(ids, current):
+        if current.id in ids and (hasattr(current, 'website_url') or hasattr(current, 'access_url')):
+            attr_name = 'access_url' if hasattr(current, 'access_url') else 'website_url'
+            idx = ids.index(current.id)
+            prev_record = idx != 0 and current.browse(ids[idx - 1])
+            next_record = idx < len(ids) - 1 and current.browse(ids[idx + 1])
+
+            if prev_record and prev_record[attr_name] and attr_name == "access_url":
+                prev_url = '%s?access_token=%s' % (prev_record[attr_name], prev_record._portal_ensure_token())
+            elif prev_record and prev_record[attr_name]:
+                prev_url = prev_record[attr_name]
+            else:
+                prev_url = False
+
+            if next_record and next_record[attr_name] and attr_name == "access_url":
+                next_url = '%s?access_token=%s' % (next_record[attr_name], next_record._portal_ensure_token())
+            elif next_record and next_record[attr_name]:
+                next_url = next_record[attr_name]
+            else:
+                next_url = False
+
+            return {
+                'prev_record': prev_url,
+                'next_record': next_url,
+            }
+        return {}
+
+    # Portal Record Detail View
+      
+    @http.route(["/my/appointments/<int:appointment_id>"], type="http", auth="public", website=True)
+    def my_portal_document(self, appointment_id, access_token=None, report_type=None, download=False):
+        try:
+            appointment = self._document_check_access('sh.appointment', appointment_id, access_token=access_token)
+        except (AccessError, MissingError):
+            return request.redirect('/my')
+
+        # Report
+
+        if report_type in ('html', 'pdf', 'text'):
+            return self._show_report(model=appointment, report_type=report_type, report_ref='sh_clinic_mgmt.report_appointment_action', download=download)
+
+        # Fetch record list of current user
         
-    @http.route(['/my/appointments/<int:appointment_id>'], type='http', auth="user", website=True)
-    def portal_appointment_detail(self, appointment_id, **kw):
-        appointment = request.env['sh.appointment'].sudo().browse(appointment_id).exists()
-        prev_id, next_id = self._get_prev_next_ids(appointment_id)
-        if not appointment or appointment.sh_patient_id.id != request.env.user.partner_id.id:
-            return request.redirect('/my/appointments')
-    
+        appointments = request.env['sh.appointment'].sudo().search([
+            ('sh_patient_id', '=', request.env.user.partner_id.id)
+        ])
+        record_pager = self.get_records_pager(appointments.ids, appointment)
+
         return request.render("sh_clinic_mgmt.portal_appointment_detail", {
-            'appointment': appointment,
-            'page_name': 'appointments',
-            'document': appointment,
-            'prev_id': prev_id,
-            'next_id': next_id,
+            "appointment": appointment,
+            "page_name": "appointments",
+            "prev_record": record_pager.get('prev_record'),
+            "next_record": record_pager.get('next_record'),
         })
+        
+        
+        
+    # @http.route('/book/appointment', type='http', auth="user", website=True)
+    # def book_appointment(self, **kw):
+    #     selected_date = kw.get('sh_date')
+    
+    #     domain = []
+    #     domain = [('sh_date', '=', fields.Datetime.now())]
+    #     # if selected_date:
+    #     temp = request.env['sh.slot.schedule'].sudo().search(domain)
+    #     print("---------------------->\n\n\n",temp)
+    #     values = {
+    #         'doctors': request.env['hr.employee'].sudo().search([
+    #             ('job_id.name', '=', 'Doctor')
+    #         ]),
+    #         'slots': temp,
+    #         'selected_date': selected_date,
+    #         'csrf_token': request.csrf_token(),
+    #     }
+    #     return request.render('sh_clinic_mgmt.book_appointment_form', values)
+    
+    @http.route('/book/appointment', type='http', auth="user", website=True)
+    def book_appointment(self, **kw):
+        selected_date = kw.get('sh_date') or fields.Date.today().strftime('%Y-%m-%d')
+        print("\n\n\n\n-------",selected_date)
+        domain = [('sh_date', '=', selected_date)]
+
+        slots = request.env['sh.slot.schedule'].sudo().search(domain)
+
+        values = {
+            'doctors': request.env['hr.employee'].sudo().search([
+                ('job_id.name', '=', 'Doctor')
+            ]),
+            'slots': slots,
+            'selected_date': selected_date,
+            'csrf_token': request.csrf_token(),
+        }
+
+        return request.render('sh_clinic_mgmt.book_appointment_form', values)
+
+
+    @http.route('/submit/appointment', type='http', auth="user", website=True, methods=["POST"])
+    def submit_appointment(self, **post):
+        patient = request.env.user.partner_id
+
+        doctor_id = post.get('sh_doctor_id')
+        slot_id = post.get('sh_slt_id')
+
+        if not doctor_id or not slot_id:
+            return request.redirect('/book/appointment')
+
+        request.env['sh.appointment'].sudo().create({
+            'sh_patient_id': patient.id,
+            'sh_doctor_id': int(doctor_id),
+            'sh_date': post.get('sh_date'),
+            'sh_slt_id': int(slot_id),
+            'sh_phone': post.get('sh_phone'),
+            'sh_visit_type': post.get('sh_visit_type'),
+        })
+

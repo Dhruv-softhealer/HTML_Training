@@ -7,7 +7,7 @@ class Disease(models.Model):
     _name = 'sh.disease'
     _description = 'Disease'
     
-    name = fields.Char(string="Disease Category", required=True)
+    name = fields.Char(string="Disease", required=True)
     sh_category_ids = fields.Many2many('sh.disease.category', string="Disease Category")
     sh_symptom_ids = fields.Many2many('sh.symptom', string="Symptoms")
     description = fields.Char(string="Description")

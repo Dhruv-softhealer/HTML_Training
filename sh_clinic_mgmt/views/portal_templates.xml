@@ -1,197 +1,85 @@
-<!DOCTYPE odoo [
-    <!ENTITY nbsp "entity-value">
-]>
 <odoo>
     <data>
-        <!-- <template id="portal_my_home_custom" inherit_id="portal.portal_my_home" priority="20">
-            <xpath
-                expr="//div[hasclass('o_portal_docs')]"
-                position="inside">
-                <div class="col-6 col-lg-4 mb-3">
-                    <a href="/my/appointments"
-                        class="d-block text-decoration-none text-reset border rounded p-3 h-100 bg-light">
-                        <div class="d-flex align-items-center">
-                            <img src="/sh_clinic_mgmt/static/src/img/invoice_icon.svg"
-                                alt="Appointments" class="me-3" style="height: 40px;" />
-                            <div>
-                                <h5 class="mb-1">Appointment</h5>
-                                <small>Follow and book your Appointments</small>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </xpath>
-        </template> -->
 
-
-        <template id="portal_my_home_sale" name="Quotations / Sales Orders" customize_show="True"
-            inherit_id="portal.portal_my_home" priority="20">
+        <template id="portal_my_home" inherit_id="portal.portal_my_home">
             <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
                 <t t-set="portal_client_category_enable" t-value="True" />
-                <t t-set="portal_alert_category_enable" t-value="True" />
             </xpath>
-            <div id="portal_alert_category" position="inside">
+
+            <div id="portal_client_category" position="inside">
                 <t t-call="portal.portal_docs_entry">
-                    <t t-set="bg_color" t-value="'alert alert-primary align-items-center'" />
-                    <t t-set="placeholder_count" t-value="'appointment_count'" />
-                    <t t-set="title">See Appointments</t>
+                    <t t-set="icon" t-value="'/sh_clinic_mgmt/static/img/aptt.png'" />
+                    <t t-set="title">Appointments</t>
                     <t t-set="url" t-value="'/my/appointments'" />
-                    <t t-set="show_count" t-value="True" />
+                    <!-- <t t-set="show_count" t-value="True" /> -->
+
+                    <t t-set="text">Book Your Appointment</t>
+                    <t t-set="placeholder_count" t-value="'appointment_count'" />
                 </t>
             </div>
         </template>
 
+        <!-- <template id="portal_my_appointments_custom"
+            inherit_id="sh_clinic_mgmt.portal_my_appointments">
+            <xpath expr="//div[hasclass('o_portal_search_panel')]" position="before">
+                <a type="button" class="btn btn-primary mb-2" role="button"
+                    t-attf-href="/my/appointments">
+                    <i class="fa fa-calendar-plus-o mr-1" /> Book Appointment </a>
+            </xpath>
+        </template> -->
+
 
         <template id="portal_my_appointments" name="My Appointments">
             <t t-call="portal.portal_layout">
-                <t t-set="title">My Appointments</t>
+                <t t-set="breadcrumbs_searchbar" t-value="True" />
 
-                <div class="container">
-                    <div class="o_portal_submenu">
-                        <!-- Searchbar Row -->
-                        <div class="d-flex justify-content-end mb-2">
-                            <form method="get" class="form-inline">
-                                <div class="input-group">
+                <t t-set="searchbar_groupby"
+                    t-value="{
+                    'none': {'label': 'All'},
+                    'sh_doctor_id': {'label': 'Doctor'},
+                    'sh_date': {'label': 'Date'},
+                    'sh_state': {'label': 'Status'}
+                    }" />
+                <t t-set="groupby" t-value="'sh_date'" />
 
-                                    <!-- Sort By -->
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">My Appointments</t>
+                </t>
 
-                                    <div t-if="searchbar_sortings" class="ms-lg-2">
-                                        <span class="small me-1 navbar-text">Sort By:</span>
-                                        <div class="btn-group">
-                                            <button id="portal_searchbar_sortings"
-                                                data-bs-toggle="dropdown"
-                                                class="btn btn-light dropdown-toggle">
-                                                <t
-                                                    t-esc="searchbar_sortings.get(sortby, searchbar_sortings.get('default')).get('label', 'Default')" />
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-end"
-                                                aria-labelledby="portal_searchbar_sortings">
-                                                <t t-foreach="searchbar_sortings.items()"
-                                                    t-as="s_sort">
-                                                    <a
-                                                        t-att-href="'/my/appointments?' + keep_query('*', sortby=s_sort[0])"
-                                                        t-attf-class="dropdown-item#{sortby == s_sort[0] and ' active' or ''}">
-                                                        <t t-esc="s_sort[1]['label']" />
-                                                    </a>
-                                                </t>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Filter By -->
-
-                                    <div t-if="searchbar_filters" class="ms-lg-2">
-                                        <span class="small me-1 navbar-text">Filter By:</span>
-                                        <div class="btn-group">
-                                            <button id="portal_searchbar_filters"
-                                                data-bs-toggle="dropdown"
-                                                class="btn btn-light dropdown-toggle">
-                                                <t
-                                                    t-esc="searchbar_filters.get(filterby, searchbar_filters.get('all')).get('label', 'All')" />
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-end"
-                                                aria-labelledby="portal_searchbar_filters">
-                                                <t t-foreach="searchbar_filters.items()"
-                                                    t-as="f_filter">
-                                                    <a
-                                                        t-att-href="'/my/appointments?' + keep_query('*', filterby=f_filter[0])"
-                                                        t-attf-class="dropdown-item#{filterby == f_filter[0] and ' active' or ''}">
-                                                        <t t-esc="f_filter[1]['label']" />
-                                                    </a>
-                                                </t>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Group By -->
-
-                                    <div t-if="searchbar_groupings" class="ms-lg-2">
-                                        <span class="small me-1 navbar-text">Group By:</span>
-                                        <div class="btn-group">
-                                            <button id="portal_searchbar_groupings"
-                                                data-bs-toggle="dropdown"
-                                                class="btn btn-light dropdown-toggle">
-                                                <t
-                                                    t-esc="searchbar_groupings.get(groupby, searchbar_groupings.get('None')).get('label', 'None')" />
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-end"
-                                                aria-labelledby="portal_searchbar_groupings">
-                                                <t t-foreach="searchbar_groupings.items()"
-                                                    t-as="g_froup">
-                                                    <a
-                                                        t-att-href="'/my/appointments?' + keep_query('*', search_in=g_froup[0])"
-                                                        t-attf-class="dropdown-item#{groupby == g_froup[0] and ' active' or ''}">
-                                                        <span
-                                                            t-esc="g_froup[1]['label']" />
-                                                    </a>
-                                                </t>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Search In -->
-
-                                    <div t-if="searchbar_inputs" class="ms-lg-2">
-                                        <div class="btn-group">
-                                            <button id="portal_searchbar_inputs"
-                                                data-bs-toggle="dropdown"
-                                                class="btn btn-light dropdown-toggle">
-                                                <span class="caret"></span>
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-end"
-                                                aria-labelledby="portal_searchbar_inputs">
-                                                <t t-foreach="searchbar_inputs.items()"
-                                                    t-as="s_input">
-                                                    <a
-                                                        t-att-href="'/my/appointments?' + keep_query('*', search_in=s_input[0])"
-                                                        t-attf-class="dropdown-item#{search_in == s_input[0] and ' active' or ''}">
-                                                        <t t-esc="s_input[1]['label']" />
-                                                    </a>
-                                                </t>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Search Input -->
-                                    <input type="search"
-                                        class="form-control border-0 bg-light"
-                                        t-att-placeholder="searchbar_inputs.get(search_in, {}).get('label', '')"
-                                        t-att-value="search"
-                                        name="search" />
-                                    <button class="btn btn-light" type="submit">
-                                        <span class="oi oi-search" />
-                                    </button>
+                <div t-if="not appointments" class="alert alert-warning" role="alert">
+                    There are currently no Transfer for your account.
+                </div>
 
 
-                                </div>
-                            </form>
+                <t t-if="appointments" t-call="portal.portal_table">
+                    <t t-foreach="grouped_appointments" t-as="group">
+                        <div t-if="group[0]" class="mt-4">
+                            <h5 class="text-primary border-bottom pb-1 mb-3">
+                                <t t-esc="group[0]" />
+                            </h5>
                         </div>
-                    </div>
-
-
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Appointment Number</th>
-                                <th>Date</th>
-                                <th>Doctor</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <t t-if="appointments">
-                                <t t-foreach="appointments" t-as="appointment">
+                        <table class="table table-hover mb-4">
+                            <thead>
+                                <tr class="active">
+                                    <th>Appointment Number</th>
+                                    <th>Doctor</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="group[1]" t-as="appointment">
                                     <tr>
                                         <td>
-                                            <a t-att-href="'/my/appointments/%s' % appointment.id">
+                                            <a t-att-href="appointment.get_portal_url()">
                                                 <t t-esc="appointment.name" />
                                             </a>
                                         </td>
                                         <td>
-                                            <t t-esc="appointment.sh_date" />
+                                            <span t-field="appointment.sh_doctor_id.name" />
                                         </td>
                                         <td>
-                                            <t t-esc="appointment.sh_doctor_id.name" />
+                                            <span t-field="appointment.sh_date" />
                                         </td>
                                         <td class="text-uppercase">
                                             <span class="badge rounded-pill"
@@ -199,18 +87,12 @@
                                                 <t t-esc="appointment.sh_state" />
                                             </span>
                                         </td>
-
                                     </tr>
                                 </t>
-                            </t>
-                            <t t-else="">
-                                <tr>
-                                    <td colspan="4">No appointments found.</td>
-                                </tr>
-                            </t>
-                        </tbody>
-                    </table>
-                </div>
+                            </tbody>
+                        </table>
+                    </t>
+                </t>
 
             </t>
         </template>
@@ -219,57 +101,43 @@
 
         <template id="portal_breadcrumbs" inherit_id="portal.portal_breadcrumbs">
             <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
-                <li t-if="page_name == 'appointments'" class="breadcrumb-item">
-                    <a t-attf-href="/my/appointments?{{ keep_query() }}">Your Appointments</a>
+                <li id="portal_breadcrumbs_appointments" t-if="page_name == 'appointments'"
+                    t-attf-class="breadcrumb-item #{'active ' if not appointment else ''}">
+                    <a t-if="appointment" t-attf-href="/my/appointments?{{ keep_query() }}">My
+                        Appointments</a>
+                    <t t-else="">My Appointments</t>
+                    <!-- Portal -->
                 </li>
-                <li t-if="page_name == 'appointments' and document" class="breadcrumb-item active">
-                    <t t-esc="document.name" />
+                <li t-if="appointment" class="breadcrumb-item active">
+                    <span t-field="appointment.name" />
                 </li>
+                <!-- <a class="btn btn-light o_download_btn flex-grow-1 w-20 my-2"
+                    t-att-href="/my/appointments"
+                    title="Download" target='_blank' role="button">
+                    <i class="fa fa-download" /> Book Appointment </a> -->
             </xpath>
         </template>
 
         <!-- Detail View -->
         <template id="portal_appointment_detail" name="Appointment Detail">
             <t t-call="portal.portal_layout">
-
-                <div class="text-end my-4">
-                    <div class="btn-group bg-light rounded px-2 py-1 shadow-sm">
-                        <!-- Previous Button -->
-                        <t t-if="prev_id">
-                            <a t-attf-href="/my/appointments/{{ prev_id }}"
-                                class="btn btn-link text-dark">
-                                <i class="fa fa-chevron-left"></i>
-                            </a>
-                        </t>
-                        <t t-else="">
-                            <button class="btn btn-link text-muted" t-att-disabled="not prev_id">
-                                <i class="fa fa-chevron-left"></i>
-                            </button>
-                        </t>
-
-                        <!-- Next Button -->
-                        <t t-if="next_id">
-                            <a t-attf-href="/my/appointments/{{ next_id }}"
-                                class="btn btn-link text-dark">
-                                <i class="fa fa-chevron-right"></i>
-                            </a>
-                        </t>
-                        <t t-else="">
-                            <button class="btn btn-link text-muted" t-att-disabled="not next_id">
-                                <i class="fa fa-chevron-right"></i>
-                            </button>
-                        </t>
-                    </div>
-                </div>
-
                 <div class="container my-5">
                     <div class="row">
                         <!-- LEFT COLUMN: Doctor & Patient Info -->
                         <div class="col-md-3">
-                            <a t-att-href="'/appointment/report/%s' % appointment.id"
-                                target="_blank"
-                                class="btn btn-outline-dark w-100 my-2">
-                                <i class="fa fa-download me-2"></i>Download Report </a>
+
+                            <!-- Report Download button -->
+
+                            <a class="btn btn-light o_download_btn flex-grow-1 w-100 my-2"
+                                t-att-href="appointment.get_portal_url(report_type='pdf')"
+                                title="Download" target='_blank' role="button">
+                                <i class="fa fa-download" /> View Detail </a>
+                            
+                            <!-- Book Appointment Button -->
+                             
+                            <a type="button" class="btn btn-primary mb-2" role="button"
+                                t-attf-href="/book/appointment">
+                                <i class="fa fa-calendar-plus-o mr-1" /> Book Appointment </a>
 
                             <div class="mb-4">
                                 <p class="text-muted fw-bold mb-1">Doctor</p>
@@ -299,40 +167,40 @@
 
 
                             <div class="mb-4">
-                                <h6 class="text-muted mb-2">Patient</h6>
+                                <h6 class="text-muted fw-bold mb-1">Patient</h6>
                                 <div class="d-flex align-items-center mb-2">
                                     <img
                                         t-att-src="appointment.sh_patient_id.image_128 and '/web/image/res.partner/' + str(appointment.sh_patient_id.id) + '/image_128'"
-                                        class="rounded-circle me-2" width="32" height="32" />
+                                        class="rounded-circle me-2"
+                                        style="width: 36px; height: 36px;"
+                                        alt="Patient Image" />
                                     <span class="fw-bold">
                                         <t t-esc="appointment.sh_patient_id.name" />
                                     </span>
                                 </div>
-                                <div class="ms-4">
-                                    <div class="d-flex align-items-center mb-1">
-                                        <i class="fa fa-phone me-2 text-dark"></i>
-                                        <span>
-                                            <t t-esc="appointment.sh_phone" />
-                                        </span>
-                                    </div>
-                                    <div class="d-flex align-items-center mb-1">
-                                        <i class="fa fa-envelope me-2 text-dark"></i>
-                                        <span>
-                                            <t t-esc="appointment.sh_email" />
-                                        </span>
-                                    </div>
-                                    <div class="d-flex align-items-center mb-1">
-                                        <i class="fa fa-tint me-2 text-dark"></i>
-                                        <span>
-                                            <t t-esc="appointment.sh_blood_group" />
-                                        </span>
-                                    </div>
-                                    <div class="d-flex align-items-center mb-1">
-                                        <i class="fa fa-calendar me-2 text-dark"></i>
-                                        <span>
-                                            <t t-esc="appointment.sh_birth_date" />
-                                        </span>
-                                    </div>
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fa fa-phone me-2 text-dark"></i>
+                                    <span>
+                                        <t t-esc="appointment.sh_phone" />
+                                    </span>
+                                </div>
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fa fa-envelope me-2 text-dark"></i>
+                                    <span>
+                                        <t t-esc="appointment.sh_email" />
+                                    </span>
+                                </div>
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fa fa-tint me-2 text-dark"></i>
+                                    <span>
+                                        <t t-esc="appointment.sh_blood_group" />
+                                    </span>
+                                </div>
+                                <div class="d-flex align-items-center mb-1">
+                                    <i class="fa fa-calendar me-2 text-dark"></i>
+                                    <span>
+                                        <t t-esc="appointment.sh_birth_date" />
+                                    </span>
                                 </div>
                             </div>
 
@@ -381,40 +249,278 @@
                             </div>
 
                             <!-- Optional Table Section -->
+
                             <div class="mt-5">
                                 <h5 class="text-uppercase text-dark mb-3">Summary</h5>
                                 <table class="table table-bordered">
                                     <tr>
-                                        <th>Status</th>
+                                        <th>Disease Name</th>
                                         <td>
-                                            <t t-esc="appointment.sh_state" />
+                                            <t
+                                                t-esc="appointment.sh_disease_line.sh_disease_name.name" />
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th>Slot</th>
+                                        <th>Saverty</th>
                                         <td>
-                                            <t t-esc="appointment.sh_slt_id.name" />
+                                            <t t-esc="appointment.sh_disease_line.sh_severity" />
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th>Date</th>
+                                        <th>Medicine Name</th>
                                         <td>
-                                            <t t-esc="appointment.sh_date" />
+                                            <t
+                                                t-esc="appointment.sh_prescription_line.sh_medicine_id.name" />
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th>Visit Type</th>
+                                        <th>Medicine Type</th>
                                         <td>
-                                            <t t-esc="appointment.sh_visit_type" />
+                                            <t
+                                                t-esc="appointment.sh_prescription_line.sh_medicine_type_id.name" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Dosage Duration</th>
+                                        <td>
+                                            <t
+                                                t-esc="appointment.sh_prescription_line.sh_dosage_duration" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Morning</th>
+                                        <td>
+                                            <t t-esc="appointment.sh_prescription_line.sh_morning" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Afternoon</th>
+                                        <td>
+                                            <t t-esc="appointment.sh_prescription_line.sh_afternoon" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Evening</th>
+                                        <td>
+                                            <t t-esc="appointment.sh_prescription_line.sh_evening" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Night</th>
+                                        <td>
+                                            <t t-esc="appointment.sh_prescription_line.sh_night" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Late Night</th>
+                                        <td>
+                                            <t
+                                                t-esc="appointment.sh_prescription_line.sh_late_night" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Instruction</th>
+                                        <td>
+                                            <t
+                                                t-if="appointment.sh_prescription_line.sh_instruction == 'after_meal'">After
+                                                Meal</t>
+                                            <t
+                                                t-if="appointment.sh_prescription_line.sh_instruction == 'before_meal'">Before
+                                                Meal</t>
                                         </td>
                                     </tr>
                                 </table>
                             </div>
+                            <br />
+                            <hr />
+                            <div class="container my-5">
+                                <h2>Communication history</h2>
+                                <t t-call="portal.message_thread">
+                                    <t t-set="object" t-value="appointment"></t>
+                                </t>
+                            </div>
+
                         </div>
                     </div>
                 </div>
 
             </t>
         </template>
+
+
+        <template id="book_appointment_form" name="Book Appointment Form">
+            <t t-call="portal.portal_layout">
+                <div class="container mt-4">
+                    <h2>Book Appointment</h2>
+                    <form action="/submit/appointment" method="post" class="form">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+
+
+                        <!-- Doctor -->
+                        <div class="form-group">
+                            <label for="sh_doctor_id">Doctor</label>
+                            <select name="sh_doctor_id" class="form-control" >
+                                <t t-foreach="doctors" t-as="doc">
+                                    <option t-att-value="doc.id">
+                                        <t t-esc="doc.name" />
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
+
+                        <!-- Appointment Date -->
+                        <div class="form-group">
+                            <label for="sh_date">Appointment Date</label>
+                            <input type="date" name="sh_date" class="form-control"  />
+                        </div>
+
+                        <!-- Slot -->
+                        <div class="form-group">
+                            <label for="sh_slt_id">Slot</label>
+                            <select name="sh_slt_id" class="form-control">
+                                <t t-if="slots">
+                                    <t t-foreach="slots" t-as="slt">
+                                        <option t-att-value="slt.id">
+                                            <t t-esc="slt.name" />
+                                        </option>
+                                    </t>
+                                </t>
+                                <t t-if="not slots">
+                                    <option>No slots available for selected date</option>
+                                </t>
+                            </select>
+                        </div>
+
+                        <!-- Visit Type -->
+                        <div class="form-group">
+                            <label for="sh_visit_type">Visit Type</label>
+                            <select name="sh_visit_type" class="form-control" >
+                                <option value="new">New</option>
+                                <option value="old">Old</option>
+                            </select>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="form-group">
+                            <label for="sh_phone">Phone</label>
+                            <input type="text" name="sh_phone" class="form-control"  />
+                        </div>
+
+                        <button type="submit" class="btn btn-success mt-2">Submit</button>
+                    </form>
+                </div>
+            </t>
+        </template>
+
+
+        <!-- <template id="book_appointment_form" name="Book Appointment Form">
+            <t t-call="portal.portal_layout">
+                <div class="container mt-4">
+                    <h2>Book Appointment</h2>
+                    <form action="/submit/appointment" method="post" class="form">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" /> -->
+
+                        <!-- Doctor Field -->
+                        <!-- <div class="form-group">
+                            <label for="sh_doctor_id">Doctor</label>
+                            <select name="sh_doctor_id" class="form-control">
+                                <t t-foreach="doctors" t-as="doc">
+                                    <option t-att-value="doc.id">
+                                        <t t-esc="doc.name" />
+                                    </option>
+                                </t>
+                            </select>
+                        </div> -->
+
+                        <!-- Date Field -->
+                        <!-- <div class="form-group">
+                            <label for="sh_date">Appointment Date</label>
+                            <input type="date" name="sh_date" id="sh_date" class="form-control" />
+                        </div> -->
+
+                        <!-- Slot Field -->
+                        <!-- <div class="form-group">
+                            <label for="sh_slt_id">Slot</label>
+                            <select name="sh_slt_id" id="sh_slt_id" class="form-control">
+                                <t t-if="slots">
+                                    <t t-foreach="slots" t-as="slt">
+                                        <option t-att-value="slt.id">
+                                            <t t-esc="slt.name" />
+                                        </option>
+                                    </t>
+                                </t>
+                            </select>
+                        </div> -->
+                        
+
+                        <!-- Visit Type -->
+                        <!-- <div class="form-group">
+                            <label for="sh_visit_type">Visit Type</label>
+                            <select name="sh_visit_type" class="form-control">
+                                <option value="new">New</option>
+                                <option value="old">Old</option>
+                            </select>
+                        </div> -->
+
+                        <!-- Phone -->
+                        <!-- <div class="form-group">
+                            <label for="sh_phone">Phone</label>
+                            <input type="text" name="sh_phone" class="form-control" />
+                        </div>
+
+                        <button type="submit" class="btn btn-success mt-2">Submit</button>
+                    </form>
+                </div> -->
+
+                <!-- JS Script -->
+                <!-- <script type="text/javascript"> document.addEventListener("DOMContentLoaded", function () {
+                    const dateInput = document.querySelector('#sh_date');
+                    const slotSelect = document.querySelector('#sh_slt_id');
+
+                    if (!dateInput || !slotSelect) return;
+
+                    dateInput.addEventListener('change', function () {
+                        const date = this.value;
+                        console.log("Fetched DATE====:", date);
+                        if (!date) return;
+
+                        // Show loading message
+                        slotSelect.innerHTML = '<option value="">Loading slots...</option>';
+
+                        fetch('/get/slots', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': odoo.csrf_token || document.querySelector('input[name="csrf_token"]').value
+                            },
+                            body: JSON.stringify({ date: date })
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                slotSelect.innerHTML = ''; // Clear current options
+                                
+                                if (data.length) {
+                                    slotSelect.innerHTML = '<option value="">No slots available </option>';
+                                } else {
+                                    
+                                    slotSelect.innerHTML = '<option value="date">'+date+'</option> <option value="date">'+date+'_2</option>';
+                                    this.orm.searchRead('sh.slot.schedule', [
+                                        ['sh_date', '=', date]
+                                    ]);
+                                    const records = this.orm.searchRead("sh.slot.schedule", ['sh_date', '=', date], ["sh_slt_id"]);
+                                    console.log(records);
+                                }
+                            })
+                            .catch(error => {
+                                console.error("Slot fetch error:", error);
+                                slotSelect.innerHTML = '<option value="">Error loading slots</option>';
+                            });
+                    });
+                });
+                </script>
+            </t>
+        </template> -->
+
+
     </data>
 </odoo>
