@@ -61,6 +61,11 @@
         # menuitem
         'views/sh_clinic_menuitems.xml',
     ],
+    'assets': {
+        'web.assets_frontend': [
+                'sh_clinic_mgmt/static/src/js/portal.js',
+            ],
+    },
         
     'installable': True,
     'application': True,

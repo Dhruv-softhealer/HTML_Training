@@ -39,7 +39,7 @@
                         <group>
                             <field name="sh_emergency_case" readonly="sh_state == 'completed_appointment'"></field>
                             <field name="sh_date" readonly="sh_state == 'completed_appointment'"></field>
-                            <field name="sh_slt_id" readonly="sh_state == 'completed_appointment'" domain="[('sh_date', '=', sh_date)]" options="{'no_create': True}"></field>
+                            <field name="sh_slt_id" readonly="sh_state == 'completed_appointment'" domain="[('sh_date', '=', sh_date), ('sh_slot_id.doctor_id', '=', sh_doctor_id)]" options="{'no_create': True}"></field>
                         </group>
                     </group>
                     <notebook>

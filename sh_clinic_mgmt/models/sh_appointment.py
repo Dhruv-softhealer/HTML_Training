@@ -20,11 +20,13 @@ class Appointment(models.Model):
     
     name = fields.Char(string="Appointment Number", required=True, tracking=True, readonly=True, default=lambda self: _('New'))
     sh_patient_id = fields.Many2one('res.partner', string="Patient Name", required=True, tracking=True)
-    sh_doctor_id = fields.Many2one('hr.employee', string="Doctor Name", required=True, tracking=True)
+    sh_doctor_id = fields.Many2one('hr.employee', string="Doctor Name", required=True, tracking=True, 
+    domain=[('job_id.name','=','Doctor')]
+    )
     sh_doctor_specialization = fields.Char(string="Doctor Specialization", related="sh_doctor_id.sh_specialization")
     sh_date = fields.Date(string="Date", required=True, tracking=True)
-    sh_slt_id = fields.Many2one('sh.slot.schedule',required=True,string='Slot')
     sh_slot_id = fields.Many2one('sh.slots',related="sh_slt_id.sh_slot_id", store=True, string='Slot')
+    sh_slt_id = fields.Many2one('sh.slot.schedule',required=True,string='Slot')
     sh_expected_revenue = fields.Float(string="Case Charges", tracking=True)
     sh_emergency_case = fields.Boolean(string="Emergency Case", tracking=True)
     
@@ -198,6 +200,7 @@ class Appointment(models.Model):
             
 
     def assign_slot_line(self):
+        print("\n\n\n\n-=-=-=-=--=-=-")
         for rec in self:
             if rec.sh_slt_id and rec.sh_date:
                 if not rec.sh_emergency_slot_bypass:
@@ -209,12 +212,14 @@ class Appointment(models.Model):
                 rec.sh_slt_id.write({
                     'sh_appointment_line': [Command.link(rec.id)]
                     })
+                print("\n\n\n\n-=-=-=-=--=-=-rec.sh_slt_id",rec.sh_slt_id)
                 
 
 # ================================== Sequence =======================================
    
     @api.model_create_multi
     def create(self, vals):
+        print("\n\n\n\nportal create===============>>>>", vals)
         for val in vals:
             if val['sh_date']:
                 booking_dt = fields.Datetime.from_string(val['sh_date'])

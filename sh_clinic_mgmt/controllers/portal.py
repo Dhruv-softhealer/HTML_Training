@@ -11,6 +11,10 @@ from odoo.addons.account.controllers.download_docs import _get_headers, _build_z
 from odoo.exceptions import AccessError,MissingError
 from odoo import fields
 import requests
+import logging
+import json
+
+_logger = logging.getLogger(__name__)
 
 class AppointmentPortal(CustomerPortal):
 
@@ -35,39 +39,8 @@ class AppointmentPortal(CustomerPortal):
         if search_in in ('all', 'sh_state'):
             search_domains.append([('sh_state', 'ilike', search)])
 
-        # print('\n\n\n\n')
-        # print(f'---old-search_domains----> {search_domains}')
-        # print('\n\n\n\n')
         return OR(search_domains) if search_domains else []
-
-    # Portal Pagination at Form side
-
-    # def get_records_pager(ids, current):
-    #     if current.id in ids and (hasattr(current, 'website_url') or hasattr(current, 'access_url')):
-    #         attr_name = 'access_url' if hasattr(current, 'access_url') else 'website_url'
-    #         idx = ids.index(current.id)
-    #         prev_record = idx != 0 and current.browse(ids[idx - 1])
-    #         next_record = idx < len(ids) - 1 and current.browse(ids[idx + 1])
-
-    #         if prev_record and prev_record[attr_name] and attr_name == "access_url":
-    #             prev_url = '%s?access_token=%s' % (prev_record[attr_name], prev_record._portal_ensure_token())
-    #         elif prev_record and prev_record[attr_name]:
-    #             prev_url = prev_record[attr_name]
-    #         else:
-    #             prev_url = prev_record
-
-    #         if next_record and next_record[attr_name] and attr_name == "access_url":
-    #             next_url = '%s?access_token=%s' % (next_record[attr_name], next_record._portal_ensure_token())
-    #         elif next_record and next_record[attr_name]:
-    #             next_url = next_record[attr_name]
-    #         else:
-    #             next_url = next_record
-
-    #         return {
-    #             'prev_record': prev_url,
-    #             'next_record': next_url,
-    #         }
-    #     return {}
+    
     
     @http.route(['/my/appointments', '/my/appointments/page/<int:page>'], type='http', auth="user", website=True)
     def portal_my_appointments(self, page=1, sortby=True, filterby="all", groupby=None, search=None, search_in='name', **kw):
@@ -77,7 +50,6 @@ class AppointmentPortal(CustomerPortal):
         domain = [('sh_patient_id', '=', partner_id)]
         
         appointments_count = Appointment.search_count(domain)
-        
         
         # Search and Filter Logic
         
@@ -112,16 +84,8 @@ class AppointmentPortal(CustomerPortal):
 
         search_bar_domain = self._search_bar_domain(search,search_in)
        
-        # print('\n\n\n\n')
-        # print(f'----search_bar_domain----> {search_bar_domain}')
-        # print('\n\n\n\n')
-
         if search_bar_domain:
             domain = AND([domain,search_bar_domain])
-
-        # print('\n\n\n\n')
-        # print(f'----domain----> {domain}')
-        # print('\n\n\n\n')
         
         # Sorting & Pagination Logic
         
@@ -135,6 +99,7 @@ class AppointmentPortal(CustomerPortal):
             url_args={'sortby': sortby, 'search_in': search_in, 'search': search, 'filterby': filterby, 'groupby': groupby},
         )
         appointments = Appointment.search(domain, limit=20, offset=pager['offset'], order=order)      
+
 
         # Grouping Logic
 
@@ -157,6 +122,8 @@ class AppointmentPortal(CustomerPortal):
         
         # Prepare the response for rendering
         
+        request.session['my_pager'] = appointments.ids
+        
         return request.render("sh_clinic_mgmt.portal_my_appointments", {
             'appointments': appointments,
             'pager': pager,
@@ -178,9 +145,9 @@ class AppointmentPortal(CustomerPortal):
             'default_url': url,
         })
         
+    # Pagination at Form Side
       
-    @staticmethod
-    def get_records_pager(ids, current):
+    def get_records_pager(self, ids, current):
         if current.id in ids and (hasattr(current, 'website_url') or hasattr(current, 'access_url')):
             attr_name = 'access_url' if hasattr(current, 'access_url') else 'website_url'
             idx = ids.index(current.id)
@@ -192,14 +159,14 @@ class AppointmentPortal(CustomerPortal):
             elif prev_record and prev_record[attr_name]:
                 prev_url = prev_record[attr_name]
             else:
-                prev_url = False
+                prev_url = prev_record
 
             if next_record and next_record[attr_name] and attr_name == "access_url":
                 next_url = '%s?access_token=%s' % (next_record[attr_name], next_record._portal_ensure_token())
             elif next_record and next_record[attr_name]:
                 next_url = next_record[attr_name]
             else:
-                next_url = False
+                next_url = next_record
 
             return {
                 'prev_record': prev_url,
@@ -208,7 +175,7 @@ class AppointmentPortal(CustomerPortal):
         return {}
 
     # Portal Record Detail View
-      
+    
     @http.route(["/my/appointments/<int:appointment_id>"], type="http", auth="public", website=True)
     def my_portal_document(self, appointment_id, access_token=None, report_type=None, download=False):
         try:
@@ -217,16 +184,22 @@ class AppointmentPortal(CustomerPortal):
             return request.redirect('/my')
 
         # Report
-
         if report_type in ('html', 'pdf', 'text'):
-            return self._show_report(model=appointment, report_type=report_type, report_ref='sh_clinic_mgmt.report_appointment_action', download=download)
-
+            return self._show_report(
+                model=appointment,
+                report_type=report_type,
+                report_ref='sh_clinic_mgmt.report_appointment_action',
+                download=download
+            )
         # Fetch record list of current user
-        
-        appointments = request.env['sh.appointment'].sudo().search([
-            ('sh_patient_id', '=', request.env.user.partner_id.id)
-        ])
-        record_pager = self.get_records_pager(appointments.ids, appointment)
+        # appointments = request.env['sh.appointment'].sudo().search([
+        #     ('sh_patient_id', '=', request.env.user.partner_id.id)
+        # ])
+
+        history = request.session.get('my_pager',[]) 
+
+
+        record_pager = self.get_records_pager(history, appointment)
 
         return request.render("sh_clinic_mgmt.portal_appointment_detail", {
             "appointment": appointment,
@@ -234,64 +207,93 @@ class AppointmentPortal(CustomerPortal):
             "prev_record": record_pager.get('prev_record'),
             "next_record": record_pager.get('next_record'),
         })
+
         
-        
-        
-    # @http.route('/book/appointment', type='http', auth="user", website=True)
-    # def book_appointment(self, **kw):
-    #     selected_date = kw.get('sh_date')
-    
-    #     domain = []
-    #     domain = [('sh_date', '=', fields.Datetime.now())]
-    #     # if selected_date:
-    #     temp = request.env['sh.slot.schedule'].sudo().search(domain)
-    #     print("---------------------->\n\n\n",temp)
-    #     values = {
-    #         'doctors': request.env['hr.employee'].sudo().search([
-    #             ('job_id.name', '=', 'Doctor')
-    #         ]),
-    #         'slots': temp,
-    #         'selected_date': selected_date,
-    #         'csrf_token': request.csrf_token(),
-    #     }
-    #     return request.render('sh_clinic_mgmt.book_appointment_form', values)
+    # Book Appointment Page
     
     @http.route('/book/appointment', type='http', auth="user", website=True)
     def book_appointment(self, **kw):
+        # print("KW >>>", kw)
         selected_date = kw.get('sh_date') or fields.Date.today().strftime('%Y-%m-%d')
-        print("\n\n\n\n-------",selected_date)
-        domain = [('sh_date', '=', selected_date)]
 
-        slots = request.env['sh.slot.schedule'].sudo().search(domain)
+        # domain = [('sh_date', '=', selected_date)]
+        # slots = request.env['sh.slot.schedule'].sudo().search(domain)
 
         values = {
-            'doctors': request.env['hr.employee'].sudo().search([
-                ('job_id.name', '=', 'Doctor')
-            ]),
-            'slots': slots,
+            'doctors': request.env['hr.employee'].sudo().search([('job_id.name', '=', 'Doctor')]),
+            'slots': request.env['sh.slot.schedule'].sudo().search([('sh_date', '=', selected_date)]),
             'selected_date': selected_date,
             'csrf_token': request.csrf_token(),
         }
-
         return request.render('sh_clinic_mgmt.book_appointment_form', values)
 
 
-    @http.route('/submit/appointment', type='http', auth="user", website=True, methods=["POST"])
+    # Submit Appointment Page
+
+    @http.route('/submit/appointment', type='http', auth="user", website=True, methods=["POST"],csrf=False)
     def submit_appointment(self, **post):
         patient = request.env.user.partner_id
-
+        print("\n\n\n\n======",patient)
         doctor_id = post.get('sh_doctor_id')
-        slot_id = post.get('sh_slt_id')
+        slot_id = post.get('portal_slot')
+        print("\n\n\n\n======doctor_id",doctor_id)
+        print("\n\n\n\n======slot_id",slot_id)
+        
 
         if not doctor_id or not slot_id:
             return request.redirect('/book/appointment')
 
-        request.env['sh.appointment'].sudo().create({
+        rec_apt = request.env['sh.appointment'].sudo().create({
             'sh_patient_id': patient.id,
             'sh_doctor_id': int(doctor_id),
             'sh_date': post.get('sh_date'),
             'sh_slt_id': int(slot_id),
+            'sh_visit_type':"new",
             'sh_phone': post.get('sh_phone'),
-            'sh_visit_type': post.get('sh_visit_type'),
         })
+        print("\n\n\n\n======rec_apt",rec_apt.name)
+
+
+    @http.route('/portal/slotdata', type="http",auth="user",methods=['POST'],website=True,csrf=False)
+    def sh_slot_data(self, **kw):
+        dic = {}
+        print("\n\n\n\n====>kw.get('sh_date')",type(kw.get('sh_doctor_id')))
+        if kw.get('sh_date'):
+            sub_categ_list = []
+            sub_categ_ids = request.env['sh.slot.schedule'].sudo().search(
+                [('sh_date', '=', (kw.get('sh_date')))])
+            print("\n\n\n\n====>sub_categ_ids",sub_categ_ids)
+            
+            for sub in sub_categ_ids:
+                sub_categ_dic = {
+                    'id': sub.id,
+                    'name': sub.name,
+                }
+                sub_categ_list.append(sub_categ_dic)
+            dic.update({
+                'sub_categories': sub_categ_list
+            })
+        else:
+            dic.update({
+                'sub_categories': []
+            })
+        return json.dumps(dic)
+    
+    
+
+
+    # @http.route('/get/slots', type='json', auth='public')
+    # def get_slots(self, sh_date=None, sh_doctor_id=None, **kwargs):
+    #     _logger.info(f"AJAX SLOT FETCH: sh_doctor_id={sh_doctor_id}, sh_date={sh_date}")
+
+    #     if not sh_date or not sh_doctor_id:
+    #         return []
+
+    #     slots = request.env['sh.slot.schedule'].sudo().search([
+    #         ('doctor_id', '=', int(sh_doctor_id)),
+    #         ('sh_date', '=', sh_date)
+    #     ])
+
+    #     return [{'id': s.id, 'name': s.name} for s in slots]
+
 

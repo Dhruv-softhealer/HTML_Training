@@ -19,19 +19,23 @@
             </div>
         </template>
 
-        <!-- <template id="portal_my_appointments_custom"
-            inherit_id="sh_clinic_mgmt.portal_my_appointments">
-            <xpath expr="//div[hasclass('o_portal_search_panel')]" position="before">
-                <a type="button" class="btn btn-primary mb-2" role="button"
-                    t-attf-href="/my/appointments">
-                    <i class="fa fa-calendar-plus-o mr-1" /> Book Appointment </a>
-            </xpath>
-        </template> -->
-
 
         <template id="portal_my_appointments" name="My Appointments">
             <t t-call="portal.portal_layout">
                 <t t-set="breadcrumbs_searchbar" t-value="True" />
+
+
+                <!-- <t t-call="portal.portal_searchbar"> -->
+                <t t-set="title">Appointment</t>
+                <div class="form-inline ml-lg-4 sh_create_btn" id="sh_create_btn">
+                    <!-- Book Appointment Button -->
+
+                    <a type="button" class="btn btn-primary mb-2" role="button"
+                        t-attf-href="/book/appointment">
+                        <i class="fa fa-calendar-plus-o mr-1" /> Book Appointment </a>
+                </div>
+                <!-- </t> -->
+
 
                 <t t-set="searchbar_groupby"
                     t-value="{
@@ -55,7 +59,8 @@
                     <t t-foreach="grouped_appointments" t-as="group">
                         <div t-if="group[0]" class="mt-4">
                             <h5 class="text-primary border-bottom pb-1 mb-3">
-                                <t t-esc="group[0]" />
+                                <t t-set="val" t-value="group[0]" />
+                                <t t-esc="val" />
                             </h5>
                         </div>
                         <table class="table table-hover mb-4">
@@ -111,10 +116,6 @@
                 <li t-if="appointment" class="breadcrumb-item active">
                     <span t-field="appointment.name" />
                 </li>
-                <!-- <a class="btn btn-light o_download_btn flex-grow-1 w-20 my-2"
-                    t-att-href="/my/appointments"
-                    title="Download" target='_blank' role="button">
-                    <i class="fa fa-download" /> Book Appointment </a> -->
             </xpath>
         </template>
 
@@ -132,12 +133,6 @@
                                 t-att-href="appointment.get_portal_url(report_type='pdf')"
                                 title="Download" target='_blank' role="button">
                                 <i class="fa fa-download" /> View Detail </a>
-                            
-                            <!-- Book Appointment Button -->
-                             
-                            <a type="button" class="btn btn-primary mb-2" role="button"
-                                t-attf-href="/book/appointment">
-                                <i class="fa fa-calendar-plus-o mr-1" /> Book Appointment </a>
 
                             <div class="mb-4">
                                 <p class="text-muted fw-bold mb-1">Doctor</p>
@@ -348,18 +343,334 @@
         </template>
 
 
+        <!-- <template id="portal_ticket_page" name="My Appointments">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True" />
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Appointment</t>
+                    <div class="form-inline ml-lg-4 sh_create_btn" id="sh_create_btn">
+                        <a id="new_request" class="btn btn-secondary" name="new_request"
+                            title="Create Support Request" aria-label="Create Support Request"
+                            role="button">
+                            <i class="fa fa-plus" /> Create New Appointment </a>
+                    </div>
+                </t>
+                <div id="createticketModal" class="modal fade" role="dialog">
+                    <div class="modal-dialog"> -->
+        <!-- Modal content-->
+        <!-- <div class="modal-content"> -->
+        <!-- <div class="modal-header">
+                         <h4 class="modal-title">Create Helpdesk Ticket</h4>
+                         <button type="button" class="close" data-bs-dismiss="modal">&amp;times;</button>
+                      </div> -->
+        <!-- <div
+                                class="modal-header d-flex justify-content-between align-items-center">
+                                <h5 class="modal-title">Create Helpdesk Ticket</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal"
+                                    aria-label="Close">
+                                    <span aria-hidden="true">&amp;times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="/portal-create-ticket" id="form_id" method="POST"
+                                    class="form-horizontal mt32" enctype="multipart/form-data">
+                                    <input type="hidden" name="sh_file_size" id="sh_file_size"
+                                        t-att-value="request.env.company.sh_file_size" />
+                                    <t
+                                        t-if="request.env.user.has_group('base.group_portal') and
+        request.env.user.sh_portal_user_access=='manager'">
+                                        <div class="row">
+                                            <div
+                                                class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
+                                                <div
+                                                    t-attf-class="form-group mb-3 #{error and 'portal_email_subject' in error and 'has-error' or ''}">
+                                                    <label class="control-label mb-1"
+                                                        for="portal_email_subject">Subject</label>
+                                                    <textarea id="portal_email_subject"
+                                                        name="portal_email_subject" required="True"
+                                                        class="form-control form-field o_website_form_required_custom"
+                                                        placeholder="Subject..." />
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
+                                                <label class="control-label mb-1" for="partner_id">
+                                                    Partner:</label>
+                                                <select
+                                                    class="form-control form-field o_website_form_required_custom"
+                                                    id="partner_id" name="partner_id">
+                                                    <option value="partner">Select Partner</option>
+                                                    <t
+                                                        t-foreach="request.env['res.partner'].sudo().search([])"
+                                                        t-as="partner">
+                                                        <option t-att-value="partner.id">
+                                                            <t t-esc="partner.name" />
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div
+                                                class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
+                                                <div
+                                                    t-attf-class="form-group mb-3 #{error and 'portal_contact_name' in error and 'has-error' or ''}">
+                                                    <label class="control-label mb-1"
+                                                        for="portal_contact_name">Name</label>
+                                                    <input type="text" class="form-control"
+                                                        id="portal_contact_name"
+                                                        name="portal_contact_name" required="True" />
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
+                                                <div name="portal_email_from_container"
+                                                    t-attf-class="form-group #{error and 'portal_email' in error and 'has-error' or ''}">
+                                                    <label class="control-label mb-1"
+                                                        for="portal_email">Email</label>
+                                                    <input type="email" class="form-control"
+                                                        id="portal_email" name="portal_email"
+                                                        required="True" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div
+                                                    t-attf-class="form-group mb-3 #{error and 'portal_email_subject' in error and 'has-error' or ''}">
+                                                    <label class="control-label mb-1"
+                                                        for="portal_email_subject">Subject</label>
+                                                    <textarea id="portal_email_subject"
+                                                        name="portal_email_subject" required="True"
+                                                        class="form-control form-field o_website_form_required_custom"
+                                                        placeholder="Subject..." />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div
+                                                class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
+                                                <div
+                                                    t-attf-class="form-group mb-3 #{error and 'portal_contact_name' in error and 'has-error' or ''}">
+                                                    <label class="control-label mb-1"
+                                                        for="portal_contact_name">Name</label>
+                                                    <input type="text" class="form-control"
+                                                        id="portal_contact_name"
+                                                        name="portal_contact_name"
+                                                        t-att-value="request.env.user.partner_id.name"
+                                                        readonly="True" />
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
+                                                <div name="portal_email_from_container"
+                                                    t-attf-class="form-group mb-3 #{error and 'portal_email' in error and 'has-error' or ''}">
+                                                    <label class="control-label mb-1"
+                                                        for="portal_email">Email</label>
+                                                    <input type="email" class="form-control"
+                                                        id="portal_email" name="portal_email"
+                                                        t-att-value="request.env.user.partner_id.email"
+                                                        readonly="True" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <t
+                                        t-if="request.env.company.category and not request.env.company.sub_category">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div t-attf-class="form-group mb-3">
+                                                    <label class="control-label mb-1"
+                                                        for="portal_category">Category</label>
+                                                    <select
+                                                        class="form-control form-field o_website_form_required_custom"
+                                                        id="portal_category" name="portal_category">
+                                                        <option value="category">Select Category</option>
+                                                        <t
+                                                            t-foreach="request.env['helpdesk.category'].sudo().search([])"
+                                                            t-as="category">
+                                                            <option t-att-value="category.id">
+                                                                <t t-esc="category.name" />
+                                                            </option>
+                                                        </t>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <t
+                                        t-if="not request.env.company.category and request.env.company.sub_category">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div t-attf-class="form-group mb-3">
+                                                    <label class="control-label mb-1"
+                                                        for="portal_subcategory">Sub Category</label>
+                                                    <select
+                                                        class="form-control form-field o_website_form_required_custom"
+                                                        id="portal_subcategory"
+                                                        name="portal_subcategory">
+                                                        <option value="sub_category">Select Sub
+                                                            Category</option>
+                                                        <t
+                                                            t-foreach="request.env['helpdesk.subcategory'].sudo().search([])"
+                                                            t-as="subcategory">
+                                                            <option t-att-value="subcategory.id">
+                                                                <t t-esc="subcategory.name" />
+                                                            </option>
+                                                        </t>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <t
+                                        t-if="request.env.company.category and request.env.company.sub_category">
+                                        <div class="row">
+                                            <div
+                                                class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
+                                                <div t-attf-class="form-group mb-3">
+                                                    <label class="control-label mb-1"
+                                                        for="portal_category">Category</label>
+                                                    <select
+                                                        class="form-control form-field o_website_form_required_custom"
+                                                        id="portal_category" name="portal_category">
+                                                        <option value="category">Select Category</option>
+                                                        <t
+                                                            t-foreach="request.env['helpdesk.category'].sudo().search([])"
+                                                            t-as="category">
+                                                            <option t-att-value="category.id">
+                                                                <t t-esc="category.name" />
+                                                            </option>
+                                                        </t>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
+                                                <div t-attf-class="form-group mb-3">
+                                                    <label class="control-label mb-1"
+                                                        for="portal_subcategory">Sub Category</label>
+                                                    <select
+                                                        class="form-control form-field o_website_form_required_custom"
+                                                        id="portal_subcategory"
+                                                        name="portal_subcategory">
+                                                        <option value="sub_category">Select Sub
+                                                            Category</option>
+                                                        <t
+                                                            t-foreach="request.env['helpdesk.subcategory'].sudo().search([])"
+                                                            t-as="subcategory">
+                                                            <option t-att-value="subcategory.id">
+                                                                <t t-esc="subcategory.name" />
+                                                            </option>
+                                                        </t>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div
+                                                t-attf-class="form-group mb-3 #{error and 'portal_description' in error and 'has-error' or ''}">
+                                                <label class="control-label mb-1"
+                                                    for="portal_description">Description</label>
+                                                <textarea id="description" name="portal_description"
+                                                    class="form-control form-field o_website_form_required_custom"
+                                                    placeholder="Description" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div
+                                            class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
+                                            <div t-attf-class="form-group mb-3">
+                                                <label class="control-label mb-1" for="portal_type">
+                                                    Type</label>
+                                                <select
+                                                    class="form-control form-field o_website_form_required_custom"
+                                                    id="portal_type" name="portal_type">
+                                                    <option value="type">Select Type</option>
+                                                    <t
+                                                        t-foreach="request.env['sh.helpdesk.ticket.type'].sudo().search([])"
+                                                        t-as="type">
+                                                        <option t-att-value="type.id">
+                                                            <t t-esc="type.name" />
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
+
+                                            <div t-attf-class="form-group">
+                                                <label class="control-label" for="portal_priority">
+                                                    Priority</label>
+                                                <select
+                                                    class="form-control form-field o_website_form_required_custom"
+                                                    id="portal_priority" name="portal_priority">
+                                                    <option value="priority">Select Priority</option>
+                                                    <t
+                                                        t-foreach="request.env['helpdesk.priority'].sudo().search([])"
+                                                        t-as="priority">
+                                                        <option t-att-value="priority.id">
+                                                            <t t-esc="priority.name" />
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div name="portal_file_container"
+                                                t-attf-class="form-group mb-3 #{error and 'portal_file' in error and 'has-error' or ''}">
+                                                <label class="control-label mb-1 d-block"
+                                                    for="portal_file">Attachments</label>
+                                                <label class="custom-file">
+                                                    <input name="portal_file" id="portal_file"
+                                                        type="file" multiple="multiple" />
+                                                    <span class="custom-file-control" />
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="text-align: right;">
+                                        <div class="col-12">
+                                            <button type="submit" id="create_helpdesk_ticket"
+                                                class="btn btn-primary">Create Ticket</button>
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <t t-if="not sh_tickets">
+                    <p>There are currently no Slots for your account.</p>
+                </t>
+
+            </t>
+        </template> -->
+
+
         <template id="book_appointment_form" name="Book Appointment Form">
             <t t-call="portal.portal_layout">
                 <div class="container mt-4">
                     <h2>Book Appointment</h2>
-                    <form action="/submit/appointment" method="post" class="form">
-                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
 
+                    <!-- Step 1: Submit Appointment -->
+                    <form action="/submit/appointment" method="post"
+                        class="form o_portal_appointment_form">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
 
                         <!-- Doctor -->
                         <div class="form-group">
                             <label for="sh_doctor_id">Doctor</label>
-                            <select name="sh_doctor_id" class="form-control" >
+                            <select name="sh_doctor_id" class="form-control" id="sh_doctor_id">
                                 <t t-foreach="doctors" t-as="doc">
                                     <option t-att-value="doc.id">
                                         <t t-esc="doc.name" />
@@ -369,41 +680,35 @@
                         </div>
 
                         <!-- Appointment Date -->
-                        <div class="form-group">
-                            <label for="sh_date">Appointment Date</label>
-                            <input type="date" name="sh_date" class="form-control"  />
+                        <div class="row">
+                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
+                                <div t-attf-class="form-group mb-3">
+                                    <div class="form-group">
+                                        <label for="sh_date">Select Appointment Date</label>
+                                        <input type="date" id="sh_date" name="sh_date"
+                                            class="form-control"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
+                                <div t-attf-class="form-group mb-3">
+                                    <label class="control-label mb-1" for="portal_subcategory">slot</label>
+                                    <select
+                                        class="form-control form-field o_website_form_required_custom"
+                                        id="portal_slot" name="portal_slot">
+                                        <option value="sub_category">Select slot</option>
+                                        
+                                    </select>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Slot -->
-                        <div class="form-group">
-                            <label for="sh_slt_id">Slot</label>
-                            <select name="sh_slt_id" class="form-control">
-                                <t t-if="slots">
-                                    <t t-foreach="slots" t-as="slt">
-                                        <option t-att-value="slt.id">
-                                            <t t-esc="slt.name" />
-                                        </option>
-                                    </t>
-                                </t>
-                                <t t-if="not slots">
-                                    <option>No slots available for selected date</option>
-                                </t>
-                            </select>
-                        </div>
-
-                        <!-- Visit Type -->
-                        <div class="form-group">
-                            <label for="sh_visit_type">Visit Type</label>
-                            <select name="sh_visit_type" class="form-control" >
-                                <option value="new">New</option>
-                                <option value="old">Old</option>
-                            </select>
-                        </div>
 
                         <!-- Phone -->
                         <div class="form-group">
                             <label for="sh_phone">Phone</label>
-                            <input type="text" name="sh_phone" class="form-control"  />
+                            <input type="text" name="sh_phone" class="form-control" />
                         </div>
 
                         <button type="submit" class="btn btn-success mt-2">Submit</button>
@@ -417,11 +722,35 @@
             <t t-call="portal.portal_layout">
                 <div class="container mt-4">
                     <h2>Book Appointment</h2>
-                    <form action="/submit/appointment" method="post" class="form">
-                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" /> -->
 
-                        <!-- Doctor Field -->
-                        <!-- <div class="form-group">
+                    <t t-set="breadcrumbs_searchbar" t-value="True" />
+
+                    <t t-call="portal.portal_searchbar">
+                        <t t-set="title">Appointment</t>
+                        <div class="form-inline ml-lg-4 sh_create_btn" id="sh_create_btn">
+                            Book Appointment Button
+
+                            <a type="button" class="btn btn-primary mb-2" role="button"
+                                t-attf-href="/book/appointment">
+                                <i class="fa fa-calendar-plus-o mr-1" /> Book Appointment </a>
+                        </div>
+                    </t>
+                    Step 1: Select Date
+                    <form action="/book/appointment" method="get" class="mb-4">
+                        <div class="form-group">
+                            <label for="sh_date">Select Appointment Date</label>
+                            <input type="date" id="sh_date" name="sh_date" class="form-control"
+                                t-att-value="selected_date" />
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2">Search Slots</button>
+                    </form>
+
+                    Step 2: Submit Appointment
+                    <form action="/submit/appointment" method="post" class="form">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+
+                        Doctor
+                        <div class="form-group">
                             <label for="sh_doctor_id">Doctor</label>
                             <select name="sh_doctor_id" class="form-control">
                                 <t t-foreach="doctors" t-as="doc">
@@ -430,97 +759,58 @@
                                     </option>
                                 </t>
                             </select>
-                        </div> -->
+                        </div>
 
-                        <!-- Date Field -->
-                        <!-- <div class="form-group">
+                        Appointment Date
+                        <div class="form-group" style="display: none;">
                             <label for="sh_date">Appointment Date</label>
-                            <input type="date" name="sh_date" id="sh_date" class="form-control" />
-                        </div> -->
+                            <input type="date" name="sh_date" class="form-control"
+                                t-att-value="selected_date" />
+                        </div>
 
-                        <!-- Slot Field -->
-                        <!-- <div class="form-group">
-                            <label for="sh_slt_id">Slot</label>
-                            <select name="sh_slt_id" id="sh_slt_id" class="form-control">
-                                <t t-if="slots">
-                                    <t t-foreach="slots" t-as="slt">
-                                        <option t-att-value="slt.id">
-                                            <t t-esc="slt.name" />
-                                        </option>
+                        Slot
+                        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
+                            <div t-attf-class="form-group mb-3">
+                                <label class="control-label mb-1" for="sh_slt_id">Slot</label>
+                                <select
+                                    class="form-control form-field o_website_form_required_custom"
+                                    id="sh_slt_id" name="sh_slt_id">
+                                    <option value="">Select Slot</option>
+                                    <t t-if="slots">
+                                        <t t-foreach="slots" t-as="slt">
+                                            <option t-att-value="slt.id">
+                                                <t t-esc="slt.name" />
+                                            </option>
+                                        </t>
                                     </t>
-                                </t>
-                            </select>
-                        </div> -->
-                        
+                                    <t t-if="not slots">
+                                        <option>No slots available for selected date</option>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
 
-                        <!-- Visit Type -->
-                        <!-- <div class="form-group">
+
+                        Visit Type
+                        <div class="form-group">
                             <label for="sh_visit_type">Visit Type</label>
                             <select name="sh_visit_type" class="form-control">
                                 <option value="new">New</option>
                                 <option value="old">Old</option>
                             </select>
-                        </div> -->
+                        </div>
 
-                        <!-- Phone -->
-                        <!-- <div class="form-group">
+                        Phone
+                        <div class="form-group">
                             <label for="sh_phone">Phone</label>
                             <input type="text" name="sh_phone" class="form-control" />
                         </div>
 
                         <button type="submit" class="btn btn-success mt-2">Submit</button>
                     </form>
-                </div> -->
-
-                <!-- JS Script -->
-                <!-- <script type="text/javascript"> document.addEventListener("DOMContentLoaded", function () {
-                    const dateInput = document.querySelector('#sh_date');
-                    const slotSelect = document.querySelector('#sh_slt_id');
-
-                    if (!dateInput || !slotSelect) return;
-
-                    dateInput.addEventListener('change', function () {
-                        const date = this.value;
-                        console.log("Fetched DATE====:", date);
-                        if (!date) return;
-
-                        // Show loading message
-                        slotSelect.innerHTML = '<option value="">Loading slots...</option>';
-
-                        fetch('/get/slots', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRFToken': odoo.csrf_token || document.querySelector('input[name="csrf_token"]').value
-                            },
-                            body: JSON.stringify({ date: date })
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                slotSelect.innerHTML = ''; // Clear current options
-                                
-                                if (data.length) {
-                                    slotSelect.innerHTML = '<option value="">No slots available </option>';
-                                } else {
-                                    
-                                    slotSelect.innerHTML = '<option value="date">'+date+'</option> <option value="date">'+date+'_2</option>';
-                                    this.orm.searchRead('sh.slot.schedule', [
-                                        ['sh_date', '=', date]
-                                    ]);
-                                    const records = this.orm.searchRead("sh.slot.schedule", ['sh_date', '=', date], ["sh_slt_id"]);
-                                    console.log(records);
-                                }
-                            })
-                            .catch(error => {
-                                console.error("Slot fetch error:", error);
-                                slotSelect.innerHTML = '<option value="">Error loading slots</option>';
-                            });
-                    });
-                });
-                </script>
+                </div>
             </t>
         </template> -->
-
 
     </data>
 </odoo>
