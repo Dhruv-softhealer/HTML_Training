@@ -216,9 +216,6 @@ class AppointmentPortal(CustomerPortal):
         # print("KW >>>", kw)
         selected_date = kw.get('sh_date') or fields.Date.today().strftime('%Y-%m-%d')
 
-        # domain = [('sh_date', '=', selected_date)]
-        # slots = request.env['sh.slot.schedule'].sudo().search(domain)
-
         values = {
             'doctors': request.env['hr.employee'].sudo().search([('job_id.name', '=', 'Doctor')]),
             'slots': request.env['sh.slot.schedule'].sudo().search([('sh_date', '=', selected_date)]),
@@ -257,11 +254,11 @@ class AppointmentPortal(CustomerPortal):
     @http.route('/portal/slotdata', type="http",auth="user",methods=['POST'],website=True,csrf=False)
     def sh_slot_data(self, **kw):
         dic = {}
-        print("\n\n\n\n====>kw.get('sh_date')",type(kw.get('sh_doctor_id')))
-        if kw.get('sh_date'):
+        print("\n\n\n\n====>kw.get('sh_date')",(kw.get('sh_doctor_id')))
+        if kw.get('sh_date') and kw.get('sh_doctor_id'):
             sub_categ_list = []
             sub_categ_ids = request.env['sh.slot.schedule'].sudo().search(
-                [('sh_date', '=', (kw.get('sh_date')))])
+                [('sh_date', '=', (kw.get('sh_date'))),('sh_slot_id.doctor_id','=',int(kw.get('sh_doctor_id')))])
             print("\n\n\n\n====>sub_categ_ids",sub_categ_ids)
             
             for sub in sub_categ_ids:
@@ -279,21 +276,3 @@ class AppointmentPortal(CustomerPortal):
             })
         return json.dumps(dic)
     
-    
-
-
-    # @http.route('/get/slots', type='json', auth='public')
-    # def get_slots(self, sh_date=None, sh_doctor_id=None, **kwargs):
-    #     _logger.info(f"AJAX SLOT FETCH: sh_doctor_id={sh_doctor_id}, sh_date={sh_date}")
-
-    #     if not sh_date or not sh_doctor_id:
-    #         return []
-
-    #     slots = request.env['sh.slot.schedule'].sudo().search([
-    #         ('doctor_id', '=', int(sh_doctor_id)),
-    #         ('sh_date', '=', sh_date)
-    #     ])
-
-    #     return [{'id': s.id, 'name': s.name} for s in slots]
-
-

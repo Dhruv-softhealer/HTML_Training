@@ -5,6 +5,7 @@ publicWidget.registry.SHCreateAppointmentPopup = publicWidget.Widget.extend({
 
     events: {
         'change #sh_date': '_onDateChange',
+        'change #sh_doctor_id':'_onDateChange',
     },
 
     _onDateChange: function () {
@@ -15,8 +16,7 @@ publicWidget.registry.SHCreateAppointmentPopup = publicWidget.Widget.extend({
         console.log("Hello")
         $.ajax({
             url: "/portal/slotdata",
-            data: { sh_date: $("#sh_date").val() },
-            // data: { sh_doctor_id: $("#sh_doctor_id").val() },
+            data: { sh_date: $("#sh_date").val(),sh_doctor_id: $("#sh_doctor_id").val() },
             type: "post",
             success: function (result) {
                 var datas = JSON.parse(result);
