@@ -9,15 +9,16 @@ from odoo.exceptions import ValidationError
 class Slots(models.Model):
     _name = 'sh.slots'
     _description = 'Slots'
+    _inherit = ['portal.mixin', 'mail.thread', 'mail.activity.mixin']
     
     
-    name = fields.Char(string="Slot Number", default=lambda self: _("New"), readonly=True)
+    name = fields.Char(string="Slot Number", default=lambda self: _("New"), readonly=True, tracking=True)
     doctor_id = fields.Many2one('hr.employee',string='Doctor Name',required=True,tracking=True, domain="[('job_id.name', '=', 'Doctor')]")
-    sh_slot_time = fields.Float(string="Slot Time(In Min)", required=True)
+    sh_slot_time = fields.Float(string="Slot Time(In Min)", required=True, tracking=True)
     sh_allowed_patients = fields.Integer(string="Allowed Patients", tracking=True, required=True)
-    sh_pre_booking = fields.Float(string="Pre-Booking Time(In Min)")
-    sh_start_date = fields.Date(string="Start Date", required=True)
-    sh_end_date = fields.Date(string="End Date", required=True)
+    sh_pre_booking = fields.Float(string="Pre-Booking Time(In Min)", tracking=True)
+    sh_start_date = fields.Date(string="Start Date", required=True, tracking=True)
+    sh_end_date = fields.Date(string="End Date", required=True, tracking=True)
     sh_cancel_time = fields.Float(string="Allow Cancelling(In Min)", required=True)
     
     sh_schedule_line = fields.One2many('sh.slot.schedule', 'sh_slot_id', string="Appointment Slots")
@@ -26,7 +27,7 @@ class Slots(models.Model):
         ('draft', 'Draft'),
         ('published', 'Published'),
         ('booked', 'Booked')
-    ],default="draft")
+    ],default="draft", tracking=True)
     
     
     

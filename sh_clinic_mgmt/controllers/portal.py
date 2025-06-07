@@ -7,14 +7,14 @@ from odoo.http import request
 from odoo.addons.portal.controllers import portal
 from odoo.tools import date_utils, groupby as groupbyelem
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager
-from odoo.addons.account.controllers.download_docs import _get_headers, _build_zip_from_data
+# from odoo.addons.account.controllers.download_docs import _get_headers, _build_zip_from_data
 from odoo.exceptions import AccessError,MissingError
 from odoo import fields
 import requests
-import logging
+# import logging
 import json
 
-_logger = logging.getLogger(__name__)
+# _logger = logging.getLogger(__name__)
 
 class AppointmentPortal(CustomerPortal):
 
@@ -29,6 +29,7 @@ class AppointmentPortal(CustomerPortal):
             return values
 
     def _search_bar_domain(self,search,search_in):
+        # print("\n\n\n", search_in)
         search_domains = []
         if search_in in ('all', 'name'):
             search_domains.append([('name', 'ilike', search)])
@@ -45,11 +46,14 @@ class AppointmentPortal(CustomerPortal):
     @http.route(['/my/appointments', '/my/appointments/page/<int:page>'], type='http', auth="user", website=True)
     def portal_my_appointments(self, page=1, sortby=True, filterby="all", groupby=None, search=None, search_in='name', **kw):
         Appointment = request.env['sh.appointment'].sudo()
+        # print("\n\n\n", Appointment)
         partner_id = request.env.user.partner_id.id
+        # print("\n\n\n", partner_id)
 
         domain = [('sh_patient_id', '=', partner_id)]
         
         appointments_count = Appointment.search_count(domain)
+        # print("\n\n\n", appointments_count)
         
         # Search and Filter Logic
         
@@ -78,12 +82,11 @@ class AppointmentPortal(CustomerPortal):
             'sh_state': {'label': _('Search in Stage'), 'input': 'sh_state'}
         }
 
-
         if filterby:
             domain += searchbar_filters[filterby]["domain"]
 
         search_bar_domain = self._search_bar_domain(search,search_in)
-       
+        # print("\n\n\n\n", search_bar_domain)
         if search_bar_domain:
             domain = AND([domain,search_bar_domain])
         
@@ -98,12 +101,16 @@ class AppointmentPortal(CustomerPortal):
             step=20,
             url_args={'sortby': sortby, 'search_in': search_in, 'search': search, 'filterby': filterby, 'groupby': groupby},
         )
+        # print("\n\n\n", pager)
+        
         appointments = Appointment.search(domain, limit=20, offset=pager['offset'], order=order)      
-
+        print("\n\n\n", appointments)
 
         # Grouping Logic
 
         def resolve_nested_attr(obj, attr_path):
+            # print("\n\n\n\n", obj)
+            print("\n\n\n\n",attr_path)
             for attr in attr_path.split('.'):
                 obj = getattr(obj, attr, False)
                 if not obj:
@@ -123,6 +130,8 @@ class AppointmentPortal(CustomerPortal):
         # Prepare the response for rendering
         
         request.session['my_pager'] = appointments.ids
+        # print("\n\n\n\n", temp)
+        
         
         return request.render("sh_clinic_mgmt.portal_my_appointments", {
             'appointments': appointments,
@@ -148,6 +157,7 @@ class AppointmentPortal(CustomerPortal):
     # Pagination at Form Side
       
     def get_records_pager(self, ids, current):
+        # print("\n\n\n\n", current.id)
         if current.id in ids and (hasattr(current, 'website_url') or hasattr(current, 'access_url')):
             attr_name = 'access_url' if hasattr(current, 'access_url') else 'website_url'
             idx = ids.index(current.id)
@@ -180,6 +190,7 @@ class AppointmentPortal(CustomerPortal):
     def my_portal_document(self, appointment_id, access_token=None, report_type=None, download=False):
         try:
             appointment = self._document_check_access('sh.appointment', appointment_id, access_token=access_token)
+            print("\n\n\n", appointment)
         except (AccessError, MissingError):
             return request.redirect('/my')
 
@@ -230,11 +241,11 @@ class AppointmentPortal(CustomerPortal):
     @http.route('/submit/appointment', type='http', auth="user", website=True, methods=["POST"],csrf=False)
     def submit_appointment(self, **post):
         patient = request.env.user.partner_id
-        print("\n\n\n\n======",patient)
+        # print("\n\n\n\n======",patient)
         doctor_id = post.get('sh_doctor_id')
         slot_id = post.get('portal_slot')
-        print("\n\n\n\n======doctor_id",doctor_id)
-        print("\n\n\n\n======slot_id",slot_id)
+        # print("\n\n\n\n======doctor_id",doctor_id)
+        # print("\n\n\n\n======slot_id",slot_id)
         
 
         if not doctor_id or not slot_id:
@@ -254,12 +265,12 @@ class AppointmentPortal(CustomerPortal):
     @http.route('/portal/slotdata', type="http",auth="user",methods=['POST'],website=True,csrf=False)
     def sh_slot_data(self, **kw):
         dic = {}
-        print("\n\n\n\n====>kw.get('sh_date')",(kw.get('sh_doctor_id')))
+        # print("\n\n\n\n====>kw.get('sh_date')",(kw.get('sh_doctor_id')))
         if kw.get('sh_date') and kw.get('sh_doctor_id'):
             sub_categ_list = []
             sub_categ_ids = request.env['sh.slot.schedule'].sudo().search(
                 [('sh_date', '=', (kw.get('sh_date'))),('sh_slot_id.doctor_id','=',int(kw.get('sh_doctor_id')))])
-            print("\n\n\n\n====>sub_categ_ids",sub_categ_ids)
+            # print("\n\n\n\n====>sub_categ_ids",sub_categ_ids)
             
             for sub in sub_categ_ids:
                 sub_categ_dic = {

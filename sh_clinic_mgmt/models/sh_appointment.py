@@ -23,26 +23,26 @@ class Appointment(models.Model):
     sh_doctor_id = fields.Many2one('hr.employee', string="Doctor Name", required=True, tracking=True, 
     domain=[('job_id.name','=','Doctor')]
     )
-    sh_doctor_specialization = fields.Char(string="Doctor Specialization", related="sh_doctor_id.sh_specialization")
+    sh_doctor_specialization = fields.Char(string="Doctor Specialization", related="sh_doctor_id.sh_specialization", tracking=True)
     sh_date = fields.Date(string="Date", required=True, tracking=True)
     sh_slot_id = fields.Many2one('sh.slots',related="sh_slt_id.sh_slot_id", store=True, string='Slot')
-    sh_slt_id = fields.Many2one('sh.slot.schedule',required=True,string='Slot')
+    sh_slt_id = fields.Many2one('sh.slot.schedule',required=True,string='Slot', tracking=True)
     sh_expected_revenue = fields.Float(string="Case Charges", tracking=True)
     sh_emergency_case = fields.Boolean(string="Emergency Case", tracking=True)
     
     
     # Patient Details 
 
-    sh_email = fields.Char(string="Email", related="sh_patient_id.email", store=True)
-    sh_phone = fields.Char(string="Phone", related="sh_patient_id.phone", required=True, readonly=False)
-    sh_blood_group = fields.Selection(string="Blood Group", related="sh_patient_id.sh_blood_group")
-    sh_birth_date = fields.Date(string="Birth Date", related="sh_patient_id.sh_birth_date")
-    sh_age = fields.Char(string="Age", related="sh_patient_id.sh_age")
+    sh_email = fields.Char(string="Email", related="sh_patient_id.email", store=True, tracking=True)
+    sh_phone = fields.Char(string="Phone", related="sh_patient_id.phone", required=True, readonly=False, tracking=True)
+    sh_blood_group = fields.Selection(string="Blood Group", related="sh_patient_id.sh_blood_group", tracking=True)
+    sh_birth_date = fields.Date(string="Birth Date", related="sh_patient_id.sh_birth_date", tracking=True)
+    sh_age = fields.Char(string="Age", related="sh_patient_id.sh_age", tracking=True)
     sh_visit_type = fields.Selection([
         ('new', 'New'),
         ('old', 'Old')
-    ], string="Visit Type", required=True)
-    sh_last_visited = fields.Date(string="Last Visited", related="sh_patient_id.sh_last_visit_date")
+    ], string="Visit Type", required=True, tracking=True)
+    sh_last_visited = fields.Date(string="Last Visited", tracking=True, related="sh_patient_id.sh_last_visit_date")
     
     
     # Disease Details
@@ -59,7 +59,7 @@ class Appointment(models.Model):
     sh_lifestyle_factors_ids = fields.Many2many('sh.life.style.fector', related="sh_patient_id.sh_life_style_fector_ids", string="LifeStyle Fector")
     sh_mental_health_issues_ids = fields.Many2many('sh.mental.health.problem', related="sh_patient_id.sh_mental_health_problem_ids", string="Mental Health Issues")
     sh_chronic_conditions_ids = fields.Many2many('sh.chronic.condition', related="sh_patient_id.sh_cronic_condition_ids", string="Chronic Condition")
-    sh_dietary_preferences = fields.Selection(string="Dietary Preferences", related="sh_patient_id.sh_dietary_preferences")
+    sh_dietary_preferences = fields.Selection(string="Dietary Preferences", related="sh_patient_id.sh_dietary_preferences", tracking=True)
     sh_allergy_ids = fields.Many2many('sh.allergies', string="Allergies", related="sh_patient_id.sh_allergy_ids")
     
     # Emergency Handling info
@@ -82,7 +82,8 @@ class Appointment(models.Model):
         ('completed_appointment', 'Completed Appointment'),
         ('cancelled_appointment', 'Cancelled Appointment'),
     ], 
-    default='new'
+    default='new',
+    tracking=True
     )
     
     # Portal Report Access
