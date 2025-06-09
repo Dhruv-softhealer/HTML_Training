@@ -6,15 +6,14 @@ from odoo.osv.expression import AND, OR
 from odoo.http import request
 from odoo.addons.portal.controllers import portal
 from odoo.tools import date_utils, groupby as groupbyelem
+from operator import itemgetter
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager
-# from odoo.addons.account.controllers.download_docs import _get_headers, _build_zip_from_data
 from odoo.exceptions import AccessError,MissingError
 from odoo import fields
 import requests
 # import logging
 import json
 
-# _logger = logging.getLogger(__name__)
 
 class AppointmentPortal(CustomerPortal):
 
@@ -44,7 +43,7 @@ class AppointmentPortal(CustomerPortal):
     
     
     @http.route(['/my/appointments', '/my/appointments/page/<int:page>'], type='http', auth="user", website=True)
-    def portal_my_appointments(self, page=1, sortby=True, filterby="all", groupby=None, search=None, search_in='name', **kw):
+    def portal_my_appointments(self, page=1, sortby=True, filterby="all", groupby='create_by', search=None, search_in='name', **kw):
         Appointment = request.env['sh.appointment'].sudo()
         # print("\n\n\n", Appointment)
         partner_id = request.env.user.partner_id.id
@@ -82,6 +81,14 @@ class AppointmentPortal(CustomerPortal):
             'sh_state': {'label': _('Search in Stage'), 'input': 'sh_state'}
         }
 
+        searchbar_groupby = {
+            # 'none': {'label': _('None')},
+            'create_by': {'input': 'create_by', 'label': _('None')},
+            'doctor': {'input': 'sh_doctor_id', 'label': _('Doctor')},
+            'date': {'input': 'sh_date', 'label': _('Date')},
+            'state': {'input': 'sh_state', 'label': _('State')},
+        }
+
         if filterby:
             domain += searchbar_filters[filterby]["domain"]
 
@@ -101,32 +108,41 @@ class AppointmentPortal(CustomerPortal):
             step=20,
             url_args={'sortby': sortby, 'search_in': search_in, 'search': search, 'filterby': filterby, 'groupby': groupby},
         )
+        
+        if groupby == 'create_by':
+            order = "create_uid, %s" % order
+        elif groupby == 'doctor':
+            order = "sh_doctor_id, %s" % order
+        elif groupby == 'date':
+            order = "sh_date, %s" % order
+        elif groupby == 'state':
+            order = "sh_state, %s" % order
+        else:
+            order = order 
+        
+        
+        # field = None if groupby == 'none' else groupby
+        # order = '%s, %s' %(field, order) if field else order
         # print("\n\n\n", pager)
         
         appointments = Appointment.search(domain, limit=20, offset=pager['offset'], order=order)      
         print("\n\n\n", appointments)
 
-        # Grouping Logic
+        if groupby == 'create_by':
+            grouped_tickets = [Appointment.concat(
+                *g) for k, g in groupbyelem(appointments, itemgetter('create_uid'))]
+        elif groupby == 'doctor':
+            grouped_tickets = [Appointment.concat(
+                *g) for k, g in groupbyelem(appointments, itemgetter('sh_doctor_id'))]
+        elif groupby == 'date':
+            grouped_tickets = [Appointment.concat(
+                *g) for k, g in groupbyelem(appointments, itemgetter('sh_date'))]
+        elif groupby == 'state':
+            grouped_tickets = [Appointment.concat(
+                *g) for k, g in groupbyelem(appointments, itemgetter('sh_state'))]
+        elif groupby == 'none' or not groupby:
+            grouped_tickets = appointments
 
-        def resolve_nested_attr(obj, attr_path):
-            # print("\n\n\n\n", obj)
-            print("\n\n\n\n",attr_path)
-            for attr in attr_path.split('.'):
-                obj = getattr(obj, attr, False)
-                if not obj:
-                    return ''
-            return obj
-
-        grouped_appointments = []
-        if groupby and groupby != 'none':
-            appointments = appointments.sorted(key=lambda a: resolve_nested_attr(a, groupby))
-            grouped_appointments = [
-                (g, list(records))
-                for g, records in groupbyelem(appointments, lambda a: resolve_nested_attr(a, groupby))
-            ]
-        else:
-            grouped_appointments = [(False, appointments)]
-        
         # Prepare the response for rendering
         
         request.session['my_pager'] = appointments.ids
@@ -137,6 +153,7 @@ class AppointmentPortal(CustomerPortal):
             'appointments': appointments,
             'pager': pager,
             'page_name': 'appointments',
+            'grouped_tickets':grouped_tickets,
             
             'searchbar_sortings': searchbar_sortings,
             'sortby': sortby,
@@ -148,7 +165,7 @@ class AppointmentPortal(CustomerPortal):
             'search':search,
             'search_in':search_in,
             
-            'grouped_appointments': grouped_appointments,
+            'searchbar_groupby': searchbar_groupby,
             'groupby': groupby,
             
             'default_url': url,
@@ -238,28 +255,90 @@ class AppointmentPortal(CustomerPortal):
 
     # Submit Appointment Page
 
-    @http.route('/submit/appointment', type='http', auth="user", website=True, methods=["POST"],csrf=False)
-    def submit_appointment(self, **post):
-        patient = request.env.user.partner_id
-        # print("\n\n\n\n======",patient)
-        doctor_id = post.get('sh_doctor_id')
-        slot_id = post.get('portal_slot')
-        # print("\n\n\n\n======doctor_id",doctor_id)
-        # print("\n\n\n\n======slot_id",slot_id)
+    # @http.route('/submit/appointment', type='http', auth="user", website=True, methods=["POST"],csrf=False)
+    # def submit_appointment(self, **post):
+    #     patient = request.env.user.partner_id
+    #     # print("\n\n\n\n======",patient)
+    #     doctor_id = post.get('sh_doctor_id')
+    #     slot_id = post.get('portal_slot')
+    #     # print("\n\n\n\n======doctor_id",doctor_id)
+    #     # print("\n\n\n\n======slot_id",slot_id)
+    #     selected_date = post.get('sh_date')
         
 
-        if not doctor_id or not slot_id:
+    #     if not doctor_id or not slot_id:
+    #         return request.redirect('/book/appointment')
+
+    #     selected_date_obj = fields.Date.to_date(selected_date)
+
+    #     last_apt = request.env['sh.appointment'].sudo().search([
+    #         ('sh_patient_id', '=', patient.id),
+    #         ('sh_date', '<', selected_date_obj)
+    #     ], order='sh_date desc', limit=1)
+        
+    #     last_visited_date = last_apt.sh_date if last_apt else False
+
+    #     rec_apt = request.env['sh.appointment'].sudo().create({
+    #         'sh_patient_id': patient.id,
+    #         'sh_doctor_id': int(doctor_id),
+    #         'sh_date': post.get('sh_date'),
+    #         'sh_slt_id': int(slot_id),
+    #         'sh_visit_type':"new",
+    #         'sh_phone': post.get('sh_phone'),
+    #         'sh_last_visited': last_visited_date,
+    #     })
+    #     print("\n\n\n\n======rec_apt",rec_apt.name)
+    
+    
+    @http.route('/submit/appointment', type='http', auth="user", website=True, methods=["POST"], csrf=False)
+    def submit_appointment(self, **post):
+        patient = request.env.user.partner_id
+        doctor_id = post.get('sh_doctor_id')
+        slot_id = post.get('portal_slot')
+        selected_date = post.get('sh_date')
+
+        if not doctor_id or not slot_id or not selected_date:
             return request.redirect('/book/appointment')
 
+        # Convert to date object
+        selected_date_obj = fields.Date.to_date(selected_date)
+        # print(f"\n\n\n\n\==========>>>> 305 selected_date_obj", selected_date_obj)
+        doctor = request.env['hr.employee'].sudo().browse(int(doctor_id))
+        case_days = request.env.company.sh_case_days
+
+        # Get last visit (previous appointment before this date)
+        last_apt = request.env['sh.appointment'].sudo().search([
+            ('sh_patient_id', '=', patient.id),
+            ('sh_date', '<', selected_date_obj)
+        ], order='sh_date desc', limit=1)
+        # print(f"\n\n\n\n\==========>>>> 308 case_days", last_apt.name)
+
+        last_visited_date = last_apt.sh_date if last_apt else False
+        diff_days = (selected_date_obj - last_visited_date).days if last_visited_date else 9999
+        print(f"\n\n\n\n\==========>>>> 318 diff_days", diff_days)
+
+        # Determine visit type and revenue
+        if diff_days <= case_days:
+            visit_type = 'old'
+            expected_revenue = doctor.sh_old_case_charges
+        else:
+            visit_type = 'new'
+            expected_revenue = doctor.sh_new_case_charges
+
+        # Create the appointment
         rec_apt = request.env['sh.appointment'].sudo().create({
             'sh_patient_id': patient.id,
             'sh_doctor_id': int(doctor_id),
-            'sh_date': post.get('sh_date'),
+            'sh_date': selected_date, 
             'sh_slt_id': int(slot_id),
-            'sh_visit_type':"new",
             'sh_phone': post.get('sh_phone'),
+            'sh_last_visited': last_visited_date,
+            'sh_visit_type': visit_type,
+            'sh_expected_revenue': expected_revenue,
         })
-        print("\n\n\n\n======rec_apt",rec_apt.name)
+
+        # return request.redirect('/my/appointments')
+
 
 
     @http.route('/portal/slotdata', type="http",auth="user",methods=['POST'],website=True,csrf=False)

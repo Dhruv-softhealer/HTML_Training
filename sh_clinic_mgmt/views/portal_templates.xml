@@ -25,26 +25,16 @@
                 <t t-set="breadcrumbs_searchbar" t-value="True" />
 
 
-                <!-- <t t-call="portal.portal_searchbar"> -->
+                 
                 <t t-set="title">Appointment</t>
                 <div class="form-inline ml-lg-4 sh_create_btn" id="sh_create_btn">
+
                     <!-- Book Appointment Button -->
 
-                    <a type="button" class="btn btn-primary mb-2" role="button"
+                    <a type="button" class="btn btn-primary mb-2" role="button" id="new_appt"
                         t-attf-href="/book/appointment">
                         <i class="fa fa-calendar-plus-o mr-1" /> Book Appointment </a>
                 </div>
-                <!-- </t> -->
-
-
-                <t t-set="searchbar_groupby"
-                    t-value="{
-                    'none': {'label': 'All'},
-                    'sh_doctor_id': {'label': 'Doctor'},
-                    'sh_date': {'label': 'Date'},
-                    'sh_state': {'label': 'Status'}
-                    }" />
-                <t t-set="groupby" t-value="'sh_date'" />
 
                 <t t-call="portal.portal_searchbar">
                     <t t-set="title">My Appointments</t>
@@ -55,41 +45,51 @@
                 </div>
 
 
-                <t t-if="appointments" t-call="portal.portal_table">
-                    <t t-foreach="grouped_appointments" t-as="group">
-                        <div t-if="group[0]" class="mt-4">
-                            <h5 class="text-primary border-bottom pb-1 mb-3">
-                                <t t-set="val" t-value="group[0]" />
-                                <t t-esc="val" />
-                            </h5>
-                        </div>
+                <t t-if="grouped_tickets" t-call="portal.portal_table">
+                    <t t-foreach="grouped_tickets" t-as="group">
                         <table class="table table-hover mb-4">
                             <thead>
-                                <tr class="active">
+                                <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                    
+                                    <th t-if="groupby == 'doctor'">
+                                        <em class="font-weight-normal text-muted">Doctor:</em>
+                                        <span t-field="group[0].sh_doctor_id.name" />
+                                    </th>
+                                    <th t-if="groupby == 'date'">
+                                        <em class="font-weight-normal text-muted">Date:</em>
+                                        <span t-esc="group[0].sh_date" />
+                                    </th>
+                                    <th t-if="groupby == 'state'">
+                                        <em class="font-weight-normal text-muted">Customer:</em>
+                                        <span t-esc="group[0].sh_state" />
+                                    </th>
+                                </tr>
+                                <tr class="thread-light">
                                     <th>Appointment Number</th>
                                     <th>Doctor</th>
                                     <th>Date</th>
                                     <th>Status</th>
                                 </tr>
+                                
                             </thead>
                             <tbody>
-                                <t t-foreach="group[1]" t-as="appointment">
+                                <t t-foreach="group" t-as="g">
                                     <tr>
                                         <td>
-                                            <a t-att-href="appointment.get_portal_url()">
-                                                <t t-esc="appointment.name" />
+                                            <a t-att-href="g.get_portal_url()">
+                                                <t t-esc="g.name" />
                                             </a>
                                         </td>
                                         <td>
-                                            <span t-field="appointment.sh_doctor_id.name" />
+                                            <span t-field="g.sh_doctor_id.name" />
                                         </td>
                                         <td>
-                                            <span t-field="appointment.sh_date" />
+                                            <span t-field="g.sh_date" />
                                         </td>
                                         <td class="text-uppercase">
                                             <span class="badge rounded-pill"
                                                 style="background-color: #e6f7fb; color: #007b8f; border: 1px solid #007b8f;">
-                                                <t t-esc="appointment.sh_state" />
+                                                <t t-esc="g.sh_state" />
                                             </span>
                                         </td>
                                     </tr>
@@ -343,7 +343,6 @@
         </template>
 
 
-
         <template id="book_appointment_form" name="Book Appointment Form">
             <t t-call="portal.portal_layout">
                 <div class="container mt-4">
@@ -385,12 +384,10 @@
                                         class="form-control form-field o_website_form_required_custom"
                                         id="portal_slot" name="portal_slot">
                                         <option value="sub_category">Select slot</option>
-                                        
                                     </select>
                                 </div>
                             </div>
                         </div>
-
 
                         <!-- Phone -->
                         <div class="form-group">
@@ -403,101 +400,6 @@
                 </div>
             </t>
         </template>
-
-
-        <!-- <template id="book_appointment_form" name="Book Appointment Form">
-            <t t-call="portal.portal_layout">
-                <div class="container mt-4">
-                    <h2>Book Appointment</h2>
-
-                    <t t-set="breadcrumbs_searchbar" t-value="True" />
-
-                    <t t-call="portal.portal_searchbar">
-                        <t t-set="title">Appointment</t>
-                        <div class="form-inline ml-lg-4 sh_create_btn" id="sh_create_btn">
-                            Book Appointment Button
-
-                            <a type="button" class="btn btn-primary mb-2" role="button"
-                                t-attf-href="/book/appointment">
-                                <i class="fa fa-calendar-plus-o mr-1" /> Book Appointment </a>
-                        </div>
-                    </t>
-                    Step 1: Select Date
-                    <form action="/book/appointment" method="get" class="mb-4">
-                        <div class="form-group">
-                            <label for="sh_date">Select Appointment Date</label>
-                            <input type="date" id="sh_date" name="sh_date" class="form-control"
-                                t-att-value="selected_date" />
-                        </div>
-                        <button type="submit" class="btn btn-primary mt-2">Search Slots</button>
-                    </form>
-
-                    Step 2: Submit Appointment
-                    <form action="/submit/appointment" method="post" class="form">
-                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
-
-                        Doctor
-                        <div class="form-group">
-                            <label for="sh_doctor_id">Doctor</label>
-                            <select name="sh_doctor_id" class="form-control">
-                                <t t-foreach="doctors" t-as="doc">
-                                    <option t-att-value="doc.id">
-                                        <t t-esc="doc.name" />
-                                    </option>
-                                </t>
-                            </select>
-                        </div>
-
-                        Appointment Date
-                        <div class="form-group" style="display: none;">
-                            <label for="sh_date">Appointment Date</label>
-                            <input type="date" name="sh_date" class="form-control"
-                                t-att-value="selected_date" />
-                        </div>
-
-                        Slot
-                        <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
-                            <div t-attf-class="form-group mb-3">
-                                <label class="control-label mb-1" for="sh_slt_id">Slot</label>
-                                <select
-                                    class="form-control form-field o_website_form_required_custom"
-                                    id="sh_slt_id" name="sh_slt_id">
-                                    <option value="">Select Slot</option>
-                                    <t t-if="slots">
-                                        <t t-foreach="slots" t-as="slt">
-                                            <option t-att-value="slt.id">
-                                                <t t-esc="slt.name" />
-                                            </option>
-                                        </t>
-                                    </t>
-                                    <t t-if="not slots">
-                                        <option>No slots available for selected date</option>
-                                    </t>
-                                </select>
-                            </div>
-                        </div>
-
-
-                        Visit Type
-                        <div class="form-group">
-                            <label for="sh_visit_type">Visit Type</label>
-                            <select name="sh_visit_type" class="form-control">
-                                <option value="new">New</option>
-                                <option value="old">Old</option>
-                            </select>
-                        </div>
-
-                        Phone
-                        <div class="form-group">
-                            <label for="sh_phone">Phone</label>
-                            <input type="text" name="sh_phone" class="form-control" />
-                        </div>
-
-                        <button type="submit" class="btn btn-success mt-2">Submit</button>
-                    </form>
-                </div>
-            </t>
-        </template> -->
 
     </data>
 </odoo>

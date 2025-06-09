@@ -2,10 +2,12 @@ import publicWidget from "@web/legacy/js/public/public_widget";
 
 publicWidget.registry.SHCreateAppointmentPopup = publicWidget.Widget.extend({
     selector: '.o_portal_appointment_form',
+    // selector: '#createticketModal , .sh_book_btn',
 
     events: {
         'change #sh_date': '_onDateChange',
         'change #sh_doctor_id':'_onDateChange',
+        // 'click #sh_new_apt':'_onClickNewAppointment',
     },
 
     _onDateChange: function () {
@@ -27,4 +29,8 @@ publicWidget.registry.SHCreateAppointmentPopup = publicWidget.Widget.extend({
             },
         });
     },
+
+    // _onClickNewAppointment: function (ev) {
+    //     $("#createticketModal").modal("show");
+    // },
 });
