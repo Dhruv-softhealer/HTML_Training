@@ -189,6 +189,7 @@ class Appointment(models.Model):
             case_days = self.env.company.sh_case_days
             
             if (self.sh_date - self.sh_last_visited).days > case_days:
+                
                 self.sh_visit_type = 'new'
                 self.sh_expected_revenue = self.sh_doctor_id.sh_new_case_charges
                 
@@ -220,6 +221,20 @@ class Appointment(models.Model):
    
     @api.model_create_multi
     def create(self, vals):
+        # sh_patient_id = vals.get('sh_patient_id')
+        # sh_doctor_id = vals.get('sh_doctor_id')
+
+        # previous_appointment = self.search([('sh_patient_id', '=', sh_patient_id), ('sh_doctor_id', '!=', sh_doctor_id)], limit=1)
+
+        # if previous_appointment:
+        #     # If there's a different doctor, apply new case charges (500)
+        #     vals['case_charges'] = 500
+        # else:
+        #     # If the doctor is the same, use existing charges
+        #     existing_case_charges = previous_appointment.case_charges if previous_appointment else 0.0
+        #     vals['case_charges'] = existing_case_charges or 500
+        
+
         print("\n\n\n\nportal create===============>>>>", vals)
         for val in vals:
             if val['sh_date']:

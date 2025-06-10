@@ -59,3 +59,15 @@ class Patient(models.Model):
                 rec.sh_age = str(age)
             else:
                 rec.sh_age = 0
+
+    @api.onchange('sh_birth_date')
+    def _onchange_sh_birth_date(self):
+        if self.sh_birth_date:
+            if self.sh_birth_date > fields.date.today():
+                self.sh_birth_date = False
+                return {
+                    'warning': {
+                        'title': "Invalid Date",
+                        'message': "Birth date cannot be set greater than today."
+                    }
+                }

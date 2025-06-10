@@ -169,6 +169,11 @@ class AppointmentPortal(CustomerPortal):
             'groupby': groupby,
             
             'default_url': url,
+            
+            'doctors': request.env['hr.employee'].sudo().search([('job_id.name', '=', 'Doctor')]),
+            'slots': '',
+            'selected_date': '',
+            'csrf_token': request.csrf_token(),
         })
         
     # Pagination at Form Side
@@ -219,10 +224,6 @@ class AppointmentPortal(CustomerPortal):
                 report_ref='sh_clinic_mgmt.report_appointment_action',
                 download=download
             )
-        # Fetch record list of current user
-        # appointments = request.env['sh.appointment'].sudo().search([
-        #     ('sh_patient_id', '=', request.env.user.partner_id.id)
-        # ])
 
         history = request.session.get('my_pager',[]) 
 
@@ -239,18 +240,18 @@ class AppointmentPortal(CustomerPortal):
         
     # Book Appointment Page
     
-    @http.route('/book/appointment', type='http', auth="user", website=True)
-    def book_appointment(self, **kw):
-        # print("KW >>>", kw)
-        selected_date = kw.get('sh_date') or fields.Date.today().strftime('%Y-%m-%d')
+    # @http.route('/book/appointment', type='http', auth="user", website=True)
+    # def book_appointment(self, **kw):
+    #     # print("KW >>>", kw)
+    #     selected_date = kw.get('sh_date') or fields.Date.today().strftime('%Y-%m-%d')
 
-        values = {
-            'doctors': request.env['hr.employee'].sudo().search([('job_id.name', '=', 'Doctor')]),
-            'slots': request.env['sh.slot.schedule'].sudo().search([('sh_date', '=', selected_date)]),
-            'selected_date': selected_date,
-            'csrf_token': request.csrf_token(),
-        }
-        return request.render('sh_clinic_mgmt.book_appointment_form', values)
+    #     values = {
+    #         'doctors': request.env['hr.employee'].sudo().search([('job_id.name', '=', 'Doctor')]),
+    #         'slots': request.env['sh.slot.schedule'].sudo().search([('sh_date', '=', selected_date)]),
+    #         'selected_date': selected_date,
+    #         'csrf_token': request.csrf_token(),
+    #     }
+    #     return request.render('sh_clinic_mgmt.book_appointment_form', values)
 
 
     # Submit Appointment Page
@@ -329,16 +330,14 @@ class AppointmentPortal(CustomerPortal):
         rec_apt = request.env['sh.appointment'].sudo().create({
             'sh_patient_id': patient.id,
             'sh_doctor_id': int(doctor_id),
-            'sh_date': selected_date, 
+            'sh_date': post.get('sh_date'),
             'sh_slt_id': int(slot_id),
             'sh_phone': post.get('sh_phone'),
             'sh_last_visited': last_visited_date,
             'sh_visit_type': visit_type,
             'sh_expected_revenue': expected_revenue,
         })
-
-        # return request.redirect('/my/appointments')
-
+        print("\n\n\n\n======rec_apt",rec_apt.name)
 
 
     @http.route('/portal/slotdata', type="http",auth="user",methods=['POST'],website=True,csrf=False)
@@ -351,7 +350,7 @@ class AppointmentPortal(CustomerPortal):
                 [('sh_date', '=', (kw.get('sh_date'))),('sh_slot_id.doctor_id','=',int(kw.get('sh_doctor_id')))])
             # print("\n\n\n\n====>sub_categ_ids",sub_categ_ids)
             
-            for sub in sub_categ_ids:
+            for sub in sub_categ_ids:   
                 sub_categ_dic = {
                     'id': sub.id,
                     'name': sub.name,
