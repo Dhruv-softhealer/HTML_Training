@@ -121,10 +121,6 @@ class AppointmentPortal(CustomerPortal):
             order = order 
         
         
-        # field = None if groupby == 'none' else groupby
-        # order = '%s, %s' %(field, order) if field else order
-        # print("\n\n\n", pager)
-        
         appointments = Appointment.search(domain, limit=20, offset=pager['offset'], order=order)      
         print("\n\n\n", appointments)
 
@@ -239,57 +235,7 @@ class AppointmentPortal(CustomerPortal):
 
         
     # Book Appointment Page
-    
-    # @http.route('/book/appointment', type='http', auth="user", website=True)
-    # def book_appointment(self, **kw):
-    #     # print("KW >>>", kw)
-    #     selected_date = kw.get('sh_date') or fields.Date.today().strftime('%Y-%m-%d')
 
-    #     values = {
-    #         'doctors': request.env['hr.employee'].sudo().search([('job_id.name', '=', 'Doctor')]),
-    #         'slots': request.env['sh.slot.schedule'].sudo().search([('sh_date', '=', selected_date)]),
-    #         'selected_date': selected_date,
-    #         'csrf_token': request.csrf_token(),
-    #     }
-    #     return request.render('sh_clinic_mgmt.book_appointment_form', values)
-
-
-    # Submit Appointment Page
-
-    # @http.route('/submit/appointment', type='http', auth="user", website=True, methods=["POST"],csrf=False)
-    # def submit_appointment(self, **post):
-    #     patient = request.env.user.partner_id
-    #     # print("\n\n\n\n======",patient)
-    #     doctor_id = post.get('sh_doctor_id')
-    #     slot_id = post.get('portal_slot')
-    #     # print("\n\n\n\n======doctor_id",doctor_id)
-    #     # print("\n\n\n\n======slot_id",slot_id)
-    #     selected_date = post.get('sh_date')
-        
-
-    #     if not doctor_id or not slot_id:
-    #         return request.redirect('/book/appointment')
-
-    #     selected_date_obj = fields.Date.to_date(selected_date)
-
-    #     last_apt = request.env['sh.appointment'].sudo().search([
-    #         ('sh_patient_id', '=', patient.id),
-    #         ('sh_date', '<', selected_date_obj)
-    #     ], order='sh_date desc', limit=1)
-        
-    #     last_visited_date = last_apt.sh_date if last_apt else False
-
-    #     rec_apt = request.env['sh.appointment'].sudo().create({
-    #         'sh_patient_id': patient.id,
-    #         'sh_doctor_id': int(doctor_id),
-    #         'sh_date': post.get('sh_date'),
-    #         'sh_slt_id': int(slot_id),
-    #         'sh_visit_type':"new",
-    #         'sh_phone': post.get('sh_phone'),
-    #         'sh_last_visited': last_visited_date,
-    #     })
-    #     print("\n\n\n\n======rec_apt",rec_apt.name)
-    
     
     @http.route('/submit/appointment', type='http', auth="user", website=True, methods=["POST"], csrf=False)
     def submit_appointment(self, **post):
