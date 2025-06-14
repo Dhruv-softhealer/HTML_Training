@@ -12,6 +12,16 @@
                 <field name="sh_blood_group"></field>
             </xpath>
 
+            <xpath expr="//button[@name='action_open_employees']" position="after">
+                <button name="action_view_current_appointments"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-stethoscope">
+                    <field name="apt_count" widget="statinfo" string="Appointments" />
+                </button>
+            </xpath>
+
+
             <xpath expr="//page[@name='internal_notes']" position="after">
                 <page name="sh_medical_details" string="Medical Details">
                     <group>
@@ -25,9 +35,9 @@
                             <field name="sh_allergy_ids" widget="many2many_tags" />
                             <field name="sh_allergies_description" />
                             <field name="sh_cronic_condition_ids" widget="many2many_tags" />
-                            <field name="sh_mobility_status" />
-                            <field name="sh_report_name" invisible="1"/>
-                            <field name="sh_report" filename="sh_report_name"/>
+                            <field name="sh_regular_medicine" />
+                            <field name="sh_report_name" invisible="1" />
+                            <field name="sh_report" filename="sh_report_name" />
                         </group>
                     </group>
 

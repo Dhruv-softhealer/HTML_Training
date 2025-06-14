@@ -8,8 +8,9 @@ from odoo.addons.portal.controllers import portal
 from odoo.tools import date_utils, groupby as groupbyelem
 from operator import itemgetter
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager
-from odoo.exceptions import AccessError,MissingError
+from odoo.exceptions import AccessError, MissingError, UserError
 from odoo import fields
+from odoo.fields import Command
 import requests
 # import logging
 import json
@@ -120,9 +121,8 @@ class AppointmentPortal(CustomerPortal):
         else:
             order = order 
         
-        
         appointments = Appointment.search(domain, limit=20, offset=pager['offset'], order=order)      
-        print("\n\n\n", appointments)
+        # print("\n\n\n", appointments)
 
         if groupby == 'create_by':
             grouped_tickets = [Appointment.concat(
@@ -165,7 +165,7 @@ class AppointmentPortal(CustomerPortal):
             'groupby': groupby,
             
             'default_url': url,
-            
+
             'doctors': request.env['hr.employee'].sudo().search([('job_id.name', '=', 'Doctor')]),
             'slots': '',
             'selected_date': '',
@@ -221,7 +221,7 @@ class AppointmentPortal(CustomerPortal):
                 download=download
             )
 
-        history = request.session.get('my_pager',[]) 
+        history = request.session.get('my_pager',[])
 
 
         record_pager = self.get_records_pager(history, appointment)
@@ -232,10 +232,6 @@ class AppointmentPortal(CustomerPortal):
             "prev_record": record_pager.get('prev_record'),
             "next_record": record_pager.get('next_record'),
         })
-
-        
-    # Book Appointment Page
-
     
     @http.route('/submit/appointment', type='http', auth="user", website=True, methods=["POST"], csrf=False)
     def submit_appointment(self, **post):
@@ -283,7 +279,12 @@ class AppointmentPortal(CustomerPortal):
             'sh_visit_type': visit_type,
             'sh_expected_revenue': expected_revenue,
         })
+
         print("\n\n\n\n======rec_apt",rec_apt.name)
+
+        request.session['apt_success'] = f"Appointment {rec_apt.name} booked successfully."
+        return request.redirect('/my/appointments')
+
 
 
     @http.route('/portal/slotdata', type="http",auth="user",methods=['POST'],website=True,csrf=False)
@@ -310,4 +311,138 @@ class AppointmentPortal(CustomerPortal):
                 'sub_categories': []
             })
         return json.dumps(dic)
+
+
+
+    @http.route(['/my/appointment/delete/<int:appointment_id>'], type='http', auth='user', website=True, csrf=False)
+    def delete_appointment(self, appointment_id, **kwargs):
+        user_partner = request.env.user.partner_id
+
+        appointment = request.env['sh.appointment'].sudo().search([
+            ('id', '=', appointment_id),
+            ('sh_patient_id', '=', user_partner.id)
+        ], limit=1)
+        # print(f"\n\n\n\t--------------> 322 appointment",appointment)
+
+        if not appointment:
+            return request.redirect('/my/appointments')
+
+        try:
+            if appointment.sh_slt_id:
+                curr_time = fields.Datetime.now()
+                
+                start_time = appointment.sh_slt_id.sh_start_time
+                cancel_limit = appointment.sh_slot_id.sh_cancel_time
+
+                # Calculate hours difference between now and slot start
+                hours_diff = (start_time - curr_time.hour)
+                print(f"\n\n\n\t--------------> 339 hours_diff",hours_diff)
+
+                if hours_diff <= cancel_limit:
+                    raise UserError(f'You cannot cancel the appointment within {cancel_limit} hours of the start time.')
+
+                # Move to Cancel state
+                appointment.sh_state = 'cancelled_appointment'
+
+                # Unlink Appointment from slot line
+                appointment.sh_slt_id.write({
+                    'sh_appointment_line': [Command.unlink(appointment.id)]
+                })
+
+        except UserError as e:
+            request.session['cancel_error'] = str(e)
+            return request.redirect('/my/appointments')
+
+        return request.redirect('/my/appointments')
+
+
+    # Portal My Account
+
+    def _get_optional_fields(self):
+        """Extend to include custom partner fields."""
+        fields = super()._get_optional_fields()
+        return fields + [
+            'sh_gender',
+            'sh_birth_date',
+            'sh_blood_group',
+            'sh_allergy_ids', 
+            'sh_dietary_preferences', 
+            'sh_mental_health_problem_ids', 
+            'sh_life_style_fector_ids', 
+            'sh_cronic_condition_ids', 
+            'sh_regular_medicine', 
+            'sh_mobility_status', 
+            'sh_report_name', 
+            'sh_report'
+        ]
     
+    @http.route(['/my/account'], type='http', auth="user", website=True)
+    def portal_my_account(self, **post):
+        partner = request.env.user.partner_id.sudo()
+        print(f"\n\n\n\t--------------> 382 partner",partner)
+
+        if request.httprequest.method == 'POST':
+            values = {
+                'sh_gender': post.get('sh_gender'),
+                'sh_birth_date': post.get('sh_birth_date'),
+                'sh_blood_group': post.get('sh_blood_group'),
+                'sh_dietary_preferences': post.get('sh_dietary_preferences'),
+                'sh_regular_medicine': post.get('sh_regular_medicine'),
+                'sh_mobility_status': post.get('sh_mobility_status'),
+            }
+
+            # Process Many2many fields
+            m2m_fields = [
+                'sh_allergy_ids',
+                # 'sh_mental_health_problem_ids',
+                # 'sh_life_style_fector_ids',
+                # 'sh_cronic_condition_ids',
+            ]
+
+            for sh_allergy_ids in m2m_fields:
+                id_list = post.getlist(sh_allergy_ids) or []
+                ids = [int(x) for x in id_list if x.isdigit()]
+                values[sh_allergy_ids] = [(6, 0, ids)] 
+
+            partner.write(values)
+
+        return request.render("sh_clinic_mgmt.portal_my_details_fields_custom", values)
+
+    
+# class CustomPortalDetails(CustomerPortal):
+
+#     @http.route(['/my/account'], type='http', auth="user", website=True)
+#     def account(self, **post):
+#         partner = request.env.user.partner_id
+
+#         if request.httprequest.method == 'POST':
+#             values = {}
+
+#             optional_fields = partner._get_optional_fields()
+#             for sh_allergy_ids in optional_fields:
+#                 if sh_allergy_ids in post:
+#                     values[sh_allergy_ids] = post.get(sh_allergy_ids)
+
+#             # Handle many2many fields
+#             m2m_fields = [
+#                 'sh_allergy_ids',
+#             ]
+
+#             for sh_allergy_ids in m2m_fields:
+#                 raw_ids = post.getlist(sh_allergy_ids)
+#                 try:
+#                     values[sh_allergy_ids] = [(6, 0, list(map(int, raw_ids)))]
+#                 except ValueError:
+#                     values[sh_allergy_ids] = [(6, 0, [])]
+
+#             partner.sudo().write(values)
+#             return request.redirect('/my/account')
+
+#         values = self._prepare_portal_layout_values()
+#         values.update({
+#             'partner': partner,
+#             'countries': request.env['res.country'].sudo().search([]),
+#             'states': request.env['res.country.state'].sudo().search([]),
+#             'allergies': request.env['sh.allergies'].sudo().search([]),
+#         })
+#         return request.render("sh_clinic_mgmt.portal_my_details_fields_custom", values)

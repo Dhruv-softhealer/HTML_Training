@@ -7,7 +7,7 @@ from datetime import date
 class Patient(models.Model):
     _inherit = 'res.partner'
     
-    sh_birth_date = fields.Date(string="Date Of Birth", required=True)
+    sh_birth_date = fields.Date(string="Date Of Birth", required=True, tracking=True)
     sh_age = fields.Char(string="Age", compute="_compute_age")
     sh_gender = fields.Selection([
         ('male', 'Male'),
@@ -30,24 +30,31 @@ class Patient(models.Model):
         ('gluten_free', 'Gluten-Free'),
         ('non_vegetarian', 'Non Vegetarian'),
         ('vegan', 'Vegan'),
-    ], string="Dietary Preferences")
-    sh_life_style_fector_ids = fields.Many2many('sh.life.style.fector', string="Life Style Fector")
-    sh_mental_health_problem_ids = fields.Many2many('sh.mental.health.problem', string="Mental Health Problem")
-    sh_allergy_ids = fields.Many2many('sh.allergies', string="Allergies")
+    ], string="Dietary Preferences", tracking=True)
+    sh_life_style_fector_ids = fields.Many2many('sh.life.style.fector', string="Life Style Fector", tracking=True)
+    sh_mental_health_problem_ids = fields.Many2many('sh.mental.health.problem', string="Mental Health Problem", tracking=True)
+    sh_allergy_ids = fields.Many2many('sh.allergies', string="Allergies", tracking=True)
     sh_allergies_description = fields.Char(string="Allergies Description")
-    sh_cronic_condition_ids = fields.Many2many('sh.chronic.condition', string="Chronic Condition")
-    sh_regular_medicine = fields.Char(string="Regular Medicine Take If Any?")
+    sh_cronic_condition_ids = fields.Many2many('sh.chronic.condition', string="Chronic Condition", tracking=True)
+    sh_regular_medicine = fields.Char(string="Regular Medicine Take If Any?", tracking=True)
     sh_mobility_status = fields.Selection([
         ('wheelchair', 'WheelChair'),
         ('walker', 'Walker'),
         ('crutches', 'Crutches'),
-    ], string="Mobility Status")
+    ], string="Mobility Status", tracking=True)
     sh_report_name = fields.Char('sh_report_name')
     sh_report = fields.Binary(string="Reports")
     
     
-    sh_last_visit_date = fields.Date(string='Last Visit Date', default=fields.Date.today)
+    sh_last_visit_date = fields.Date(string='Last Visit Date', tracking=True, default=fields.Date.today)
     
+    apt_count = fields.Integer(string="Appointments", compute="_compute_apt_count")
+
+    def _compute_apt_count(self):
+        Appointment = self.env['sh.appointment']
+        for partner in self:
+            partner.apt_count = Appointment.search_count([('sh_patient_id', '=', partner.id)])
+
     @api.depends('sh_birth_date')
     def _compute_age(self):
         for rec in self:
@@ -71,3 +78,13 @@ class Patient(models.Model):
                         'message': "Birth date cannot be set greater than today."
                     }
                 }
+
+    def action_view_current_appointments(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Current Appointments',
+            'res_model': 'sh.appointment',
+            'view_mode': 'list,form',
+            'domain': [('sh_patient_id', '=', self.id)],
+        }

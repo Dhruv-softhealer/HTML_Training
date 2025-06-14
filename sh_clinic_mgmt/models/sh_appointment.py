@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Part of Softhealer Technologies.
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from venv import logger
 from odoo import Command, _, models, fields, api
 from odoo.exceptions import UserError, ValidationError
@@ -26,7 +26,9 @@ class Appointment(models.Model):
     sh_doctor_specialization = fields.Char(string="Doctor Specialization", related="sh_doctor_id.sh_specialization", tracking=True)
     sh_date = fields.Date(string="Date", required=True, tracking=True)
     sh_slot_id = fields.Many2one('sh.slots',related="sh_slt_id.sh_slot_id", store=True, string='Slot')
-    sh_slt_id = fields.Many2one('sh.slot.schedule',required=True,string='Slot', tracking=True)
+    sh_slt_id = fields.Many2one('sh.slot.schedule',required=True,string='Slot',
+    domain="[('sh_date','=',sh_date),('sh_slot_id.doctor_id', '=', sh_doctor_id)]",
+    tracking=True)
     sh_expected_revenue = fields.Float(string="Case Charges", tracking=True)
     sh_emergency_case = fields.Boolean(string="Emergency Case", tracking=True)
     
@@ -43,7 +45,6 @@ class Appointment(models.Model):
         ('old', 'Old')
     ], string="Visit Type", required=True, tracking=True)
     sh_last_visited = fields.Date(string="Last Visited", tracking=True, related="sh_patient_id.sh_last_visit_date")
-    
     
     # Disease Details
     
@@ -78,14 +79,37 @@ class Appointment(models.Model):
     
     sh_state = fields.Selection([
         ('new', 'New'),
+        ('today_apt','Today'),
         ('in_progress', 'In Progress'),
+        ('pending','Pending'),
         ('completed_appointment', 'Completed Appointment'),
         ('cancelled_appointment', 'Cancelled Appointment'),
     ], 
     default='new',
-    tracking=True
-    )
     
+    tracking=True,
+    )
+    apt_count = fields.Integer(string="Appointments", compute="_compute_apt_count")
+    sh_invoice_id = fields.Many2one('account.move', string="Invoice")
+    sale_order_id = fields.Many2one('sale.order', string="Sales Order")
+
+    def action_change_stage(self):
+        return{
+            'name': 'close',
+            'target':'new',
+            'type':'ir.actions.act_window',
+            'res_model':'sh.appointment.stage.wizard',
+            'views': [ [False, 'form']],                
+        } 
+
+
+    def _compute_apt_count(self):
+        for appointment in self:
+            appointment.apt_count = self.env['sh.appointment'].search_count([
+                ('sh_date', '<', fields.Date.today()),('sh_patient_id', '=', appointment.sh_patient_id.id)
+            ])
+            # print(f"\n\n\n\t--------------> 98 self.apt_count",self.apt_count)
+
     # Portal Report Access
     
     def get_portal_url(self, suffix=None, download=None, report_type=None, query_string=None, anchor=None, **kwargs):
@@ -111,26 +135,81 @@ class Appointment(models.Model):
         for order in self:
             order.access_url = f'/my/appointments/{order.id}'
 
-    
     # ===================================== Stages ===========================================
-        
 
     def check_in(self):
         self.sh_state = 'in_progress'
         self.sh_checked_in = True
         
-    def move_to_done(self):
-        self.sh_state = 'completed_appointment'
-        self.sh_patient_id.sh_last_visit_date = date.today()
+    def _create_invoice(self):
+        self.ensure_one()
+
+        if self.sale_order_id:
+            return
+
+        if not self.sh_patient_id:
+            raise UserError("Patient is not linked to appointment.")
+
+        product = self.env['product.product'].search([('name', 'ilike', 'Appointment')], limit=1)
+        if not product:
+            raise UserError("No product found for 'Appointment'. Please create one.")
+
+        order_vals = {
+            'partner_id': self.sh_patient_id.id,
+            'date_order': fields.Datetime.now(),
+            'order_line': [(0, 0, {
+                'name': 'Doctor Appointment - %s' % self.name,
+                'product_id': product.id,
+                'product_uom_qty': 1,
+                'price_unit': self.sh_expected_revenue,
+            })]
+        }
+
+        sale_order = self.env['sale.order'].create(order_vals)
+        self.sale_order_id = sale_order.id
+
+        # receptionist = self.env.ref('base.user_admin')
+        # receptionist_partner = receptionist.partner_id
+        # self.env['bus.bus']._sendone(
+        #     (receptionist_partner._cr.dbname, 'res.partner', receptionist_partner.id),
+        #     {
+        #         'type': 'simple_notification',
+        #         'title': "Sales Order Created",
+        #         'message': f"A Sales Order has been created for Appointment Number {self.name}",
+        #     }
+        # )
+
+    def action_view_sales_order(self):
+        self.ensure_one()
+        print(f"\n\n\n\t--------------> 185 sale_order_id",self.sale_order_id.name)
+        if not self.sale_order_id:
+            raise UserError("No Sales Order linked.")
         return {
-        'type': 'ir.actions.client',
-        'tag': 'reload',
+            'name': 'Sales Order',
+            'view_mode': 'form,list',
+            'res_model': 'sale.order',
+            'type': 'ir.actions.act_window',
+            'res_id': self.sale_order_id.id,
+        }
+
+
+
+    def move_to_done(self):
+        for appointment in self:
+            if appointment.sh_state != 'completed_appointment':
+                appointment.sh_state = 'completed_appointment'
+                appointment.sh_patient_id.sh_last_visit_date = date.today()
+                appointment._create_invoice()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
         }
         
     def unlock_record(self):
         self.sh_state = 'in_progress'
             
-    
+    def pending_appointment(self):
+        self.sh_state = 'pending'
     
     def cancel_record(self):
         self.sh_state = 'cancelled_appointment'
@@ -146,30 +225,41 @@ class Appointment(models.Model):
                 record.sh_slt_id.write({
                     'sh_appointment_line': [Command.unlink(record.id)]
                 })
+            mail_template = self.env.ref('sh_clinic_mgmt.mail_template_cancel_appointment')
+            print(f"\n\n\n\t--------------> 162 mail_template",mail_template)
+            if mail_template:
+                mail_template.send_mail(record.id, force_send=True)
                 return {
                         'type': 'ir.actions.client',
                         'tag': 'display_notification',
                         'params': {
                             'title': 'Success',
                             'message': 'Appointment cancelled successfully.',
-                            'type': 'success',  
+                            'type': 'success',
                             'sticky': False,
                         }
                     }
-            mail_template = self.env.ref('sh_clinic_mgmt.mail_template_cancel_appointment')
-            if mail_template:
-                mail_template.send_mail(record.id, force_send=True)
         
     
     # ======================================= Emergence Case ==========================================
         
-     
     @api.onchange('sh_emergency_case')
     def onchange_emergency_case(self):
         if self.sh_emergency_case:
             self.sh_doctor_notified = True
             self.sh_assigned_doctor = self.sh_doctor_id
-            
+
+
+    def action_view_appointments(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Appointments',
+            'res_model': 'sh.appointment',
+            'view_mode': 'list,form',
+            'domain': [('sh_date', '<', fields.Date.today())],
+            # 'context': {'default_appointment_id': self.id},
+        }
      
     # ======================================= Date Validation & Apply Charges ==========================================
         
@@ -189,7 +279,6 @@ class Appointment(models.Model):
             case_days = self.env.company.sh_case_days
             
             if (self.sh_date - self.sh_last_visited).days > case_days:
-                
                 self.sh_visit_type = 'new'
                 self.sh_expected_revenue = self.sh_doctor_id.sh_new_case_charges
                 
@@ -201,7 +290,7 @@ class Appointment(models.Model):
 # ======================================== Assign Appointment to Slot =========================================
             
 
-    def assign_slot_line(self):
+    def assign_apt_to_slot_line(self):
         print("\n\n\n\n-=-=-=-=--=-=-")
         for rec in self:
             if rec.sh_slt_id and rec.sh_date:
@@ -217,81 +306,123 @@ class Appointment(models.Model):
                 print("\n\n\n\n-=-=-=-=--=-=-rec.sh_slt_id",rec.sh_slt_id)
                 
 
+# ================================== Cron Job For Today Appointment =======================================
+
+    def move_to_today_appointment(self):
+        today = fields.Date.today()
+        appointments = self.search([('sh_date', '=', today), ('sh_state', '=', 'new')])
+        
+        for appointment in appointments:
+            appointment.sh_state = 'today_apt'
+            mail_template = self.env.ref('sh_clinic_mgmt.mail_template_today_appointment')
+            if mail_template:
+                mail_template.send_mail(appointment.id, force_send=True)
+
+
 # ================================== Sequence =======================================
    
     @api.model_create_multi
-    def create(self, vals):
-        # sh_patient_id = vals.get('sh_patient_id')
-        # sh_doctor_id = vals.get('sh_doctor_id')
-
-        # previous_appointment = self.search([('sh_patient_id', '=', sh_patient_id), ('sh_doctor_id', '!=', sh_doctor_id)], limit=1)
-
-        # if previous_appointment:
-        #     # If there's a different doctor, apply new case charges (500)
-        #     vals['case_charges'] = 500
-        # else:
-        #     # If the doctor is the same, use existing charges
-        #     existing_case_charges = previous_appointment.case_charges if previous_appointment else 0.0
-        #     vals['case_charges'] = existing_case_charges or 500
-        
-
-        print("\n\n\n\nportal create===============>>>>", vals)
-        for val in vals:
-            if val['sh_date']:
+    def create(self, vals_list):
+        # print("\n\n\n\nportal create===============>>>>", vals_list)
+        for val in vals_list:
+            if val.get('sh_date'):
                 booking_dt = fields.Datetime.from_string(val['sh_date'])
-
                 local_booking_dt = fields.Datetime.context_timestamp(self, booking_dt)
                 booking_str = local_booking_dt.strftime('%y%m%d-%H%M')
- 
+
                 now_dt = fields.Datetime.context_timestamp(self, datetime.now())
                 current_str = now_dt.strftime('%y%m%d-%H%M')
-                
-                #============================ pre-booking validation =================================
-                
+
+                # ============================ Pre-booking validation ============================
+
                 if val.get('sh_slt_id') and not val.get('sh_emergency_slot_bypass'):
                     rec = self.env['sh.slot.schedule'].browse(val['sh_slt_id'])
-                    
+
                     if rec.sh_slot_id.sh_pre_booking:
                         pre_booking_hour = rec.sh_slot_id.sh_pre_booking
                         diff = (local_booking_dt - now_dt).total_seconds() / 3600.0
-            
+
                         if diff < pre_booking_hour:
                             raise ValidationError(f"A minimum advance booking of {pre_booking_hour} hours is required.")
- 
-                seq = self.env['ir.sequence'].next_by_code('sh.appointment') or '000'
-                val['name'] = f'APT-B{booking_str}-C{current_str}-{seq}'
+
+                # ============================ Doctor-wise sequence ============================
+
+                doctor = self.env['hr.employee'].browse(val['sh_doctor_id'])
+                if not doctor:
+                    raise ValidationError("Doctor not found for appointment.")
+
+                doctor_code = doctor.name.replace(" ", "_").upper()
+                seq_code = f'sh.appointment.{doctor_code}'
+
+                # Look for existing sequence or create new one per doctor
+                sequence = self.env['ir.sequence'].search([('code', '=', seq_code)], limit=1)
+                if not sequence:
+                    sequence = self.env['ir.sequence'].create({
+                        'name': f'Appointment Sequence for {doctor.name}',
+                        'code': seq_code,
+                        'prefix': f'{doctor_code}-',
+                        'padding': 3,
+                    })
+                # print(f"\n\n\n\t--------------> 298 sequence_2",sequence)
+
+                doctor_seq = self.env['ir.sequence'].next_by_code(seq_code) or '000'
+
+                val['name'] = f'{doctor_seq}-B{booking_str}-C{current_str}'
                 val['sh_state'] = 'new'
-        record = super().create(vals)
-        record.assign_slot_line()
+
+        record = super().create(vals_list)
+        record.assign_apt_to_slot_line()
         return record
  
+
     def write(self, vals):
+        for rec in self:
+            old_slot_rec = rec.sh_slt_id.sh_slot_id
+            old_slot_line_id = rec.sh_slt_id.id
+
         res = super(Appointment, self).write(vals)
  
         if 'sh_date' in vals or 'sh_slt_id' in vals or 'sh_emergency_slot_bypass' in vals:
+            if 'sh_date' in vals and not 'sh_slt_id' in vals:
+                raise ValidationError("Change the slot's date and time.")
             if vals.get('sh_date'):
-                booking_dt = fields.Datetime.from_string(vals['sh_date'])
-                local_booking_dt = fields.Datetime.context_timestamp(self, booking_dt)
- 
-            now_dt = fields.Datetime.context_timestamp(self, datetime.now())
-            
-            
-            #============================ pre-booking validation =================================
-            
-            if vals.get('sh_slt_id') and not vals.get('sh_emergency_slot_bypass'):
+                date_obj = datetime.strptime(vals['sh_date'], "%Y-%m-%d").date()
+            else:
+                date_obj = self.sh_date
+            if vals.get('sh_slt_id'):
                 rec = self.env['sh.slot.schedule'].browse(vals['sh_slt_id'])
-                if rec.sh_slot_id.sh_pre_booking:
-                    pre_booking_hour = rec.sh_slot_id.sh_pre_booking
-                    diff = (local_booking_dt - now_dt).total_seconds() / 3600.0
-                   
-                    if diff < pre_booking_hour:
-                        raise ValidationError(f"A minimum advance booking of {pre_booking_hour} hours is required.")
+                
+            now_dt = fields.Datetime.context_timestamp(self, datetime.now())
+            naive_now_dt = now_dt.replace(tzinfo=None)
+            # now_time = now_dt.time()
  
-            slot_line = self.env['sh.slot.schedule'].search([('sh_slot_id', '=', self.sh_slt_id.id),('sh_appointment_line', 'in', self.id)],limit=1)
-                        
+            # pre-booking validation
+            if (vals.get('sh_slt_id') or vals.get('sh_date')) and not vals.get('sh_emergency_slot_bypass'):
+                pre_booking_float = old_slot_rec.sh_pre_booking
+ 
+                start_time = self.float_to_time(rec.sh_start_time)
+                booking_dt = datetime.combine(date_obj, start_time)
+ 
+                if pre_booking_float > -1:
+                    diff = (booking_dt - naive_now_dt).total_seconds() / 3600.0
+                    if diff < 0:
+                        raise ValidationError("You can't book old slot.")
+                    else:
+                        if diff < pre_booking_float:
+                            raise ValidationError(f"You must book at least {pre_booking_float} hours in advance.")
+ 
+            slot_line = self.env['sh.slot.schedule'].search([('id', '=', old_slot_line_id)],limit=1)
+            # unlinking existing id
             slot_line.write({
-                'sh_appointment_line': [Command.link(self.id)]  
+                'sh_appointment_line': [Command.unlink(self.id)]  
             })
-                        
-            self.assign_slot_line()
+            # linking new
+            self.assign_apt_to_slot_line()
         return res
+
+    def float_to_time(self, float_val):
+        hours = int(float_val)
+        minutes = int(round((float_val - hours) * 60))
+        return time(hour=hours, minute=minutes)
+
+    

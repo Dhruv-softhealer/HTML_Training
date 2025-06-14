@@ -1,18 +1,61 @@
 <odoo>
     <record id="mail_template_cancel_appointment" model="mail.template">
         <field name="name">Appointment Cancellation Email</field>
-        <field name="subject">Appointment Cancelled - ${object.name}</field>
-        <field name="email_from"></field>
-        <field name="email_to">{{object.partner_id.sh_email}}</field>
-        <field name="model_id" ref="sh_clinic_mgmt.model_sh_appointment" />
-        <field name="body_html">
-        <![CDATA[
-                <p>Dear ${object.sh_patient_id.name},</p>
-                <p>Your appointment <strong>${object.name}</strong> scheduled on
-                <strong>${object.sh_slt_id.sh_start_time}</strong> has been cancelled.</p>
+        <field name="model_id" ref="model_sh_appointment" />
+        <field name="subject">Appointment Cancelled - {{ (object.sh_patient_id.email) }}</field>
+        <field name="email_from">{{ (object.sh_doctor_id.email) }}</field>
+        <field name="email_to">{{ (object.sh_patient_id.email) }}</field>
+        <field name="auto_delete" eval="True" />
+        <field name="body_html" type="html">
+            <t t-if="object.sh_patient_id.name"> Dear <a
+                    t-attf-href="http://localhost:8088/odoo/action-436/11/res.partner/34?debug=1"
+                    style="text-decoration:none; color: #454748;"
+                    t-out="object.sh_patient_id.name"></a>
+            </t>
+
+            <t t-if="object.name and object.sh_slt_id.sh_start_time">
+                <p>Your appointment <strong>
+                        <t t-out="object.name" />
+                    </strong> scheduled on <strong>
+                        <t t-out="object.sh_slt_id.sh_start_time" />
+                    </strong>
+                    has been cancelled.</p>
+
                 <p>If you have any questions, please contact us.</p>
-                <p>Thank you.</p>
-                ]]>
+
+                <p>Thank you...</p>
+            </t>
+
         </field>
     </record>
+
+
+    <record id="mail_template_today_appointment" model="mail.template">
+        <field name="name">Today Appointment Reminder</field>
+        <field name="model_id" ref="model_sh_appointment" />
+        <field name="subject">Reminder: Appointment Today with {{ (object.sh_doctor_id.email) }}</field>
+        <field name="email_to">{{ object.email_formatted }}</field>
+        <field name="email_from">{{ (object.sh_patient_id.email) }}</field>
+        <field name="auto_delete" eval="True" />
+        <field name="body_html" type="html">
+
+            <t t-if="object.sh_patient_id.name"> Dear <a
+                    t-attf-href="'%s' % {{ object.sh_patient_id.name }}"
+                    style="text-decoration:none; color: #454748;"
+                    t-out="object.sh_patient_id.name or ''">http://www.example.com</a>
+            </t>
+            <p>This is a reminder for your appointment scheduled <strong>today</strong>:</p>
+
+            <ul>
+                <li><strong>Doctor:</strong> <t t-out="object.sh_doctor_id.name"/></li>
+                <li><strong>Time:</strong> <t t-out="object.sh_time_slot_id.name"/></li>
+            </ul>
+
+            <p>Please arrive 10 minutes early.</p>
+            <p>Thank you...</p>
+
+        </field>
+    </record>
+
+
 </odoo>

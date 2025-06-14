@@ -9,6 +9,10 @@
                 <field name="sh_slot_time"></field>
                 <field name="sh_start_date"></field>
                 <field name="sh_end_date"></field>
+                <field name="sh_state" string="State" widget="badge"
+                decoration-muted="sh_state == 'draft'"
+                    decoration-success="sh_state == 'published'"
+                    decoration-warning="sh_state == 'booked'" />
             </list>
         </field>
     </record>
@@ -19,8 +23,10 @@
         <field name="arch" type="xml">
             <form string="Slots">
                 <header>
-                    <button name="publish_appointment" string="Publish" type="object" class="oe_highlight" />
-                    <button name="generate_slot" string="Generate Slot" type="object" class="oe_highlight" />
+                    <button name="publish_appointment" string="Publish" type="object"
+                        class="oe_highlight" />
+                    <button name="generate_slot" string="Generate Slot" type="object"
+                        class="oe_highlight" />
                     <field name="sh_state" widget="statusbar"></field>
                 </header>
                 <sheet>
@@ -28,7 +34,7 @@
                     <group>
                         <group>
                             <field name="doctor_id"></field>
-                            <field name="sh_slot_time" widget="float_time"/>
+                            <field name="sh_slot_time" widget="float_time" />
                             <field name="sh_pre_booking" widget="float_time"></field>
                             <field name="sh_start_date"></field>
                             <field name="sh_end_date"></field>
@@ -53,7 +59,7 @@
                     </notebook>
                 </sheet>
                 <!-- Chatter -->
-                <chatter/>
+                <chatter />
             </form>
         </field>
     </record>
@@ -68,24 +74,41 @@
                 <field name="doctor_id" string="Doctor Name" />
 
                 <!-- Filters -->
-                <filter string="Published" name="published" domain="[('sh_state', '=', 'published')]" />
-                <filter string="Booked" name="booked" domain="[('sh_state', '=', 'booked')]"/>
-                <filter string="Draft" name="draft" domain="[('sh_state', '=', 'draft')]"/>
-                <separator/>
+                <filter string="Published" name="published"
+                    domain="[('sh_state', '=', 'published')]" />
+                <filter string="Booked" name="booked" domain="[('sh_state', '=', 'booked')]" />
+                <filter string="Draft" name="draft" domain="[('sh_state', '=', 'draft')]" />
+                <separator />
 
-                <filter string="Allowed Patients (&lt;=3)" name="allowed_patients_high" domain="[('sh_allowed_patients', '&lt;=', 3)]"/>
-                <separator/>
+                <filter string="Allowed Patients (&lt;=3)" name="allowed_patients_high"
+                    domain="[('sh_allowed_patients', '&lt;=', 3)]" />
+                <separator />
 
-                <separator/>
+                <separator />
 
                 <!-- Group By -->
                 <group expand="0" string="Group By">
-                    <filter string="Doctor" name="group_by_doctor" context="{'group_by': 'doctor_id'}"/>
-                    <filter string="State" name="group_by_state" context="{'group_by': 'sh_state'}"/>
-                    <filter string="Start Date" name="group_by_start_date" context="{'group_by': 'sh_start_date'}"/>
-                    <filter string="End Date" name="group_by_end_date" context="{'group_by': 'sh_end_date'}"/>
+                    <filter string="Doctor" name="group_by_doctor"
+                        context="{'group_by': 'doctor_id'}" />
+                    <filter string="State" name="group_by_state" context="{'group_by': 'sh_state'}" />
+                    <filter string="Start Date" name="group_by_start_date"
+                        context="{'group_by': 'sh_start_date'}" />
+                    <filter string="End Date" name="group_by_end_date"
+                        context="{'group_by': 'sh_end_date'}" />
                 </group>
             </search>
+        </field>
+    </record>
+
+    <record id="action_mass_publish_state" model="ir.actions.server">
+        <field name="name">Move to Publish</field>
+        <field name="model_id" ref="model_sh_slots" />
+        <field name="binding_model_id" ref="model_sh_slots" />
+        <field name="state">code</field>
+        <field name="binding_view_types">list</field>
+        <field name="code">
+            for record in records:
+            record.action_publish()
         </field>
     </record>
 

@@ -19,17 +19,20 @@ class Slots(models.Model):
     sh_pre_booking = fields.Float(string="Pre-Booking Time(In Min)", tracking=True)
     sh_start_date = fields.Date(string="Start Date", required=True, tracking=True)
     sh_end_date = fields.Date(string="End Date", required=True, tracking=True)
-    sh_cancel_time = fields.Float(string="Allow Cancelling(In Min)", required=True)
+    sh_cancel_time = fields.Float(string="Allow Cancelling(In Min)", required=True, tracking=True)
     
     sh_schedule_line = fields.One2many('sh.slot.schedule', 'sh_slot_id', string="Appointment Slots")
     
+
     sh_state = fields.Selection([
         ('draft', 'Draft'),
         ('published', 'Published'),
         ('booked', 'Booked')
     ],default="draft", tracking=True)
     
-    
+    def action_publish(self):
+        for rec in self:
+            rec.sh_state = 'published'
     
     def compute_slot_stage(self):
         for rec in self:
@@ -124,7 +127,6 @@ class Slots(models.Model):
                 
     # ======================================= Slot Overlapping ========================================
     
-    
     @api.constrains('doctor_id', 'sh_start_date', 'sh_end_date')
     def _check_overlapping_slots(self):
         for rec in self:
@@ -139,3 +141,10 @@ class Slots(models.Model):
                 raise ValidationError(
                     f"Doctor {rec.doctor_id.name} already has a slot between {overlapping_slots.sh_start_date} and {overlapping_slots.sh_end_date}. Please change the date or timing."
                 )
+
+    def unlink(self):
+        for rec in self:
+            if rec.sh_state == 'published':
+                raise ValidationError("You can not delete publish slots.")
+        rec = super().unlink()
+        return rec

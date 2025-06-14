@@ -27,6 +27,7 @@
         # date
         'data/apt_sequence.xml',
         'data/sh_mail_template.xml',
+        'data/sh_appointment_cron.xml',
         
         # report
         # 'report/sh_appointment_template.xml',
@@ -34,6 +35,7 @@
         
         # wizard
         'wizard/sh_appointment_template.xml',
+        # 'wizard/sh_daily_appointment_summary_wizard.xml',
         
         # views
         'views/sh_allergies_view.xml',
@@ -56,6 +58,7 @@
         'views/sh_appointment_view.xml',
         'views/report_appointment.xml',
         'views/portal_templates.xml',
+        'views/sh_apt_wizard_view.xml',
         'wizard/sh_reports.xml',
         
         # menuitem

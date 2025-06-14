@@ -25,38 +25,103 @@
                 <t t-set="breadcrumbs_searchbar" t-value="True" />
 
 
-                <!-- <t t-call="portal.portal_searchbar">
+                <t t-call="portal.portal_searchbar">
                     <t t-set="title">Appointent</t>
-                    <div class="form-inline ml-lg-4 sh_book_btn" id="sh_book_btn"> -->
+                    <div class="form-inline ml-lg-4 sh_book_btn" id="sh_book_btn">
 
                         <!-- Book Appointment Button -->
 
-                        <!-- <a id="new_appt" class="btn btn-secondary" name="new_appt"
+                        <a id="new_appt" class="btn btn-secondary" name="new_appt"
                             title="Create APT Request" aria-label="Create APT Request"
                             role="button">
                             <i class="fa fa-plus" /> Book Appointment </a>
                     </div>
-                </t> -->
+                </t>
 
                 <div id="createticketModal" class="modal fade" role="dialog">
-                    <div class="modal-dialog modal-lg">
+                    <div class="modal-dialog">
                         <!-- Modal content-->
                         <div class="modal-content">
+
                             <div
                                 class="modal-header d-flex justify-content-between align-items-center">
                                 <h5 class="modal-title">Book Appointment</h5>
                                 <button type="button" class="close" data-bs-dismiss="modal"
                                     aria-label="Close">
-                                    <span aria-hidden="true"></span>
+                                    <span aria-hidden="true">&amp;times;</span>
                                 </button>
                             </div>
                             <div class="modal-body">
                                 <!-- Call the form template directly -->
-                                <t t-call="sh_clinic_mgmt.book_appointment_form" />
+                                <!-- <t t-call="sh_clinic_mgmt.book_appointment_form" /> -->
+
+                                <form action="/submit/appointment" method="post"
+                                    class="form o_portal_appointment_form">
+                                    <input type="hidden" name="csrf_token"
+                                        t-att-value="request.csrf_token()" />
+
+                                    <!-- Doctor -->
+                                    <div class="form-group">
+                                        <label for="sh_doctor_id">Doctor</label>
+                                        <select name="sh_doctor_id" class="form-control"
+                                            id="sh_doctor_id">
+                                            <t t-foreach="doctors" t-as="doc">
+                                                <option t-att-value="doc.id">
+                                                    <t t-esc="doc.name" />
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+
+                                    <!-- Appointment Date -->
+                                    <div class="row">
+                                        <div
+                                            class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
+                                            <div t-attf-class="form-group mb-3">
+                                                <div class="form-group">
+                                                    <label for="sh_date">Select Appointment Date</label>
+                                                    <input type="date" id="sh_date" name="sh_date"
+                                                        class="form-control"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
+                                            <div t-attf-class="form-group mb-3">
+                                                <label class="control-label mb-1"
+                                                    for="portal_subcategory">slot</label>
+                                                <select
+                                                    class="form-control form-field o_website_form_required_custom"
+                                                    id="portal_slot" name="portal_slot">
+                                                    <option value="sub_category">Select slot</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Phone -->
+                                    <div class="form-group">
+                                        <label for="sh_phone">Phone</label>
+                                        <input type="text" name="sh_phone" class="form-control" />
+                                    </div>
+
+                                    <button type="submit" class="btn btn-success mt-2">Submit</button>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <t t-if="request.session.get('apt_success')">
+                    <div class="alert alert-success alert-dismissible fade show w-50" role="alert">
+                        <t t-esc="request.session.pop('apt_success')" />
+                        <button type="button" class="close" data-bs-dismiss="alert"
+                            aria-label="Close">
+                            <span aria-hidden="true">&amp;times;</span>
+                        </button>
+                    </div>
+                </t>
 
 
                 <div t-if="not appointments" class="alert alert-warning" role="alert">
@@ -68,8 +133,9 @@
                     <t t-foreach="grouped_tickets" t-as="group">
                         <table class="table table-hover mb-4">
                             <thead>
-                                <tr t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
-                                    
+                                <tr
+                                    t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+
                                     <th t-if="groupby == 'doctor'">
                                         <em class="font-weight-normal text-muted">Doctor:</em>
                                         <span t-field="group[0].sh_doctor_id.name" />
@@ -89,7 +155,7 @@
                                     <th>Date</th>
                                     <th>Status</th>
                                 </tr>
-                                
+
                             </thead>
                             <tbody>
                                 <t t-foreach="group" t-as="g">
@@ -148,10 +214,23 @@
 
                             <!-- Report Download button -->
 
-                            <a class="btn btn-light o_download_btn flex-grow-1 w-100 my-2"
+                            <a class="btn btn-primary o_download_btn flex-grow-1 w-100 my-2"
                                 t-att-href="appointment.get_portal_url(report_type='pdf')"
                                 title="Download" target='_blank' role="button">
                                 <i class="fa fa-download" /> View Detail </a>
+
+                            <a t-att-href="'/my/appointment/delete/%s' % appointment.id"
+                                class="btn btn-danger flex-grow-1 w-100 my-2"
+                                title="Cancel Appointment" role="button"
+                                onclick="return confirm('Are you sure you want to cancel this appointment?');">
+                                <i class="fa fa-times-circle" aria-hidden="true" /> Cancel
+                                Appointment </a>
+
+                            <t t-if="request.session.get('cancel_error')">
+                                <div class="alert alert-danger" role="alert">
+                                    <t t-esc="request.session.pop('cancel_error')" />
+                                </div>
+                            </t>
 
                             <div class="mb-4">
                                 <p class="text-muted fw-bold mb-1">Doctor</p>
@@ -362,17 +441,198 @@
         </template>
 
 
-        <template id="book_appointment_form" name="Book Appointment Form">
+        <!-- Custom Fields in My Details -->
+
+        <template id="portal_my_details_fields_custom" inherit_id="portal.portal_my_details_fields">
+            <xpath expr="//div[contains(@class, 'clearfix')]" position="before">
+
+                <div t-attf-class="mb-3 col-xl-6">
+                    <label for="sh_gender">Gender</label>
+                    <select name="sh_gender" class="form-control" id="sh_gender">
+                        <option t-att-selected="partner.sh_gender == 'male'" value="male">Male</option>
+                        <option t-att-selected="partner.sh_gender == 'female'" value="female">Female</option>
+                        <option t-att-selected="partner.sh_gender == 'other'" value="other">Other</option>
+                    </select>
+                </div>
+
+                <div
+                    t-attf-class="mb-3 col-xl-6">
+                    <label for="sh_birth_date">Birth Date</label>
+                    <input type="date" class="form-control" name="sh_birth_date"
+                        t-att-value="partner.sh_birth_date or ''" />
+                </div>
+
+                <div
+                    t-attf-class="mb-3 col-xl-6">
+                    <label for="sh_blood_group">Blood Group</label>
+                    <select name="sh_blood_group" class="form-control" id="sh_blood_group">
+                        <option t-att-selected="partner.sh_blood_group == 'a+'" value="a+">A+</option>
+                        <option t-att-selected="partner.sh_blood_group == 'a-'" value="a-">A-</option>
+                        <option t-att-selected="partner.sh_blood_group == 'b+'" value="b+">B+</option>
+                        <option t-att-selected="partner.sh_blood_group == 'b-'" value="b-">B-</option>
+                        <option t-att-selected="partner.sh_blood_group == 'ab+'" value="ab+">AB+</option>
+                        <option t-att-selected="partner.sh_blood_group == 'ab-'" value="ab-">AB-</option>
+                        <option t-att-selected="partner.sh_blood_group == 'o+'" value="o+">O+</option>
+                        <option t-att-selected="partner.sh_blood_group == 'o-'" value="o-">O-</option>
+                    </select>
+                </div>
+
+            </xpath>
+
+            <xpath expr="//select[@name='country_id']/.." position="after">
+                <div class="col-12 d-none d-xl-block">
+                    <strong class="form-text text-muted">
+                        Medical Details
+                    </strong>
+                </div>
+
+                <t t-foreach="request.env['sh.allergies'].sudo().search([])" t-as="allergy">
+                    <div class="form-check">
+                        <input type="checkbox"
+                            class="form-check-input"
+                            name="sh_allergy_ids"
+                            t-att-value="allergy.id"
+                            t-att-checked="'checked' if allergy.id in partner.sh_allergy_ids.ids else None" />
+                        <label class="form-check-label" t-esc="allergy.name" />
+                    </div>
+                </t>
+
+
+                <!-- <div class="form-group">
+                    <label for="sh_allergy_ids">Allergies</label>
+                    <select name="sh_allergy_ids" id="sh_allergy_ids" class="form-control"
+                        multiple="multiple">
+                        <t t-foreach="request.env['sh.allergies'].sudo().search([])" t-as="allergy">
+                            <option t-att-value="allergy.id"
+                                t-att-selected="'selected' if allergy.id in partner.sh_allergy_ids.ids else None">
+                                <t t-esc="allergy.name" />
+                            </option>
+                        </t>
+                    </select>
+                </div> -->
+
+                <div
+                    t-attf-class="mb-3 #{error.get('sh_dietary_preferences') and 'o_has_error' or ''} col-xl-6">
+                    <div class="col-xl-6">
+                        <label for="sh_dietary_preferences">Dietary Preferences</label>
+                        <select name="sh_dietary_preferences" class="form-control"
+                            id="sh_dietary_preferences">
+                            <option t-att-selected="partner.sh_dietary_preferences == 'vegetarian'"
+                                value="vegetarian">Vegetarian</option>
+                            <option t-att-selected="partner.sh_dietary_preferences == 'gluten_free'"
+                                value="gluten_free">Gluten-Free</option>
+                            <option
+                                t-att-selected="partner.sh_dietary_preferences == 'non_vegetarian'"
+                                value="non_vegetarian">Non Vegetarian</option>
+                            <option t-att-selected="partner.sh_dietary_preferences == 'vegan'"
+                                value="vegan">Vegan</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- <div
+                    t-attf-class="mb-3 #{error.get('sh_mental_health_problem_ids') and 'o_has_error' or ''} col-xl-6">
+                    <div class="col-xl-6">
+                        <label class="col-form-label" for="sh_mental_health_problem_ids">Mental
+                            Health Problem</label>
+                        <select name="sh_mental_health_problem_ids" multiple="multiple"
+                            class="form-control"
+                            id="sh_mental_health_problem_ids">
+                            <t t-foreach="request.env['sh.mental.health.problem'].sudo().search([])" t-as="mhp">
+                                <option t-att-value="mhp.id"
+                                    t-att-selected="'selected' if mhp.id in partner.sh_mental_health_problem_ids.ids else None">
+                                    <t t-esc="mhp.name" />
+                                </option>
+                            </t>
+                        </select>
+                    </div>
+                </div>
+
+                <div
+                    t-attf-class="mb-3 #{error.get('sh_life_style_fector_ids') and 'o_has_error' or ''} col-xl-6">
+                    <div class="col-xl-6">
+                        <label class="col-form-label" for="sh_life_style_fector_ids">Lift Style
+                            Fector</label>
+                        <select name="sh_life_style_fector_ids" multiple="multiple"
+                            class="form-control"
+                            id="sh_life_style_fector_ids">
+                            <t t-foreach="request.env['sh.life.style.fector'].sudo().search([])" t-as="lsf">
+                                <option t-att-value="lsf.id"
+                                    t-att-selected="'selected' if lsf.id in partner.sh_life_style_fector_ids.ids else None">
+                                    <t t-esc="lsf.name" />
+                                </option>
+                            </t>
+                        </select>
+                    </div>
+                </div>
+
+                <div
+                    t-attf-class="mb-3 #{error.get('sh_cronic_condition_ids') and 'o_has_error' or ''} col-xl-6">
+                    <div class="col-xl-6">
+                        <label class="col-form-label" for="sh_cronic_condition_ids">Chronic
+                            Condition</label>
+                        <select name="sh_cronic_condition_ids" multiple="multiple"
+                            class="form-control"
+                            id="sh_cronic_condition_ids">
+                            <t t-foreach="request.env['sh.chronic.condition'].sudo().search([])" t-as="cc">
+                                <option t-att-value="cc.id"
+                                    t-att-selected="'selected' if cc.id in partner.sh_cronic_condition_ids.ids else None">
+                                    <t t-esc="cc.name" />
+                                </option>
+                            </t>
+                        </select>
+                    </div>
+                </div> -->
+
+                <div
+                    t-attf-class="mb-3 col-xl-6">
+                    <div class="col-xl-6">
+                        <label for="sh_regular_medicine">Current Medication</label>
+                        <input type="text" class="form-control" name="sh_regular_medicine"
+                            t-att-value="partner.sh_regular_medicine or ''" />
+                    </div>
+                </div>
+
+
+                <div
+                    t-attf-class="mb-3 col-xl-6">
+                    <div class="col-xl-6">
+                        <label for="sh_mobility_status">Mobility Status</label>
+                        <select name="sh_mobility_status" class="form-control"
+                            id="sh_mobility_status">
+                            <option t-att-selected="partner.sh_mobility_status == 'wheelchair'"
+                                value="wheelchair">Wheelchair</option>
+                            <option t-att-selected="partner.sh_mobility_status == 'walker'"
+                                value="walker">Walker</option>
+                            <option
+                                t-att-selected="partner.sh_mobility_status == 'crutches'"
+                                value="crutches">Crutches</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div
+                    t-attf-class="mb-3 col-xl-6">
+                    <div class="col-xl-6">
+                        <label for="sh_report">Report</label>
+                        <input type="file" class="form-control" name="sh_report"
+                            t-att-value="partner.sh_report or ''" />
+                    </div>
+                </div>
+
+            </xpath>
+        </template>
+
+
+        <!-- <template id="book_appointment_form" name="Book Appointment Form">
             <t t-call="portal.portal_layout">
                 <div class="container mt-4">
                     <h2>Book Appointment</h2>
 
-                    <!-- Step 1: Submit Appointment -->
                     <form action="/submit/appointment" method="post"
                         class="form o_portal_appointment_form">
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
 
-                        <!-- Doctor -->
                         <div class="form-group">
                             <label for="sh_doctor_id">Doctor</label>
                             <select name="sh_doctor_id" class="form-control" id="sh_doctor_id">
@@ -384,7 +644,6 @@
                             </select>
                         </div>
 
-                        <!-- Appointment Date -->
                         <div class="row">
                             <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
                                 <div t-attf-class="form-group mb-3">
@@ -408,7 +667,6 @@
                             </div>
                         </div>
 
-                        <!-- Phone -->
                         <div class="form-group">
                             <label for="sh_phone">Phone</label>
                             <input type="text" name="sh_phone" class="form-control" />
@@ -418,7 +676,7 @@
                     </form>
                 </div>
             </t>
-        </template>
+        </template> -->
 
     </data>
 </odoo>

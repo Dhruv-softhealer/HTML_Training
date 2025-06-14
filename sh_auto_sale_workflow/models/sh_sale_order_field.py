@@ -46,12 +46,6 @@ class SaleOrderWorkflow(models.Model):
                             
                             
                         if rec.send_invoice_by_email:
-                            # self.env["account.move.send.wizard"].with_context(
-                            #     active_model="account.move",
-                            #     active_ids=var.ids, 
-                            #     mail_partner_ids=self.partner_id,
-                            #     mail_subject=self.auto_sale_workflow.company_id
-                            # ).action_send_and_print()
                             
                             self.env['account.move.send.wizard'].create([{"move_id": var.id}]).action_send_and_print()
         return res
