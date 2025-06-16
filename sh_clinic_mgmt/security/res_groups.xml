@@ -30,7 +30,7 @@
     </record>
 
 
-    <!-- ================================== Record Rules =============================== -->
+<!-- ================================== Record Rules =============================== -->
 
     <record id="sh_appointment_reception_rule" model="ir.rule">
         <field name="name">Receptioniest Rules</field>

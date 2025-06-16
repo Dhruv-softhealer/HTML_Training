@@ -60,14 +60,18 @@
                         <button type="object"
                             name="action_view_sales_order"
                             icon="fa-file-text-o"
-                            class="oe_stat_button">
+                            groups="sh_clinic_mgmt.clinic_group_admin"
+                            class="oe_stat_button" 
+                            invisible="not sale_order_id">
                             <field name="sale_order_id" invisible="1" />
                             <div class="o_stat_info">
                                 <span>Sales Order</span>
                             </div>
                         </button>
                     </div>
-                    <field name="name"></field>
+                    <h1>
+                        <field name="name"></field>
+                    </h1>
                     <group>
                         <group>
                             <field name="sh_expected_revenue"

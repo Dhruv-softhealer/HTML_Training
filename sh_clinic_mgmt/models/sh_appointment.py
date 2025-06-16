@@ -8,7 +8,7 @@ from odoo.exceptions import UserError, ValidationError
 from odoo.sql_db import timedelta
 from odoo.tools.date_utils import date
 from collections import defaultdict
-from odoo.addons.portal.models.portal_mixin import PortalMixin
+# from odoo.addons.portal.models.portal_mixin import PortalMixin
 
 
 class Appointment(models.Model):
@@ -84,14 +84,15 @@ class Appointment(models.Model):
         ('pending','Pending'),
         ('completed_appointment', 'Completed Appointment'),
         ('cancelled_appointment', 'Cancelled Appointment'),
-    ], 
+    ],
     default='new',
-    
     tracking=True,
     )
     apt_count = fields.Integer(string="Appointments", compute="_compute_apt_count")
-    sh_invoice_id = fields.Many2one('account.move', string="Invoice")
+    # sh_invoice_id = fields.Many2one('account.move', string="Invoice")
     sale_order_id = fields.Many2one('sale.order', string="Sales Order")
+
+    # ===================================== Appointment Stage Change ===========================================
 
     def action_change_stage(self):
         return{
@@ -100,9 +101,10 @@ class Appointment(models.Model):
             'type':'ir.actions.act_window',
             'res_model':'sh.appointment.stage.wizard',
             'views': [ [False, 'form']],                
-        } 
+        }
 
-
+    # ===================================== Count for Appointments ===========================================
+    
     def _compute_apt_count(self):
         for appointment in self:
             appointment.apt_count = self.env['sh.appointment'].search_count([
@@ -123,7 +125,7 @@ class Appointment(models.Model):
             '#%s' % anchor if anchor else ''
         )
         return url
-    
+
     def _get_report_base_filename(self):
         self.ensure_one()
         return 'APT-%s' % (self.name)
@@ -140,6 +142,8 @@ class Appointment(models.Model):
     def check_in(self):
         self.sh_state = 'in_progress'
         self.sh_checked_in = True
+
+    #  ===================================== Sale Order Creation ===========================================
         
     def _create_invoice(self):
         self.ensure_one()
@@ -147,25 +151,34 @@ class Appointment(models.Model):
         if self.sale_order_id:
             return
 
-        if not self.sh_patient_id:
-            raise UserError("Patient is not linked to appointment.")
+        for appointment in self:
+            if not appointment.sh_patient_id:
+                raise UserError("Patient is not linked to appointment.")
+            if not appointment.sh_doctor_id:
+                raise UserError("Doctor is not linked to appointment.")
 
-        product = self.env['product.product'].search([('name', 'ilike', 'Appointment')], limit=1)
-        if not product:
-            raise UserError("No product found for 'Appointment'. Please create one.")
+            prescription_line_vals = []
+            for line in appointment.sh_prescription_line:
+                # print(f"\n\n\n\t--------------> 165 line.sh_medicine_id.name",line.sh_medicine_id.sh_product_id.product_variant_id.id)
+                if not line.sh_medicine_id:
+                    raise UserError("No Medicine lines created, Kinely create medicine lines for appointment %s." % appointment.name)
+                prescription_line_vals.append((0, 0, {
+                    'product_id': line.sh_medicine_id.sh_product_id.product_variant_id.id,
+                    'name': appointment.name,
+                    'price_unit': appointment.sh_expected_revenue,
+                }))
 
-        order_vals = {
-            'partner_id': self.sh_patient_id.id,
-            'date_order': fields.Datetime.now(),
-            'order_line': [(0, 0, {
-                'name': 'Doctor Appointment - %s' % self.name,
-                'product_id': product.id,
-                'product_uom_qty': 1,
-                'price_unit': self.sh_expected_revenue,
-            })]
-        }
+            if not prescription_line_vals:
+                raise UserError("No valid prescription lines found for appointment %s." % appointment.name)
+
+            order_vals = {
+                'partner_id': appointment.sh_patient_id.id,
+                'date_order': fields.Datetime.now(),
+                'order_line': prescription_line_vals
+            }
 
         sale_order = self.env['sale.order'].create(order_vals)
+
         self.sale_order_id = sale_order.id
 
         # receptionist = self.env.ref('base.user_admin')
@@ -182,8 +195,8 @@ class Appointment(models.Model):
     def action_view_sales_order(self):
         self.ensure_one()
         print(f"\n\n\n\t--------------> 185 sale_order_id",self.sale_order_id.name)
-        if not self.sale_order_id:
-            raise UserError("No Sales Order linked.")
+        # if not self.sale_order_id:
+        #     raise UserError("No Sales Order linked.")
         return {
             'name': 'Sales Order',
             'view_mode': 'form,list',
@@ -192,8 +205,8 @@ class Appointment(models.Model):
             'res_id': self.sale_order_id.id,
         }
 
-
-
+    # ===================================== Done Stage ===========================================
+    
     def move_to_done(self):
         for appointment in self:
             if appointment.sh_state != 'completed_appointment':
@@ -258,7 +271,6 @@ class Appointment(models.Model):
             'res_model': 'sh.appointment',
             'view_mode': 'list,form',
             'domain': [('sh_date', '<', fields.Date.today())],
-            # 'context': {'default_appointment_id': self.id},
         }
      
     # ======================================= Date Validation & Apply Charges ==========================================
@@ -305,7 +317,6 @@ class Appointment(models.Model):
                     })
                 print("\n\n\n\n-=-=-=-=--=-=-rec.sh_slt_id",rec.sh_slt_id)
                 
-
 # ================================== Cron Job For Today Appointment =======================================
 
     def move_to_today_appointment(self):

@@ -106,7 +106,7 @@ class AppointmentPortal(CustomerPortal):
             url=url,
             total=appointments_count,
             page=page,
-            step=20,
+            step=10,
             url_args={'sortby': sortby, 'search_in': search_in, 'search': search, 'filterby': filterby, 'groupby': groupby},
         )
         
@@ -121,7 +121,7 @@ class AppointmentPortal(CustomerPortal):
         else:
             order = order 
         
-        appointments = Appointment.search(domain, limit=20, offset=pager['offset'], order=order)      
+        appointments = Appointment.search(domain, limit=10, offset=pager['offset'], order=order)      
         # print("\n\n\n", appointments)
 
         if groupby == 'create_by':
