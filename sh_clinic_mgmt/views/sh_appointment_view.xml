@@ -254,7 +254,7 @@
     <!-- ========================== Appointment Summery Report ============================ -->
 
 
-    <record id="sh_appointment_summery_form_view" model="ir.ui.view">
+    <!-- <record id="sh_appointment_summery_form_view" model="ir.ui.view">
         <field name="name">Appointment Summery</field>
         <field name="model">sh.appointment.summary.wizard</field>
         <field name="arch" type="xml">
@@ -281,7 +281,7 @@
         <field name="res_model">sh.appointment.summary.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
-    </record>
+    </record> -->
 
 
 </odoo>

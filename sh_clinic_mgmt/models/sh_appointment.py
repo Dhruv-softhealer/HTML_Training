@@ -92,6 +92,7 @@ class Appointment(models.Model):
     # sh_invoice_id = fields.Many2one('account.move', string="Invoice")
     sale_order_id = fields.Many2one('sale.order', string="Sales Order")
 
+
     # ===================================== Appointment Stage Change ===========================================
 
     def action_change_stage(self):

@@ -5,15 +5,10 @@
         <menuitem id="sh_slot_config_action" name="Slot" sequence="1" action="sh_slots_action_view">
 
         </menuitem>
-        <menuitem id="sh_appointment_config_action" name="Appointment" sequence="2">
-            <menuitem id="menu_appointment_summary"
-            name="Appointment Summary"
-            action="action_appointment_summary_wizard" sequence="1"/>
-            
-            <menuitem id="menu_appointment_action" name="Appointment"
-                action="sh_appointment_action_view" sequence="2"/>
 
-        </menuitem>
+        <menuitem id="menu_appointment_action" name="Appointment"
+            action="sh_appointment_action_view" sequence="2" />
+
         <menuitem id="sh_patient_config_action" name="Patient" sequence="3"
             action="sh_patient_action_view">
 
@@ -51,6 +46,10 @@
 
             <menuitem id="sh_clinic_submenu_action_9" name="Symptoms"
                 action="sh_symptom_action_view"></menuitem>
+        </menuitem>
+        <menuitem id="sh_clinic_report_action" name="Reports" sequence="6">
+            <menuitem id="sh_daily_apt_report" action="action_appointment_summary_report_wizard" 
+                name="Daily Appointment Summery Report" sequence="1"/>
         </menuitem>
     </menuitem>
 </odoo>

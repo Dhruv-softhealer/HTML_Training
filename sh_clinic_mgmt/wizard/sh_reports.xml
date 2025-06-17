@@ -15,16 +15,26 @@
         <field name="dpi">96</field>
     </record>
 
-    <record id="report_appointment_summary" model="ir.actions.report">
+    <!-- <record id="report_appointment_summary" model="ir.actions.report">
         <field name="name">Daily Appointment Summary</field>
         <field name="model">sh.appointment.summary.wizard</field>
         <field name="report_type">qweb-pdf</field>
-        <field name="report_name">sh_clinic_mgmt.appointment_summary_template</field>
-        <field name="report_file">sh_clinic_mgmt.appointment_summary_template</field>
+        <field name="report_name">sh_clinic_mgmt.appointment_report_template</field>
+        <field name="report_file">sh_clinic_mgmt.appointment_report_template</field>
         <field name="print_report_name">'Daily Appointment Summary'</field>
         <field name="binding_model_id" ref="sh_clinic_mgmt.model_sh_appointment_summary_wizard" />
         <field name="binding_type">report</field>
         <field name="paperformat_id" ref="paperformat_event_full_page" />
+    </record> -->
+
+    <record id="action_appointment_summary_report" model="ir.actions.report">
+        <field name="name">Appointment Report</field>
+        <field name="model">sh.appointment.summary.report</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sh_clinic_mgmt.appointment_report_template</field>
+        <field name="report_file">sh_clinic_mgmt.appointment_report_template</field>
+        <field name="binding_model_id" ref="model_sh_appointment_summary_report" />
+        <field name="binding_type">report</field>
     </record>
 
     <!-- report_action.xml -->

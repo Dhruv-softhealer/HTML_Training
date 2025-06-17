@@ -376,73 +376,49 @@ class AppointmentPortal(CustomerPortal):
             'sh_report'
         ]
     
-    @http.route(['/my/account'], type='http', auth="user", website=True)
-    def portal_my_account(self, **post):
-        partner = request.env.user.partner_id.sudo()
-        print(f"\n\n\n\t--------------> 382 partner",partner)
+    @http.route(['/my/account'], type='http', auth='user', website=True)
+    def account(self, redirect=None, **post):
+        if post and request.httprequest.method == 'POST':
+            partner = request.env.user.partner_id
 
-        if request.httprequest.method == 'POST':
-            values = {
-                'sh_gender': post.get('sh_gender'),
-                'sh_birth_date': post.get('sh_birth_date'),
-                'sh_blood_group': post.get('sh_blood_group'),
-                'sh_dietary_preferences': post.get('sh_dietary_preferences'),
-                'sh_regular_medicine': post.get('sh_regular_medicine'),
-                'sh_mobility_status': post.get('sh_mobility_status'),
-            }
+            # Parse checkbox values from form
 
-            # Process Many2many fields
-            m2m_fields = [
-                'sh_allergy_ids',
-                # 'sh_mental_health_problem_ids',
-                # 'sh_life_style_fector_ids',
-                # 'sh_cronic_condition_ids',
-            ]
+            lifestyle_ids = list(map(int, request.httprequest.form.getlist('sh_life_style_fector_ids') or []))
+            mental_ids = list(map(int, request.httprequest.form.getlist('sh_mental_health_problem_ids') or []))
+            allergy_ids = list(map(int, request.httprequest.form.getlist('sh_allergy_ids') or []))
+            cronic_ids = list(map(int, request.httprequest.form.getlist('sh_cronic_condition_ids') or []))
+ 
+            print('\n=========== lifestyle_ids => ', lifestyle_ids, '  ===========\n')
+            print('\n=========== mental_ids => ', mental_ids, '  ===========\n')
+            print('\n=========== allergy_ids => ', allergy_ids, '  ===========\n')
+            print('\n=========== cronic_ids => ', cronic_ids, '  ===========\n')
 
-            for sh_allergy_ids in m2m_fields:
-                id_list = post.getlist(sh_allergy_ids) or []
-                ids = [int(x) for x in id_list if x.isdigit()]
-                values[sh_allergy_ids] = [(6, 0, ids)] 
+            partner.sudo().write({
+                'sh_life_style_fector_ids': [(6, 0, lifestyle_ids)],
+                'sh_mental_health_problem_ids': [(6, 0, mental_ids)],
+                'sh_allergy_ids': [(6, 0, allergy_ids)],
+                'sh_cronic_condition_ids': [(6, 0, cronic_ids)],
+            })
 
-            partner.write(values)
+            post['sh_life_style_fector_ids'] = lifestyle_ids
+            post['sh_mental_health_problem_ids'] = mental_ids
+            post['sh_allergy_ids'] = allergy_ids
+            post['sh_cronic_condition_ids'] = cronic_ids
+ 
+        response = super(AppointmentPortal, self).account(redirect=redirect, **post)
 
-        return request.render("sh_clinic_mgmt.portal_my_details_fields_custom", values)
-
-    
-# class CustomPortalDetails(CustomerPortal):
-
-#     @http.route(['/my/account'], type='http', auth="user", website=True)
-#     def account(self, **post):
-#         partner = request.env.user.partner_id
-
-#         if request.httprequest.method == 'POST':
-#             values = {}
-
-#             optional_fields = partner._get_optional_fields()
-#             for sh_allergy_ids in optional_fields:
-#                 if sh_allergy_ids in post:
-#                     values[sh_allergy_ids] = post.get(sh_allergy_ids)
-
-#             # Handle many2many fields
-#             m2m_fields = [
-#                 'sh_allergy_ids',
-#             ]
-
-#             for sh_allergy_ids in m2m_fields:
-#                 raw_ids = post.getlist(sh_allergy_ids)
-#                 try:
-#                     values[sh_allergy_ids] = [(6, 0, list(map(int, raw_ids)))]
-#                 except ValueError:
-#                     values[sh_allergy_ids] = [(6, 0, [])]
-
-#             partner.sudo().write(values)
-#             return request.redirect('/my/account')
-
-#         values = self._prepare_portal_layout_values()
-#         values.update({
-#             'partner': partner,
-#             'countries': request.env['res.country'].sudo().search([]),
-#             'states': request.env['res.country.state'].sudo().search([]),
-#             'allergies': request.env['sh.allergies'].sudo().search([]),
-#         })
-#         return request.render("sh_clinic_mgmt.portal_my_details_fields_custom", values)
+        if isinstance(response, http.Response) and hasattr(response, 'qcontext'):
+            print(f"\n\n\n\t--------------> 411 response.qcontext",response.qcontext)
+            response.qcontext.update({
+                'lifestyles': request.env['sh.life.style.fector'].sudo().search([]),
+                'mental_problems': request.env['sh.mental.health.problem'].sudo().search([]),
+                'allergies': request.env['sh.allergies'].sudo().search([]),
+                'cronics': request.env['sh.chronic.condition'].sudo().search([]),
+                
+                'sh_life_style_fector_ids': lifestyle_ids if post else [],
+                'sh_mental_health_problem_ids': mental_ids if post else [],
+                'sh_allergy_ids': allergy_ids if post else [],
+                'sh_cronic_condition_ids': cronic_ids if post else [],
+            })
+        return response
+ 

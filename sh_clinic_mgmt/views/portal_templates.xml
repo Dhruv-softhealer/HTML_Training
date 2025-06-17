@@ -486,30 +486,84 @@
                     </strong>
                 </div>
 
-                <t t-foreach="request.env['sh.allergies'].sudo().search([])" t-as="allergy">
-                    <div class="form-check">
+                <!-- <div class="mb-3 col-xl-6">
+                    <label class="col-form-label">Allergy</label>
+                    <div class="form-check" t-foreach="allergies" t-as="algy">
                         <input type="checkbox"
                             class="form-check-input"
                             name="sh_allergy_ids"
-                            t-att-value="allergy.id"
-                            t-att-checked="'checked' if allergy.id in partner.sh_allergy_ids.ids else None" />
-                        <label class="form-check-label" t-esc="allergy.name" />
+                            t-att-id="'%s' % algy.id"
+                            t-att-value="algy.id"
+                            t-att-checked="algy.id in (sh_allergy_ids or partner.sh_allergy_ids.ids)" />
+                        <label class="form-check-label" t-att-for="'%s' % algy.id">
+                            <t t-esc="algy.name" />
+                        </label>
                     </div>
-                </t>
-
-
-                <!-- <div class="form-group">
-                    <label for="sh_allergy_ids">Allergies</label>
-                    <select name="sh_allergy_ids" id="sh_allergy_ids" class="form-control"
-                        multiple="multiple">
-                        <t t-foreach="request.env['sh.allergies'].sudo().search([])" t-as="allergy">
-                            <option t-att-value="allergy.id"
-                                t-att-selected="'selected' if allergy.id in partner.sh_allergy_ids.ids else None">
-                                <t t-esc="allergy.name" />
-                            </option>
-                        </t>
-                    </select>
                 </div> -->
+
+                <div class="mb-3 col-xl-6">
+                    <label class="col-form-label">Allergy</label>
+                    <t t-foreach="allergies" t-as="algy">
+                        <div class="form-check">
+                            <input type="checkbox"
+                                class="form-check-input"
+                                name="sh_allergy_ids"
+                                t-att-id="'algy_%s' % algy.id"
+                                t-att-value="algy.id"
+                                t-att-checked="'checked' if algy.id in (sh_allergy_ids or partner.sh_allergy_ids.ids) else None" />
+                            <label class="form-check-label" t-att-for="'algy_%s' % algy.id">
+                                <t t-esc="algy.name" />
+                            </label>
+                        </div>
+                    </t>
+                </div>
+
+
+                <div class="mb-3 col-xl-6">
+                    <label class="col-form-label">Mental Health Problem</label>
+                    <div class="form-check" t-foreach="mental_problems" t-as="mhp">
+                        <input type="checkbox"
+                            class="form-check-input"
+                            name="sh_mental_health_problem_ids"
+                            t-att-id="'%s' % mhp.id"
+                            t-att-value="mhp.id"
+                            t-att-checked="mhp.id in (sh_mental_health_problem_ids or partner.sh_mental_health_problem_ids.ids)" />
+                        <label class="form-check-label" t-att-for="'%s' % mhp.id">
+                            <t t-esc="mhp.name" />
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-3 col-xl-6">
+                    <label class="col-form-label">Life Style Fector</label>
+                    <div class="form-check" t-foreach="lifestyles" t-as="ls">
+                        <input type="checkbox"
+                            class="form-check-input"
+                            name="sh_life_style_fector_ids"
+                            t-att-id="'%s' % ls.id"
+                            t-att-value="ls.id"
+                            t-att-checked="ls.id in (sh_life_style_fector_ids or partner.sh_life_style_fector_ids.ids)" />
+                        <label class="form-check-label" t-att-for="'%s' % ls.id">
+                            <t t-esc="ls.name" />
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-3 col-xl-6">
+                    <label class="col-form-label">Chronic Conditions</label>
+                    <div class="form-check" t-foreach="cronics" t-as="condition">
+                        <input type="checkbox"
+                            class="form-check-input"
+                            name="sh_cronic_condition_ids"
+                            t-att-id="'cronic_%s' % condition.id"
+                            t-att-value="condition.id"
+                            t-att-checked="condition.id in (sh_cronic_condition_ids or partner.sh_cronic_condition_ids.ids)" />
+                        <label class="form-check-label" t-att-for="'cronic_%s' % condition.id">
+                            <t t-esc="condition.name" />
+                        </label>
+                    </div>
+                </div>
+
 
                 <div
                     t-attf-class="mb-3 #{error.get('sh_dietary_preferences') and 'o_has_error' or ''} col-xl-6">
@@ -529,60 +583,6 @@
                         </select>
                     </div>
                 </div>
-
-                <!-- <div
-                    t-attf-class="mb-3 #{error.get('sh_mental_health_problem_ids') and 'o_has_error' or ''} col-xl-6">
-                    <div class="col-xl-6">
-                        <label class="col-form-label" for="sh_mental_health_problem_ids">Mental
-                            Health Problem</label>
-                        <select name="sh_mental_health_problem_ids" multiple="multiple"
-                            class="form-control"
-                            id="sh_mental_health_problem_ids">
-                            <t t-foreach="request.env['sh.mental.health.problem'].sudo().search([])" t-as="mhp">
-                                <option t-att-value="mhp.id"
-                                    t-att-selected="'selected' if mhp.id in partner.sh_mental_health_problem_ids.ids else None">
-                                    <t t-esc="mhp.name" />
-                                </option>
-                            </t>
-                        </select>
-                    </div>
-                </div>
-
-                <div
-                    t-attf-class="mb-3 #{error.get('sh_life_style_fector_ids') and 'o_has_error' or ''} col-xl-6">
-                    <div class="col-xl-6">
-                        <label class="col-form-label" for="sh_life_style_fector_ids">Lift Style
-                            Fector</label>
-                        <select name="sh_life_style_fector_ids" multiple="multiple"
-                            class="form-control"
-                            id="sh_life_style_fector_ids">
-                            <t t-foreach="request.env['sh.life.style.fector'].sudo().search([])" t-as="lsf">
-                                <option t-att-value="lsf.id"
-                                    t-att-selected="'selected' if lsf.id in partner.sh_life_style_fector_ids.ids else None">
-                                    <t t-esc="lsf.name" />
-                                </option>
-                            </t>
-                        </select>
-                    </div>
-                </div>
-
-                <div
-                    t-attf-class="mb-3 #{error.get('sh_cronic_condition_ids') and 'o_has_error' or ''} col-xl-6">
-                    <div class="col-xl-6">
-                        <label class="col-form-label" for="sh_cronic_condition_ids">Chronic
-                            Condition</label>
-                        <select name="sh_cronic_condition_ids" multiple="multiple"
-                            class="form-control"
-                            id="sh_cronic_condition_ids">
-                            <t t-foreach="request.env['sh.chronic.condition'].sudo().search([])" t-as="cc">
-                                <option t-att-value="cc.id"
-                                    t-att-selected="'selected' if cc.id in partner.sh_cronic_condition_ids.ids else None">
-                                    <t t-esc="cc.name" />
-                                </option>
-                            </t>
-                        </select>
-                    </div>
-                </div> -->
 
                 <div
                     t-attf-class="mb-3 col-xl-6">
@@ -622,61 +622,5 @@
 
             </xpath>
         </template>
-
-
-        <!-- <template id="book_appointment_form" name="Book Appointment Form">
-            <t t-call="portal.portal_layout">
-                <div class="container mt-4">
-                    <h2>Book Appointment</h2>
-
-                    <form action="/submit/appointment" method="post"
-                        class="form o_portal_appointment_form">
-                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
-
-                        <div class="form-group">
-                            <label for="sh_doctor_id">Doctor</label>
-                            <select name="sh_doctor_id" class="form-control" id="sh_doctor_id">
-                                <t t-foreach="doctors" t-as="doc">
-                                    <option t-att-value="doc.id">
-                                        <t t-esc="doc.name" />
-                                    </option>
-                                </t>
-                            </select>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
-                                <div t-attf-class="form-group mb-3">
-                                    <div class="form-group">
-                                        <label for="sh_date">Select Appointment Date</label>
-                                        <input type="date" id="sh_date" name="sh_date"
-                                            class="form-control"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 com-sm-12 col-xs-12">
-                                <div t-attf-class="form-group mb-3">
-                                    <label class="control-label mb-1" for="portal_subcategory">slot</label>
-                                    <select
-                                        class="form-control form-field o_website_form_required_custom"
-                                        id="portal_slot" name="portal_slot">
-                                        <option value="sub_category">Select slot</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="sh_phone">Phone</label>
-                            <input type="text" name="sh_phone" class="form-control" />
-                        </div>
-
-                        <button type="submit" class="btn btn-success mt-2">Submit</button>
-                    </form>
-                </div>
-            </t>
-        </template> -->
-
     </data>
 </odoo>

@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 # Part of Softhealer Technologies
 
-from . import sh_daily_appointment_summary_report
+from . import sh_appointment_summery_report

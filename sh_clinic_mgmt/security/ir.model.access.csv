@@ -112,6 +112,7 @@ res_config_settings_receptioniest,res.config.settings.receptioniest,model_res_co
 res_config_settings_doctor,res.config.settings.doctor,model_res_config_settings,clinic_group_doctor,1,1,1,1
 res_config_settings_admin,res.config.settings.admin,model_res_config_settings,clinic_group_admin,1,1,1,1
 
-sh_appointment_summary_wizard,sh.appointment.summary.wizard,model_sh_appointment_summary_wizard,base.group_user,1,1,1,1
-
 sh_appointment_stage_wizard,sh.appointment.stage.wizard,model_sh_appointment_stage_wizard,base.group_user,1,1,1,1
+
+
+sh_appointment_summery_wizard,sh.appointment.summery.wizard,model_sh_appointment_summary_report,base.group_user,1,1,1,1

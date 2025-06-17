@@ -34,8 +34,7 @@
         # 'report/sh_reports.xml',
         
         # wizard
-        'wizard/sh_appointment_template.xml',
-        # 'wizard/sh_daily_appointment_summary_wizard.xml',
+        'wizard/sh_daily_appointment_summery_report.xml',
         
         # views
         'views/sh_allergies_view.xml',
@@ -60,6 +59,9 @@
         'views/portal_templates.xml',
         'views/sh_apt_wizard_view.xml',
         'wizard/sh_reports.xml',
+
+        # Reports
+        'report/sh_appointment_summery_template.xml',
         
         # menuitem
         'views/sh_clinic_menuitems.xml',
