@@ -177,6 +177,18 @@
                                                 <t t-esc="g.sh_state" />
                                             </span>
                                         </td>
+
+                                        <td>
+                                            <t t-if="g.sh_state != 'cancelled_appointment'">
+                                                <a t-att-href="'/my/appointment/delete/%s' % g.id"
+                                                    class="btn btn-danger flex-grow-1 w-100 my-2"
+                                                    title="Cancel Appointment"
+                                                    role="button"
+                                                    onclick="return confirm('Are you sure you want to cancel this appointment?');">
+                                                    <i class="fa fa-times-circle" aria-hidden="true" />
+                                                    Cancel Appointment </a>
+                                            </t>
+                                        </td>
                                     </tr>
                                 </t>
                             </tbody>
@@ -219,12 +231,14 @@
                                 title="Download" target='_blank' role="button">
                                 <i class="fa fa-download" /> View Detail </a>
 
-                            <a t-att-href="'/my/appointment/delete/%s' % appointment.id"
-                                class="btn btn-danger flex-grow-1 w-100 my-2"
-                                title="Cancel Appointment" role="button"
-                                onclick="return confirm('Are you sure you want to cancel this appointment?');">
-                                <i class="fa fa-times-circle" aria-hidden="true" /> Cancel
-                                Appointment </a>
+                            <t t-if="appointment.sh_state != 'cancelled_appointment'">
+                                <a t-att-href="'/my/appointment/delete/%s' % appointment.id"
+                                    class="btn btn-danger flex-grow-1 w-100 my-1"
+                                    title="Cancel Appointment" role="button"
+                                    onclick="return confirm('Are you sure you want to cancel this appointment?');">
+                                    <i class="fa fa-times-circle" aria-hidden="true" /> Cancel
+                                    Appointment </a>
+                            </t>
 
                             <t t-if="request.session.get('cancel_error')">
                                 <div class="alert alert-danger" role="alert">
@@ -341,89 +355,59 @@
                                 </p>
                             </div>
 
-                            <!-- Optional Table Section -->
+                            <!-- Medicine & Prescription Details -->
 
                             <div class="mt-5">
                                 <h5 class="text-uppercase text-dark mb-3">Summary</h5>
                                 <table class="table table-bordered">
-                                    <tr>
-                                        <th>Disease Name</th>
-                                        <td>
-                                            <t
-                                                t-esc="appointment.sh_disease_line.sh_disease_name.name" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Saverty</th>
-                                        <td>
-                                            <t t-esc="appointment.sh_disease_line.sh_severity" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Medicine Name</th>
-                                        <td>
-                                            <t
-                                                t-esc="appointment.sh_prescription_line.sh_medicine_id.name" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Medicine Type</th>
-                                        <td>
-                                            <t
-                                                t-esc="appointment.sh_prescription_line.sh_medicine_type_id.name" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Dosage Duration</th>
-                                        <td>
-                                            <t
-                                                t-esc="appointment.sh_prescription_line.sh_dosage_duration" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Morning</th>
-                                        <td>
-                                            <t t-esc="appointment.sh_prescription_line.sh_morning" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Afternoon</th>
-                                        <td>
-                                            <t t-esc="appointment.sh_prescription_line.sh_afternoon" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Evening</th>
-                                        <td>
-                                            <t t-esc="appointment.sh_prescription_line.sh_evening" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Night</th>
-                                        <td>
-                                            <t t-esc="appointment.sh_prescription_line.sh_night" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Late Night</th>
-                                        <td>
-                                            <t
-                                                t-esc="appointment.sh_prescription_line.sh_late_night" />
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Instruction</th>
-                                        <td>
-                                            <t
-                                                t-if="appointment.sh_prescription_line.sh_instruction == 'after_meal'">After
-                                                Meal</t>
-                                            <t
-                                                t-if="appointment.sh_prescription_line.sh_instruction == 'before_meal'">Before
-                                                Meal</t>
-                                        </td>
-                                    </tr>
+                                    <tbody>
+                                        <tr>
+                                            <th colspan="6" class="bg-light text-center">Prescription
+                                                Details</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Medicine</th>
+                                            <th>Type</th>
+                                            <th>Dosage Duration</th>
+                                            <th>Time (Morning / Afternoon / Evening / Night / Late
+                                                Night)</th>
+                                            <th>Instruction</th>
+                                            <th>Severity</th>
+                                        </tr>
+                                        <t t-foreach="appointment.sh_prescription_line" t-as="line">
+                                            <tr>
+                                                <td>
+                                                    <t t-esc="line.sh_medicine_id.name" />
+                                                </td>
+                                                <td>
+                                                    <t t-esc="line.sh_medicine_type_id.name" />
+                                                </td>
+                                                <td>
+                                                    <t t-esc="line.sh_dosage_duration" />
+                                                </td>
+                                                <td>
+                                                    <t t-if="line.sh_morning">Morning </t>
+                                                    <t t-if="line.sh_afternoon">Afternoon </t>
+                                                    <t t-if="line.sh_evening">Evening </t>
+                                                    <t t-if="line.sh_night">Night </t>
+                                                    <t t-if="line.sh_late_night">Late Night </t>
+                                                </td>
+                                                <td>
+                                                    <t t-if="line.sh_instruction == 'before_meal'">Before
+                                                        Meal</t>
+                                                    <t t-if="line.sh_instruction == 'after_meal'">After
+                                                        Meal</t>
+                                                </td>
+                                                <td>
+                                                    <t
+                                                        t-esc="appointment.sh_disease_line.sh_severity"></t>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
                                 </table>
                             </div>
+
                             <br />
                             <hr />
                             <div class="container my-5">
@@ -439,7 +423,6 @@
 
             </t>
         </template>
-
 
         <!-- Custom Fields in My Details -->
 
@@ -485,21 +468,6 @@
                         Medical Details
                     </strong>
                 </div>
-
-                <!-- <div class="mb-3 col-xl-6">
-                    <label class="col-form-label">Allergy</label>
-                    <div class="form-check" t-foreach="allergies" t-as="algy">
-                        <input type="checkbox"
-                            class="form-check-input"
-                            name="sh_allergy_ids"
-                            t-att-id="'%s' % algy.id"
-                            t-att-value="algy.id"
-                            t-att-checked="algy.id in (sh_allergy_ids or partner.sh_allergy_ids.ids)" />
-                        <label class="form-check-label" t-att-for="'%s' % algy.id">
-                            <t t-esc="algy.name" />
-                        </label>
-                    </div>
-                </div> -->
 
                 <div class="mb-3 col-xl-6">
                     <label class="col-form-label">Allergy</label>

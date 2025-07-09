@@ -1,5 +1,7 @@
 <odoo>
 
+    <!-- =================== Paper Format ================== -->
+
     <record id="paperformat_event_full_page" model="report.paperformat">
         <field name="name">Custom Paperformat for the Event Full Page Ticket report</field>
         <field name="default" eval="False" />
@@ -15,39 +17,137 @@
         <field name="dpi">96</field>
     </record>
 
-    <!-- <record id="report_appointment_summary" model="ir.actions.report">
-        <field name="name">Daily Appointment Summary</field>
-        <field name="model">sh.appointment.summary.wizard</field>
-        <field name="report_type">qweb-pdf</field>
-        <field name="report_name">sh_clinic_mgmt.appointment_report_template</field>
-        <field name="report_file">sh_clinic_mgmt.appointment_report_template</field>
-        <field name="print_report_name">'Daily Appointment Summary'</field>
-        <field name="binding_model_id" ref="sh_clinic_mgmt.model_sh_appointment_summary_wizard" />
-        <field name="binding_type">report</field>
-        <field name="paperformat_id" ref="paperformat_event_full_page" />
-    </record> -->
-
-    <record id="action_appointment_summary_report" model="ir.actions.report">
-        <field name="name">Appointment Report</field>
-        <field name="model">sh.appointment.summary.report</field>
-        <field name="report_type">qweb-pdf</field>
-        <field name="report_name">sh_clinic_mgmt.appointment_report_template</field>
-        <field name="report_file">sh_clinic_mgmt.appointment_report_template</field>
-        <field name="binding_model_id" ref="model_sh_appointment_summary_report" />
-        <field name="binding_type">report</field>
-    </record>
-
-    <!-- report_action.xml -->
+    <!-- =================== Report For Portal ================== -->
 
     <record id="report_appointment_action" model="ir.actions.report">
-        <field name="name">Appointment</field>
+        <field name="name">Prescription</field>
         <field name="model">sh.appointment</field>
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">sh_clinic_mgmt.report_appointment</field>
         <field name="report_file">sh_clinic_mgmt.report_appointment</field>
         <field name="print_report_name">'Appointment'</field>
+        <field name="binding_model_id" ref="model_sh_appointment"/>
         <field name="binding_type">report</field>
     </record>
 
+    <!-- =================== Report For Backend ================== -->
 
+    <!-- 1. Daily Appointment Summary -->
+
+    <record id="action_appointment_summary_report" model="ir.actions.report">
+        <field name="name">Appointment Report</field>
+        <field name="model">sh.appointment.summary.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sh_clinic_mgmt.appointment_summary_report_template</field>
+        <field name="report_file">sh_clinic_mgmt.appointment_summary_report_template</field>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- 2. Monthly Revenue Report -->
+
+    <record id="action_monthly_revenue_report" model="ir.actions.report">
+        <field name="name">Monthly Revenue Report</field>
+        <field name="model">sh.monthly.revenue.report</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sh_clinic_mgmt.monthly_revenue_report_template</field>
+        <field name="report_file">sh_clinic_mgmt.monthly_revenue_report_template</field>
+        <field name="print_report_name">'Monthly Revenue Report'</field>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- 3. Doctor Availability Report -->
+
+    <record id="doctor_availability_action" model="ir.actions.report">
+        <field name="name">Slots</field>
+        <field name="model">sh.doctor.availability.report</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sh_clinic_mgmt.doctor_availability_template</field>
+        <field name="report_file">sh_clinic_mgmt.doctor_availability_template</field>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- 4. Patient Visit History Report -->
+
+    <record id="action_patient_visit_history_report" model="ir.actions.report">
+        <field name="name">Patient Visit History</field>
+        <field name="model">sh.patient.visit.history.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sh_clinic_mgmt.patient_visit_history_report_template</field>
+        <field name="report_file">sh_clinic_mgmt.patient_visit_history_report_template</field>
+        <field name="print_report_name">'Patient Visit History'</field>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- 5. Medicine Stock Report -->
+
+    <record id="action_medicine_stock_report" model="ir.actions.report">
+        <field name="name">Medicine Stock Report</field>
+        <field name="model">sh.medicine.stock.report</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sh_clinic_mgmt.medicine_stock_report_template</field>
+        <field name="report_file">sh_clinic_mgmt.medicine_stock_report_template</field>
+        <field name="print_report_name">'Medicine Stock Report'</field>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- 6. Doctor’s Performance Report -->
+
+    <record id="action_doctor_performance_report" model="ir.actions.report">
+        <field name="name">Doctor's Performance Report</field>
+        <field name="model">sh.doctor.performance.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sh_clinic_mgmt.doctor_performance_report_template</field>
+        <field name="report_file">sh_clinic_mgmt.doctor_performance_report_template</field>
+        <field name="print_report_name">'Doctor's Performance Report'</field>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- 7. Patient Demographics Report -->
+
+    <record id="action_patient_demographics_report" model="ir.actions.report">
+        <field name="name">Patient Demographics Report</field>
+        <field name="model">res.partner</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sh_clinic_mgmt.patient_demographics_report_template</field>
+        <field name="report_file">sh_clinic_mgmt.patient_demographics_report_template</field>
+        <field name="print_report_name">'Patient Demographic Report'</field>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- 8. Treatment & Diagnosis Report -->
+
+    <record id="action_treatment_diagnosis_report" model="ir.actions.report">
+        <field name="name">Treatment and Diagnosis Report</field>
+        <field name="model">sh.treatment.diagnosis.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sh_clinic_mgmt.treatment_diagnosis_report_template</field>
+        <field name="report_file">sh_clinic_mgmt.treatment_diagnosis_report_template</field>
+        <field name="print_report_name">'Treatment and Diagnosis Report'</field>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- 10. Disease Wise Patient Report -->
+
+    <record id="action_disease_wise_patient_report" model="ir.actions.report">
+        <field name="name">Disease Wise Patient Report</field>
+        <field name="model">sh.disease.wise.patient.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sh_clinic_mgmt.disease_wise_patient_report_template</field>
+        <field name="report_file">sh_clinic_mgmt.disease_wise_patient_report_template</field>
+        <field name="print_report_name">'Disease Wise Patient Report'</field>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- 11. Emergency Cases Report -->
+
+    <record id="action_emergency_cases_report" model="ir.actions.report">
+        <field name="name">Emergency Cases Report</field>
+        <field name="model">sh.emergency.cases.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sh_clinic_mgmt.emergency_cases_report_template</field>
+        <field name="report_file">sh_clinic_mgmt.emergency_cases_report_template</field>
+        <field name="print_report_name">'Emergency Cases'</field>
+        <field name="binding_type">report</field>
+    </record>
+    
 </odoo>

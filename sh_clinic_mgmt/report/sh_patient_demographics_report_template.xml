@@ -1,0 +1,43 @@
+<odoo>
+    <template id="patient_demographics_report_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2>Patient Demographics Report</h2>
+                    <table class="o_has_total_table table o_main_table" style="text-align: center;">
+                        <thead>
+                            <tr>
+                                <td>Age Group</td>
+                                <td>Male</td>
+                                <td>Female</td>
+                                <td>Other</td>
+                                <td>Total Patients</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="results" t-as="res">
+                                <tr>
+                                    <td>
+                                        <span t-esc="res['age_group']" />
+                                    </td>
+                                    <td>
+                                        <span t-esc="res['male']" />
+                                    </td>
+                                    <td>
+                                        <span t-esc="res['female']" />
+                                    </td>
+                                    <td>
+                                        <span t-esc="res['other']" />
+                                    </td>
+                                    <td>
+                                        <span t-esc="res['total_patients']" />
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

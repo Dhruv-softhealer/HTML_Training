@@ -11,4 +11,3 @@ class Medicine(models.Model):
     sh_brand = fields.Char(string="Brand")
     sh_side_effect = fields.Char(string="Side Effect")
     sh_provided_by_us = fields.Boolean(string="Provided By Us?", tracking=True)
-    

@@ -1,0 +1,53 @@
+<odoo>
+    <template id="doctor_performance_report_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <br />
+                <br />
+                <div class="page">
+                    <h2>Doctor's Performance Report</h2>
+                    <p>
+                        <strong>From:</strong>
+                        <t t-esc="data['from_date']" />
+                        <strong> To: </strong>
+                        <t t-esc="data['to_date']" />
+                    </p>
+                    <table class="o_has_total_table table o_main_table"
+                        style="text-align: center;">
+                        <thead>
+                            <tr>
+                                <td>Doctor Name</td>
+                                <td>Total Appointments</td>
+                                <td>Completed</td>
+                                <td>Cancelled</td>
+                                <td>Pending</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="results" t-as="res">
+                                <tr>
+                                    <td>
+                                        <span
+                                            t-esc="env['hr.employee'].browse(res['doctor']).name or 'N/A'" />
+                                    </td>
+                                    <td>
+                                        <span t-esc="res['total']" />
+                                    </td>
+                                    <td>
+                                        <span t-esc="res['completed']" />
+                                    </td>
+                                    <td>
+                                        <span t-esc="res['cancelled']" />
+                                    </td>
+                                    <td>
+                                        <span t-esc="res['pending']" />
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

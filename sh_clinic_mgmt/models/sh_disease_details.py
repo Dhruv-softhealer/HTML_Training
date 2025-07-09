@@ -8,9 +8,9 @@ class DiseaseDetail(models.Model):
     _description = 'Disease Detail'
     
     
-    sh_disease_o2m_id = fields.Many2one('sh.appointment')
-    sh_disease_name = fields.Many2one('sh.disease', string="Disease Name", required=True, tracking=True)
-    sh_disease_category = fields.Many2many('sh.disease.category', related="sh_disease_name.sh_category_ids", readonly=False)
+    sh_appointment_id = fields.Many2one('sh.appointment')
+    sh_disease_id = fields.Many2one('sh.disease', string="Disease Name", required=True, tracking=True)
+    sh_disease_category = fields.Many2many('sh.disease.category', related="sh_disease_id.sh_category_ids", readonly=False)
     sh_symptoms_ids = fields.Many2many('sh.symptom', string="Symptoms")
     sh_severity = fields.Selection([
         ('1', '1'),

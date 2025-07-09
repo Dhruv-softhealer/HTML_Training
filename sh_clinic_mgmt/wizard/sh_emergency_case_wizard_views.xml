@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_emergency_cases_report_wizard" model="ir.ui.view">
+        <field name="name">emergency.cases.report.wizard</field>
+        <field name="model">sh.emergency.cases.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Emergency Cases Report">
+                <group>
+                    <field name="from_date" required="1" />
+                    <field name="to_date" required="1" />
+                </group>
+                <footer>
+                    <button name="action_print_report" string="Download PDF Report" type="object"
+                        class="btn-primary" />
+                    <button name="action_excel_report" string="Download Excel Report" type="object"
+                        class="btn-primary" />
+                    <button string="Cancel" class="btn-secondary" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_emergency_cases_report_wizard" model="ir.actions.act_window">
+        <field name="name">Emergency Cases Report</field>
+        <field name="res_model">sh.emergency.cases.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

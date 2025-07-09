@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="monthly_revenue_report_form_view" model="ir.ui.view">
+        <field name="name">monthly.revenue.report.wizard</field>
+        <field name="model">sh.monthly.revenue.report</field>
+        <field name="arch" type="xml">
+            <form string="Monthly Revenue Report">
+                <group>
+                    <field name="month" required="1" />
+                </group>
+                <footer>
+                    <button name="action_print_report" string="Download PDF Report" type="object"
+                        class="btn-primary" />
+                    <button name="action_excel_report" string="Download Excel Report" type="object"
+                        class="btn-primary" />
+                    <button string="Cancel" class="btn-secondary" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_monthly_revenue_report_wizard" model="ir.actions.act_window">
+        <field name="name">Monthly Revenue Report</field>
+        <field name="res_model">sh.monthly.revenue.report</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

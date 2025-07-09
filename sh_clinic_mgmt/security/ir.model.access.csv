@@ -114,5 +114,24 @@ res_config_settings_admin,res.config.settings.admin,model_res_config_settings,cl
 
 sh_appointment_stage_wizard,sh.appointment.stage.wizard,model_sh_appointment_stage_wizard,base.group_user,1,1,1,1
 
+sh_appointment_summery_wizard,sh.appointment.summery.wizard,model_sh_appointment_summary_report_wizard,base.group_user,1,1,1,1
 
-sh_appointment_summery_wizard,sh.appointment.summery.wizard,model_sh_appointment_summary_report,base.group_user,1,1,1,1
+access_doctor_availability_receptionist,access_doctor_availability_receptionist,model_sh_doctor_availability_report,clinic_group_receptioniest,1,1,1,1
+access_doctor_availability_doctor,access_doctor_availability_doctor,model_sh_doctor_availability_report,clinic_group_doctor,1,1,1,1
+access_doctor_availability_admin,access_doctor_availability_admin,model_sh_doctor_availability_report,clinic_group_admin,1,1,1,1
+
+sh_monthly_revenue_report,sh.monthly.revenue.wizard,model_sh_monthly_revenue_report,base.group_user,1,1,1,1
+
+sh_patient_visit_history_report,sh.patient.visit.history.report,model_sh_patient_visit_history_wizard,base.group_user,1,1,1,1
+
+sh_medicine_stock_report,sh.medicine.stock.report,model_sh_medicine_stock_report,base.group_user,1,1,1,1
+
+sh_doctor_performance_report,sh.doctor.performance.report,model_sh_doctor_performance_wizard,base.group_user,1,1,1,1
+
+sh_patient_demographics_report,sh.patient.demographics.report,model_sh_patient_demographics_wizard,base.group_user,1,1,1,1
+
+sh_treatment_diagnosis_report,sh.treatment.diagnosis.report,model_sh_treatment_diagnosis_wizard,base.group_user,1,1,1,1
+
+sh_disease_wise_patient_wizard,sh.disease.wise.patient.report,model_sh_disease_wise_patient_wizard,base.group_user,1,1,1,1
+
+sh_emergency_cases_wizard,sh.emergency.cases.report,model_sh_emergency_cases_wizard,base.group_user,1,1,1,1

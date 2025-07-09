@@ -18,10 +18,14 @@ class Appointment(models.Model):
     
     # Header Page
     
+    sh_company_id = fields.Many2one('res.company',string='Company',default=lambda self:self.env.company)
+ 
+    sh_doctor_domain_ids = fields.Many2many('hr.job',related='sh_company_id.job_position_ids',readonly=True)
+
     name = fields.Char(string="Appointment Number", required=True, tracking=True, readonly=True, default=lambda self: _('New'))
     sh_patient_id = fields.Many2one('res.partner', string="Patient Name", required=True, tracking=True)
     sh_doctor_id = fields.Many2one('hr.employee', string="Doctor Name", required=True, tracking=True, 
-    domain=[('job_id.name','=','Doctor')]
+    domain=[('job_id','in', sh_doctor_domain_ids)],
     )
     sh_doctor_specialization = fields.Char(string="Doctor Specialization", related="sh_doctor_id.sh_specialization", tracking=True)
     sh_date = fields.Date(string="Date", required=True, tracking=True)
@@ -48,7 +52,7 @@ class Appointment(models.Model):
     
     # Disease Details
     
-    sh_disease_line = fields.One2many('sh.disease.detail', 'sh_disease_o2m_id')
+    sh_disease_line = fields.One2many('sh.disease.detail', 'sh_appointment_id')
     
     
     # Prescription & Medication 
@@ -87,6 +91,7 @@ class Appointment(models.Model):
     ],
     default='new',
     tracking=True,
+    string="State",
     )
     apt_count = fields.Integer(string="Appointments", compute="_compute_apt_count")
     # sh_invoice_id = fields.Many2one('account.move', string="Invoice")
@@ -113,7 +118,7 @@ class Appointment(models.Model):
             ])
             # print(f"\n\n\n\t--------------> 98 self.apt_count",self.apt_count)
 
-    # Portal Report Access
+    # =========== >>>> Portal Report Access <<<< ============
     
     def get_portal_url(self, suffix=None, download=None, report_type=None, query_string=None, anchor=None, **kwargs):
         self.ensure_one()
@@ -196,8 +201,6 @@ class Appointment(models.Model):
     def action_view_sales_order(self):
         self.ensure_one()
         print(f"\n\n\n\t--------------> 185 sale_order_id",self.sale_order_id.name)
-        # if not self.sale_order_id:
-        #     raise UserError("No Sales Order linked.")
         return {
             'name': 'Sales Order',
             'view_mode': 'form,list',
@@ -254,7 +257,6 @@ class Appointment(models.Model):
                         }
                     }
         
-    
     # ======================================= Emergence Case ==========================================
         
     @api.onchange('sh_emergency_case')
@@ -262,7 +264,7 @@ class Appointment(models.Model):
         if self.sh_emergency_case:
             self.sh_doctor_notified = True
             self.sh_assigned_doctor = self.sh_doctor_id
-
+            
 
     def action_view_appointments(self):
         self.ensure_one()
@@ -406,23 +408,22 @@ class Appointment(models.Model):
                 
             now_dt = fields.Datetime.context_timestamp(self, datetime.now())
             naive_now_dt = now_dt.replace(tzinfo=None)
-            # now_time = now_dt.time()
  
             # pre-booking validation
             if (vals.get('sh_slt_id') or vals.get('sh_date')) and not vals.get('sh_emergency_slot_bypass'):
                 pre_booking_float = old_slot_rec.sh_pre_booking
- 
+
                 start_time = self.float_to_time(rec.sh_start_time)
                 booking_dt = datetime.combine(date_obj, start_time)
- 
+
                 if pre_booking_float > -1:
                     diff = (booking_dt - naive_now_dt).total_seconds() / 3600.0
                     if diff < 0:
                         raise ValidationError("You can't book old slot.")
                     else:
                         if diff < pre_booking_float:
-                            raise ValidationError(f"You must book at least {pre_booking_float} hours in advance.")
- 
+                            raise ValidationError(f"Can not book appointment before {pre_booking_float} hours.")
+
             slot_line = self.env['sh.slot.schedule'].search([('id', '=', old_slot_line_id)],limit=1)
             # unlinking existing id
             slot_line.write({

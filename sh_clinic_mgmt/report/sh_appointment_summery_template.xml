@@ -1,56 +1,66 @@
 <odoo>
-    <template id="appointment_report_template">
+    <template id="appointment_summary_report_template">
         <t t-call="web.html_container">
             <t t-call="web.external_layout">
+                <br />
+                <br />
+                <br />
                 <div class="page">
                     <h2>Appointment Summary</h2>
-                    <!-- <p t-if="data">
-                        <strong>From:</strong>
-                        <t t-esc="data.get('from_date')" />
-                        <strong>To:</strong>
-                        <t t-esc="data.get('to_date')" />
-                    </p>
                     <t t-if="doctor">
                         <p>
                             <strong>Doctor:</strong>
                             <t t-esc="doctor.name" />
                         </p>
-                    </t> -->
-
-                    <p style="margin-bottom: 30px;" t-if="data">
-                        <strong>Date Range:</strong> <t t-esc="data.get('from_date')" /> to <t
-                            t-esc="data.get('to_date')" />
-                    </p>
-                    <t t-if="doctor">
-                        <br />
-                        <strong>Doctor:</strong>
-                        <t t-esc="doctor.name" />
                     </t>
-
-                    <table
-                        style="margin: 0 auto; border-collapse: collapse; width: 90%; font-size: 14px;">
-                        <thead style="background-color: #f2f2f2;">
-                            <tr>
-                                <th style="border: 1px solid #000; padding: 8px;">Date</th>
-                                <th style="border: 1px solid #000; padding: 8px;">Total</th>
-                                <th style="border: 1px solid #000; padding: 8px;">Completed</th>
-                                <th style="border: 1px solid #000; padding: 8px;">Canceled</th>
+                    <p>
+                        <strong>From:</strong>
+                        <t t-esc="data['from_date']" />
+                        <strong> To </strong>
+                        <t t-esc="data['to_date']" />
+                    </p>
+                    <table class="o_has_total_table table o_main_table">
+                        <thead>
+                            <tr style="background-color: #e8e8e8; border: 1px solid #ccc;">
+                                <th
+                                    style="padding: 8px; border: 1px solid #ccc; text-align: center;">
+                                    Date</th>
+                                <th
+                                    style="padding: 8px; border: 1px solid #ccc; text-align: center;">
+                                    Total</th>
+                                <th
+                                    style="padding: 8px; border: 1px solid #ccc; text-align: center;">
+                                    Completed</th>
+                                <th
+                                    style="padding: 8px; border: 1px solid #ccc; text-align: center;">
+                                    Cancelled</th>
+                                <th
+                                    style="padding: 8px; border: 1px solid #ccc; text-align: center;">
+                                    Pending</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <t t-foreach="summary" t-as="day">
+                            <t t-foreach="summary" t-as="line">
                                 <tr>
-                                    <td style="border: 1px solid #000; padding: 8px;">
-                                        <t t-esc="day['date']" />
+                                    <td
+                                        style="padding: 8px; border: 1px solid #ccc; text-align: center;">
+                                        <t t-esc="line['date']" />
                                     </td>
-                                    <td style="border: 1px solid #000; padding: 8px;">
-                                        <t t-esc="day['total']" />
+                                    <td
+                                        style="padding: 8px; border: 1px solid #ccc; text-align: center;">
+                                        <t t-esc="line['total']" />
                                     </td>
-                                    <td style="border: 1px solid #000; padding: 8px;">
-                                        <t t-esc="day['completed_appointment']" />
+                                    <td
+                                        style="padding: 8px; border: 1px solid #ccc; text-align: center;">
+                                        <t t-esc="line['completed_appointment']" />
                                     </td>
-                                    <td style="border: 1px solid #000; padding: 8px;">
-                                        <t t-esc="day['cancelled_appointment']" />
+                                    <td
+                                        style="padding: 8px; border: 1px solid #ccc; text-align: center;">
+                                        <t t-esc="line['cancelled_appointment']" />
+                                    </td>
+                                    <td
+                                        style="padding: 8px; border: 1px solid #ccc; text-align: center;">
+                                        <t t-esc="line['pending']" />
                                     </td>
                                 </tr>
                             </t>

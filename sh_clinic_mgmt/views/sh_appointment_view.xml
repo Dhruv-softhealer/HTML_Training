@@ -14,7 +14,8 @@
                     decoration-warning="sh_state == 'pending'"
                     decoration-info="sh_state == 'today_apt'"
                     decoration-primary="sh_state == 'in_progress'"
-                    decoration-muted="sh_state == 'new'"></field>
+                    decoration-muted="sh_state == 'new'">
+                </field>
             </list>
         </field>
     </record>
@@ -61,7 +62,7 @@
                             name="action_view_sales_order"
                             icon="fa-file-text-o"
                             groups="sh_clinic_mgmt.clinic_group_admin"
-                            class="oe_stat_button" 
+                            class="oe_stat_button"
                             invisible="not sale_order_id">
                             <field name="sale_order_id" invisible="1" />
                             <div class="o_stat_info">
@@ -76,6 +77,8 @@
                         <group>
                             <field name="sh_expected_revenue"
                                 readonly="sh_state == 'completed_appointment'"></field>
+                            <field name="sh_doctor_domain_ids" invisible="1"></field>
+                            <field name="sh_company_id" invisible="1"></field>
                             <field name="sh_patient_id"
                                 readonly="sh_state == 'completed_appointment'"></field>
                             <field name="sh_age"></field>
@@ -110,7 +113,7 @@
                         <page string="Disease Details">
                             <field name="sh_disease_line">
                                 <list>
-                                    <field name="sh_disease_name"></field>
+                                    <field name="sh_disease_id"></field>
                                     <field name="sh_disease_category"></field>
                                     <field name="sh_symptoms_ids"></field>
                                     <field name="sh_severity"></field>
@@ -172,7 +175,9 @@
                         </page>
                     </notebook>
                 </sheet>
+
                 <!-- Chatter -->
+
                 <chatter />
             </form>
         </field>
@@ -183,12 +188,15 @@
         <field name="model">sh.appointment</field>
         <field name="arch" type="xml">
             <search string="Search Appointment">
+
                 <!-- Basic Search Field -->
+
                 <field name="name" string="Appointment Number" />
                 <field name="sh_patient_id" string="Patient" />
                 <field name="sh_doctor_id" string="Doctor" />
 
                 <!-- Filter Section -->
+
                 <filter string="New Visits" name="new_visits"
                     domain="[('sh_visit_type', '=', 'new')]" />
                 <filter string="Old Visits" name="old_visits"
@@ -219,6 +227,7 @@
                 <separator />
 
                 <!-- Group By -->
+
                 <group expand="0" string="Group By">
                     <filter string="Doctor" name="group_by_doctor"
                         context="{'group_by': 'sh_doctor_id'}" />
@@ -250,38 +259,5 @@
         <field name="code">
             action = records.action_change_stage()</field>
     </record>
-
-    <!-- ========================== Appointment Summery Report ============================ -->
-
-
-    <!-- <record id="sh_appointment_summery_form_view" model="ir.ui.view">
-        <field name="name">Appointment Summery</field>
-        <field name="model">sh.appointment.summary.wizard</field>
-        <field name="arch" type="xml">
-            <form string="Appointment summery">
-                <sheet>
-                    <group>
-                        <field name="from_date"></field>
-                        <field name="to_date"></field>
-                        <field name="doctor_id"></field>
-                    </group>
-                </sheet>
-                <footer>
-                    <button name="generate_report" type="object" string="Generate Report"
-                        class="oe_highlight" />
-                    <button string="Cancel" class="btn-secondary" special="cancel" />
-                </footer>
-            </form>
-        </field>
-    </record>
-
-
-    <record id="action_appointment_summary_wizard" model="ir.actions.act_window">
-        <field name="name">Daily Appointment Summary</field>
-        <field name="res_model">sh.appointment.summary.wizard</field>
-        <field name="view_mode">form</field>
-        <field name="target">new</field>
-    </record> -->
-
 
 </odoo>

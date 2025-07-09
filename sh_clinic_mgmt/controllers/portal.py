@@ -14,6 +14,7 @@ from odoo.fields import Command
 import requests
 # import logging
 import json
+from datetime import datetime, timedelta, time
 
 
 class AppointmentPortal(CustomerPortal):
@@ -286,7 +287,6 @@ class AppointmentPortal(CustomerPortal):
         return request.redirect('/my/appointments')
 
 
-
     @http.route('/portal/slotdata', type="http",auth="user",methods=['POST'],website=True,csrf=False)
     def sh_slot_data(self, **kw):
         dic = {}
@@ -313,7 +313,6 @@ class AppointmentPortal(CustomerPortal):
         return json.dumps(dic)
 
 
-
     @http.route(['/my/appointment/delete/<int:appointment_id>'], type='http', auth='user', website=True, csrf=False)
     def delete_appointment(self, appointment_id, **kwargs):
         user_partner = request.env.user.partner_id
@@ -329,22 +328,32 @@ class AppointmentPortal(CustomerPortal):
 
         try:
             if appointment.sh_slt_id:
-                curr_time = fields.Datetime.now()
-                
-                start_time = appointment.sh_slt_id.sh_start_time
+                now = fields.Datetime.now()
+
+                appointment_date = appointment.sh_date
+                slot_float = appointment.sh_slt_id.sh_start_time
                 cancel_limit = appointment.sh_slot_id.sh_cancel_time
 
-                # Calculate hours difference between now and slot start
-                hours_diff = (start_time - curr_time.hour)
-                print(f"\n\n\n\t--------------> 339 hours_diff",hours_diff)
+                # Convert float to datetime.time
+                
+                slot_hours = int(slot_float)
+                slot_minutes = int((slot_float - slot_hours) * 60)
+                slot_time = time(slot_hours, slot_minutes)
 
-                if hours_diff <= cancel_limit:
-                    raise UserError(f'You cannot cancel the appointment within {cancel_limit} hours of the start time.')
+                # Combine date and time
+                
+                slot_datetime = datetime.combine(appointment_date, slot_time)
 
-                # Move to Cancel state
+                cancellation_deadline = slot_datetime - timedelta(hours=cancel_limit)
+
+                if now >= cancellation_deadline:
+                    raise UserError(f"Can not cancel appointment before {cancel_limit} hours.")
+
+                if appointment_date < now.date():
+                    raise UserError("You cannot cancel a past appointment.")
+
+                # Cancel and unlink
                 appointment.sh_state = 'cancelled_appointment'
-
-                # Unlink Appointment from slot line
                 appointment.sh_slt_id.write({
                     'sh_appointment_line': [Command.unlink(appointment.id)]
                 })
@@ -388,10 +397,10 @@ class AppointmentPortal(CustomerPortal):
             allergy_ids = list(map(int, request.httprequest.form.getlist('sh_allergy_ids') or []))
             cronic_ids = list(map(int, request.httprequest.form.getlist('sh_cronic_condition_ids') or []))
  
-            print('\n=========== lifestyle_ids => ', lifestyle_ids, '  ===========\n')
-            print('\n=========== mental_ids => ', mental_ids, '  ===========\n')
-            print('\n=========== allergy_ids => ', allergy_ids, '  ===========\n')
-            print('\n=========== cronic_ids => ', cronic_ids, '  ===========\n')
+            print(f"\n\n\n\t--------------> 422 lifestyle_ids",lifestyle_ids)
+            print(f"\n\n\n\t--------------> 423 mental_ids",mental_ids)
+            print(f"\n\n\n\t--------------> 424 allergy_ids",allergy_ids)
+            print(f"\n\n\n\t--------------> 425 cronic_ids",cronic_ids)
 
             partner.sudo().write({
                 'sh_life_style_fector_ids': [(6, 0, lifestyle_ids)],
@@ -404,7 +413,7 @@ class AppointmentPortal(CustomerPortal):
             post['sh_mental_health_problem_ids'] = mental_ids
             post['sh_allergy_ids'] = allergy_ids
             post['sh_cronic_condition_ids'] = cronic_ids
- 
+
         response = super(AppointmentPortal, self).account(redirect=redirect, **post)
 
         if isinstance(response, http.Response) and hasattr(response, 'qcontext'):
@@ -414,11 +423,10 @@ class AppointmentPortal(CustomerPortal):
                 'mental_problems': request.env['sh.mental.health.problem'].sudo().search([]),
                 'allergies': request.env['sh.allergies'].sudo().search([]),
                 'cronics': request.env['sh.chronic.condition'].sudo().search([]),
-                
+
                 'sh_life_style_fector_ids': lifestyle_ids if post else [],
                 'sh_mental_health_problem_ids': mental_ids if post else [],
                 'sh_allergy_ids': allergy_ids if post else [],
                 'sh_cronic_condition_ids': cronic_ids if post else [],
             })
         return response
- 

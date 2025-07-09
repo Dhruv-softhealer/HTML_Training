@@ -4,16 +4,19 @@
 
 from datetime import datetime, timedelta
 from odoo import _, models, api, fields
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 
 class Slots(models.Model):
     _name = 'sh.slots'
     _description = 'Slots'
     _inherit = ['portal.mixin', 'mail.thread', 'mail.activity.mixin']
     
+    sh_company_id = fields.Many2one('res.company',string='Company',default=lambda self:self.env.company)
+ 
+    sh_doctor_domain_ids = fields.Many2many('hr.job',related='sh_company_id.job_position_ids',readonly=True)
     
     name = fields.Char(string="Slot Number", default=lambda self: _("New"), readonly=True, tracking=True)
-    doctor_id = fields.Many2one('hr.employee',string='Doctor Name',required=True,tracking=True, domain="[('job_id.name', '=', 'Doctor')]")
+    doctor_id = fields.Many2one('hr.employee',string='Doctor Name',required=True,tracking=True, domain="[('job_id', 'in', sh_doctor_domain_ids)]")
     sh_slot_time = fields.Float(string="Slot Time(In Min)", required=True, tracking=True)
     sh_allowed_patients = fields.Integer(string="Allowed Patients", tracking=True, required=True)
     sh_pre_booking = fields.Float(string="Pre-Booking Time(In Min)", tracking=True)
@@ -90,7 +93,7 @@ class Slots(models.Model):
             
             if not calendar_id:
                 raise ValidationError("No working hours defined for current doctor.")
- 
+
             current_date = self.sh_start_date
             while current_date <= self.sh_end_date:
                 
@@ -148,3 +151,11 @@ class Slots(models.Model):
                 raise ValidationError("You can not delete publish slots.")
         rec = super().unlink()
         return rec
+
+
+    def write(self, vals):
+        for rec in self:
+            if rec.sh_state != 'draft':
+                raise UserError("You cannot modify slot details once the slot is published or booked.")
+        self.generate_slot()
+        return super().write(vals)

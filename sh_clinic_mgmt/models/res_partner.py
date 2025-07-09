@@ -8,7 +8,7 @@ class Patient(models.Model):
     _inherit = 'res.partner'
     
     sh_birth_date = fields.Date(string="Date Of Birth", required=True, tracking=True)
-    sh_age = fields.Char(string="Age", compute="_compute_age")
+    sh_age = fields.Char(string="Age", compute="_compute_age", store=True)
     sh_gender = fields.Selection([
         ('male', 'Male'),
         ('female', 'Female'),

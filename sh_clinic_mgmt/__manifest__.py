@@ -29,12 +29,18 @@
         'data/sh_mail_template.xml',
         'data/sh_appointment_cron.xml',
         
-        # report
-        # 'report/sh_appointment_template.xml',
-        # 'report/sh_reports.xml',
         
         # wizard
         'wizard/sh_daily_appointment_summery_report.xml',
+        'wizard/sh_doctor_avail_wizard.xml',
+        'wizard/sh_monthly_revenue_report_wizard_views.xml',
+        'wizard/sh_patient_visit_history_wizard_views.xml',
+        'wizard/sh_medicine_stock_report_wizard_view.xml',
+        'wizard/sh_doctor_performance_wizard_views.xml',
+        'wizard/sh_patient_demographics_wizard_views.xml',
+        'wizard/sh_treatment_diagnosis_wizard_views.xml',
+        'wizard/sh_disease_wise_patient_wizard_views.xml',
+        'wizard/sh_emergency_case_wizard_views.xml',
         
         # views
         'views/sh_allergies_view.xml',
@@ -62,6 +68,15 @@
 
         # Reports
         'report/sh_appointment_summery_template.xml',
+        'report/sh_doctor_availability_report_template.xml',
+        'report/sh_monthly_revenue_template_views.xml',
+        'report/sh_patient_visit_history_report_template.xml',
+        'report/sh_medicine_stock_report_template.xml',
+        'report/sh_doctor_performance_report_template.xml',
+        'report/sh_patient_demographics_report_template.xml',
+        'report/sh_treatment_diagnosis_report_template.xml',
+        'report/sh_disease_wise_patient_template.xml',
+        'report/sh_emergency_case_report_template.xml',
         
         # menuitem
         'views/sh_clinic_menuitems.xml',

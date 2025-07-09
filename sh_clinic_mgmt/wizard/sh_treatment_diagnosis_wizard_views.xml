@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_treatment_diagnosis_report_wizard" model="ir.ui.view">
+        <field name="name">sh.treatment.diagnosis.wizard</field>
+        <field name="model">sh.treatment.diagnosis.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Treatment and Diagnosis Report">
+                <group>
+                    <field name="from_date" required="1"/>
+                    <field name="to_date" required="1"/>
+                </group>
+                <footer>
+                    <button name="action_print_report" string="Download PDF Report" type="object" class="btn-primary"/>
+                    <button name="action_excel_report" string="Download Excel Report" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_treatment_diagnosis_report_wizard" model="ir.actions.act_window">
+        <field name="name">Treatment and Diagnosis Report</field>
+        <field name="res_model">sh.treatment.diagnosis.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

@@ -47,9 +47,40 @@
             <menuitem id="sh_clinic_submenu_action_9" name="Symptoms"
                 action="sh_symptom_action_view"></menuitem>
         </menuitem>
+
+        <!-- ================================= REPORTS ================================== -->
+
         <menuitem id="sh_clinic_report_action" name="Reports" sequence="6">
-            <menuitem id="sh_daily_apt_report" action="action_appointment_summary_report_wizard" 
-                name="Daily Appointment Summery Report" sequence="1"/>
+            
+            <menuitem id="menu_sh_daily_apt_report" action="action_appointment_summary_report_wizard"
+                name="Daily Appointment Summery Report" sequence="1" />
+
+            <menuitem id="menu_sh_monthly_revenue_report" action="action_monthly_revenue_report_wizard"
+                name="Monthly Revenue Report" sequence="2" />
+
+            <menuitem id="menu_sh_doctor_availibility_report" action="action_doctor_avail_report_wizard"
+                name="Doctor Availibility Report" sequence="3" />
+
+            <menuitem id="menu_patient_visit_history_report" action="action_patient_visit_history_report_wizard"
+                name="Patient Visit History Report" sequence="4" />
+
+            <menuitem id="menu_medicine_stock_report" action="action_medicine_stock_report_wizard"
+                name="Medicine Stock Report" sequence="5" />
+
+            <menuitem id="menu_doctor_performance_report" action="action_doctor_performance_report_wizard"
+                name="Doctor's Performance Report" sequence="6" />
+
+            <menuitem id="menu_patient_demographics_report" action="action_patient_demographics_report_wizard"
+                name="Patient Demographics Report" sequence="7" />
+
+            <menuitem id="menu_treatment_diagnosis_report" action="action_treatment_diagnosis_report_wizard"
+                name="Treatment &amp; Diagnosis Report" sequence="8" />
+
+            <menuitem id="menu_disease_wise_patient_report" action="action_disease_wise_patient_report_wizard"
+                name="Disease Wise Patient Report" sequence="9" />
+
+            <menuitem id="menu_emergency_cases_report" action="action_emergency_cases_report_wizard"
+                name="Emergency Cases Report" sequence="10" />
         </menuitem>
     </menuitem>
 </odoo>
