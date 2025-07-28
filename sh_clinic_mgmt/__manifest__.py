@@ -57,7 +57,7 @@
         'views/sh_medicine_view.xml',
         'views/hr_job_view.xml',
         'views/hr_department_view.xml',
-        'views/resource_calendar_view.xml',
+        # 'views/resource_calendar_view.xml',
         'views/sh_slots_view.xml',
         'views/res_config_settings_view.xml',
         'views/sh_appointment_view.xml',

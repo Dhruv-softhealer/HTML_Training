@@ -6,7 +6,7 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='tz']" position="after">
-                <field name="sh_doctor_name" ></field>
+                <!-- <field name="sh_doctor_name" ></field> -->
             </xpath>
 
         </field>

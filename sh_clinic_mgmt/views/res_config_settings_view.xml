@@ -17,7 +17,7 @@
                         <setting id="job_position_id" help="Select job positions">
                             <field name="job_position_ids" widget="many2many_tags"/>
                         </setting>
-                    </block>
+                    </block>    
                 </app>
              </xpath>
         </field>

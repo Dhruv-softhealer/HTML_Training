@@ -96,6 +96,8 @@ class Appointment(models.Model):
     apt_count = fields.Integer(string="Appointments", compute="_compute_apt_count")
     # sh_invoice_id = fields.Many2one('account.move', string="Invoice")
     sale_order_id = fields.Many2one('sale.order', string="Sales Order")
+    
+    sh_priority = fields.Integer(string="Priority", default=0, tracking=True)
 
 
     # ===================================== Appointment Stage Change ===========================================
@@ -383,6 +385,9 @@ class Appointment(models.Model):
 
                 val['name'] = f'{doctor_seq}-B{booking_str}-C{current_str}'
                 val['sh_state'] = 'new'
+                
+                # if val.get('sh_emergency_case'):
+                #     val['sh_priority'] = 1
 
         record = super().create(vals_list)
         record.assign_apt_to_slot_line()
@@ -429,6 +434,11 @@ class Appointment(models.Model):
             slot_line.write({
                 'sh_appointment_line': [Command.unlink(self.id)]  
             })
+            
+            # if 'sh_emergency_case' in vals:
+            #     if vals['sh_emergency_case']:
+            #         vals['sh_priority'] = 1
+            
             # linking new
             self.assign_apt_to_slot_line()
         return res
