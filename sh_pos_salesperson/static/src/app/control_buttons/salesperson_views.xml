@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template1" name="template1" xml:space="preserve">
+    <t t-name="SalespersonPopup" owl="1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Select Salespersonnnnnnn</h5>
+                </div>
+                <div class="modal-body">
+                    <t t-foreach="pos.users" t-as="user" t-key="user.id">
+                        <div>
+                            <button type="button" class="btn btn-primary" t-on-click="() => selectSalesperson(user.id)">
+                                <t t-esc="user.name" />
+                            </button>
+                        </div>
+                    </t>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" t-on-click="cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

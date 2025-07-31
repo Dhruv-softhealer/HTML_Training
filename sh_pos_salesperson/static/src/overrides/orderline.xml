@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="sh_pos_salesperson.Orderline" t-inherit="point_of_sale.Orderline" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('internal-note-container')]" position="before">
+            <div class="w-100 px-1 py-1 rounded d-flex justify-content-end fs-4" t-if="line.sh_salesperson_id">
+                <img t-att-src="line.sh_salesperson_src" t-att-alt="line.sh_salesperson_name" class="rounded-4" style="width:25px"/>&#160;&#160;&#160;&#160;&#160;
+                <span t-esc="line.sh_salesperson_name" style="color: green;"></span>
+                
+                <i class="fa fa-times text-danger" t-on-click=" () => env.services.pos.get_order()?.get_selected_orderline()?.remove_salesperson()"></i>
+            </div>
+        </xpath>
+</t>
+</templates>
