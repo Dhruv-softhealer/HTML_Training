@@ -1,4 +1,4 @@
-import { Orderline } from "@point_of_sale/app/generic_components/orderline/orderline";
+// import { Orderline } from "@point_of_sale/app/generic_components/orderline/orderline";
 import { PosOrderline } from "@point_of_sale/app/models/pos_order_line";
 import { patch } from "@web/core/utils/patch";
  

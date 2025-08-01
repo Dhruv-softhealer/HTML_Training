@@ -20,6 +20,7 @@ POS Salesperson Management
         # 'security/ir.model.access.csv',
         'views/res_config_settings_views.xml',
         'views/pos_order_line_views.xml',
+        'views/pos_order_views.xml',
     ],
     "assets": {
         'point_of_sale._assets_pos': [

@@ -1,0 +1,15 @@
+<odoo>
+    <record id="pos_order_filter_view_inherit_salesperson" model="ir.ui.view">
+        <field name="name">pos.order.filter.inherit.salesperson</field>
+        <field name="model">report.pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_report_pos_order_search" />
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='product_category']" position="after">
+                <filter string="Salesperson" name="group_by_salesperson" domain="[]"
+                    context="{'group_by': 'sh_salesperson_id'}" />
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>
